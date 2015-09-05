@@ -46,6 +46,7 @@ public:
 	void dummyeinst();
 	void RTCstart();
 	void RTCstop();
+	uint8_t timer();
 protected:
 private:
 	RTC( const RTC &c );

@@ -140,7 +140,7 @@ void menue_einst(){
 	oled.clearFrame();
 	buffersize=sprintf(buffer,"1:Kompass kalib.");
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,0*charhighte);}
-	buffersize=sprintf(buffer,"2:HMC5883L Gain");
+	buffersize=sprintf(buffer,"2:Kompassverstaerkung");
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,1*charhighte);}
 	buffersize=sprintf(buffer,"3:Uhr einstellen");
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,2*charhighte);}
@@ -186,6 +186,7 @@ void uhranzeigen(){
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(Buffer[i],65+i*charsize,3*charhighte);}
 }
 
+/*
 unsigned int stoppuhr(){
 	uint8_t sek=0;
 	uint8_t min=0;
@@ -305,11 +306,7 @@ unsigned int stoppuhr(){
 	}
 	
 	return (24*stun+60*min+sek);
-}
-
-void timer(){
-	
-}
+}*/
 
 void fahradschirm(double winkelgeschw, double angle){
 	char buffer[10];
@@ -336,9 +333,6 @@ void fahradschirm(double winkelgeschw, double angle){
 	anzeige_kleinenadel(31,31,angle);
 }
 
-void kompass_kalibrieren(){
-	
-}
 /*
 void calibrate_kompass(){
 	char buffer[20];
@@ -436,5 +430,280 @@ void anzeige_kompass(double winkel){
 	anzeige_richtung(winkel);	
 }
 
+void timerseite(){
+	char buffer[20];
+	uint8_t buffersize=0;
+	oled.clearFrame();
+	buffersize=sprintf(buffer,"Timer: ");
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,0*charhighte);}
+	if (pos!=0)
+	{
+		oled.draw_ASCI(pos+'0',buffersize*charsize,0*charhighte);
+	}
+		
+	buffer[0]=zaehler.Stunden/10;
+	buffer[1]=zaehler.Stunden%10;
+	buffer[2]=':';
+	buffer[3]=zaehler.Minuten/10;
+	buffer[4]=zaehler.Minuten%10;
+	buffer[5]=':';
+	buffer[6]=zaehler.Sekunden/10;
+	buffer[7]=zaehler.Sekunden%10;
+	for(uint8_t i=0;i<bitsderrtc;i++){
+		if (buffer[i]==':')
+		{
+			oled.draw_ASCI(buffer[i],i*numbersmalsize,2.5*charhighte);
+		}
+		else{
+			oled.draw_number16x16(buffer[i],i*numbersmalsize,2*charhighte);
+		}
+	}
+}
+
+void Stoppuhrseite(){
+	char buffer[20];
+	uint8_t buffersize=0;
+	oled.clearFrame();
+	buffersize=sprintf(buffer,"Stoppuhr: ");
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,0*charhighte);}
+	
+	buffer[0]=stoppuhr.Stunden/10;
+	buffer[1]=stoppuhr.Stunden%10;
+	buffer[2]=':';
+	buffer[3]=stoppuhr.Minuten/10;
+	buffer[4]=stoppuhr.Minuten%10;
+	buffer[5]=':';
+	buffer[6]=stoppuhr.Sekunden/10;
+	buffer[7]=stoppuhr.Sekunden%10;
+	for(uint8_t i=0;i<bitsderrtc;i++){
+		if (buffer[i]==':')
+		{
+			oled.draw_ASCI(buffer[i],i*numbersmalsize,2.5*charhighte);
+		}
+		else{
+			oled.draw_number16x16(buffer[i],i*numbersmalsize,2*charhighte);
+		}
+	}
+}
+
+void uhreinstellen(){
+	rtc.RTCstop();
+	
+	oled.clearFrame();
+	char buffer[20];
+	uint8_t buffersize;
+	uint8_t pos=0;
+	while(pos<11){
+		buffersize=sprintf(buffer,"Uhreinstellung");
+		for(uint8_t i = 0; i<buffersize;i++){
+			oled.draw_ASCI(buffer[i],charsize*i,0);
+		}
+		buffersize=sprintf(buffer,"--------------");
+		for(uint8_t i = 0; i<buffersize;i++){
+			oled.draw_ASCI(buffer[i],charsize*i,8);
+		}
+		buffer[0]=rtc.Stunden/10;
+		buffer[1]=rtc.Stunden%10;
+		buffer[2]=':';
+		buffer[3]=rtc.Minuten/10;
+		buffer[4]=rtc.Minuten%10;
+		buffer[5]=' ';
+		buffer[6]=rtc.Tag/10;
+		buffer[7]=rtc.Tag%10;
+		buffer[8]='.';
+		buffer[9]=rtc.Monat/10;
+		buffer[10]=rtc.Monat%10;
+		buffer[11]='.';
+		buffer[12]=rtc.Jahr/10;
+		buffer[13]=rtc.Jahr%10;
+		buffersize=14;
+		for(uint8_t i = 0; i<5;i++){
+			if(i!=2){
+				oled.draw_number16x16(buffer[i],i*numbersmalsize,2*charhighte);
+			}
+			else {
+				oled.draw_ASCI(buffer[i],i*numbersmalsize+numbersmalsize/2,2*charhighte+charhighte/2);
+			}
+		}
+		for(uint8_t i = 6; i<buffersize;i++){
+			if(i!=8 && i!=11){
+				oled.draw_number16x16(buffer[i],i*numbersmalsize-6*numbersmalsize,4*charhighte);
+			}
+			else {
+				oled.draw_ASCI(buffer[i],i*numbersmalsize+numbersmalsize/2-6*numbersmalsize,5*charhighte);
+			}
+		}
+
+		oled.sendFrame();
+		oled.clearFrame();
+		switch (pos) {
+			case 0:
+				rtc.Stunden=Tastatur.ZahlenausTastatur()*10;
+				if(rtc.Stunden>=24){
+					rtc.Stunden=0;
+					pos=-1;
+					buffersize=sprintf(buffer,"Stunden falsch");
+					for(uint8_t i = 0; i<buffersize;i++){
+						oled.draw_ASCI(buffer[i],charsize*i,7*8);
+					}
+				}
+				break;
+			case 1:
+				rtc.Stunden+=Tastatur.ZahlenausTastatur();
+				if(rtc.Stunden>=24){
+					rtc.Stunden=0;
+					pos=-1;
+					buffersize=sprintf(buffer,"Stunden falsch");
+					for(uint8_t i = 0; i<buffersize;i++){
+						oled.draw_ASCI(buffer[i],charsize*i,7*8);
+					}
+				}
+				break;
+			case 2:
+				rtc.Minuten=Tastatur.ZahlenausTastatur()*10;
+				if(rtc.Minuten>=60){
+					rtc.Minuten=0;
+					pos=1;
+					buffersize=sprintf(buffer,"Minuten falsch");
+					for(uint8_t i = 0; i<buffersize;i++){
+						oled.draw_ASCI(buffer[i],charsize*i,7*8);
+					}
+				}
+				break;
+			case 3:
+				rtc.Minuten+=Tastatur.ZahlenausTastatur();
+				if(rtc.Minuten>=60){
+					rtc.Minuten=0;
+					pos=1;
+					buffersize=sprintf(buffer,"Minuten falsch");
+					for(uint8_t i = 0; i<buffersize;i++){
+						oled.draw_ASCI(buffer[i],charsize*i,7*8);
+					}
+				}
+				break;
+			case 4:
+				rtc.Tag=Tastatur.ZahlenausTastatur()*10;
+				if(rtc.Tag>=32){
+					rtc.Tag=0;
+					pos=3;
+					buffersize=sprintf(buffer,"Tag falsch");
+					for(uint8_t i = 0; i<buffersize;i++){
+						oled.draw_ASCI(buffer[i],charsize*i,7*8);
+					}
+				}
+				break;
+			case 5:
+				rtc.Tag+=Tastatur.ZahlenausTastatur();
+				if(rtc.Tag>=32){
+					rtc.Tag=0;
+					pos=3;
+					buffersize=sprintf(buffer,"Tag falsch");
+					for(uint8_t i = 0; i<buffersize;i++){
+						oled.draw_ASCI(buffer[i],charsize*i,7*8);
+					}
+				}
+				break;
+			case 6:
+				rtc.Monat=Tastatur.ZahlenausTastatur()*10;
+				if(rtc.Monat>=13){
+					rtc.Monat=0;
+					pos=5;
+					buffersize=sprintf(buffer,"Monat falsch");
+					for(uint8_t i = 0; i<buffersize;i++){
+						oled.draw_ASCI(buffer[i],charsize*i,7*8);
+					}
+				}
+				break;
+			case 7:
+				rtc.Monat+=Tastatur.ZahlenausTastatur();
+				if(rtc.Monat>=13){
+					rtc.Monat=0;
+					pos=5;
+					buffersize=sprintf(buffer,"Monat falsch");
+					for(uint8_t i = 0; i<buffersize;i++){
+						oled.draw_ASCI(buffer[i],charsize*i,7*8);
+					}
+				}
+				if(rtc.Monat==4||rtc.Monat==6||rtc.Monat==9||rtc.Monat==11){
+					if(rtc.Tag>=31){
+						rtc.Tag=0;
+						rtc.Monat=0;
+						pos=3;
+						buffersize=sprintf(buffer,"Tag falsch");
+						for(uint8_t i = 0; i<buffersize;i++){
+							oled.draw_ASCI(buffer[i],charsize*i,7*8);
+						}
+					}
+				}
+				else if(rtc.Monat==2){
+					if(rtc.Tag>=30){
+						rtc.Tag=0;
+						rtc.Monat=0;
+						pos=3;
+						buffersize=sprintf(buffer,"Tag falsch");
+						for(uint8_t i = 0; i<buffersize;i++){
+							oled.draw_ASCI(buffer[i],charsize*i,7*8);
+						}
+					}
+				}
+				break;
+			case 8:
+				rtc.Jahr=Tastatur.ZahlenausTastatur()*10;
+				if(rtc.Jahr>=50){
+					rtc.Jahr=0;
+					pos=7;
+					buffersize=sprintf(buffer,"Jahr falsch");
+					for(uint8_t i = 0; i<buffersize;i++){
+						oled.draw_ASCI(buffer[i],charsize*i,7*8);
+					}
+				}
+				break;
+			case 9:
+				rtc.Jahr+=Tastatur.ZahlenausTastatur();
+				if(rtc.Jahr>=50){
+					rtc.Jahr=0;
+					pos=7;
+					buffersize=sprintf(buffer,"Jahr falsch");
+					for(uint8_t i = 0; i<buffersize;i++){
+						oled.draw_ASCI(buffer[i],charsize*i,7*8);
+					}
+				}
+				if(rtc.Monat==2){
+					if(rtc.Jahr%4==0){
+						rtc.Tag=0;
+						rtc.Monat=0;
+						rtc.Jahr=0;
+						pos=3;
+						buffersize=sprintf(buffer,"Tag falsch");
+						for(uint8_t i = 0; i<buffersize;i++){
+							oled.draw_ASCI(buffer[i],charsize*i,7*8);
+						}
+					}
+					else{
+						if(rtc.Tag>=29){
+							rtc.Tag=0;
+							rtc.Monat=0;
+							rtc.Jahr=0;
+							pos=3;
+							buffersize=sprintf(buffer,"Tag falsch");
+							for(uint8_t i = 0; i<buffersize;i++){
+								oled.draw_ASCI(buffer[i],charsize*i,7*8);
+							}
+						}
+					}
+				}
+				break;
+			default:
+				pos++;
+				break;
+		}
+		pos++;
+	}
+	
+	rtc.Sekunden		= 0;
+	rtc.HundSekunden	= 0;
+	oled.clearFrame();
+	rtc.RTCstart();
+}
 
 #endif /* SEITEN_H_ */

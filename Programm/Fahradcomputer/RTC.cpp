@@ -11,11 +11,6 @@
 // default constructor
 RTC::RTC()
 {
-} //RTC
-
-// default destructor
-RTC::~RTC()
-{
 	Sekunden=0;
 	HundSekunden=0;
 	Minuten=0;
@@ -31,6 +26,11 @@ RTC::~RTC()
 	msg_uhr[5]=':';
 	//msg_dat[2]='.';
 	//msg_dat[5]='.';
+} //RTC
+
+// default destructor
+RTC::~RTC()
+{
 } //~RTC
 
 uint8_t RTC::zeit(){
@@ -95,4 +95,25 @@ void RTC::RTCstart(){
 
 void RTC::RTCstop(){
 	TCCR2B &= ~((1<<CS22) | (1<<CS21));
+}
+
+uint8_t RTC::timer(){
+	if (Sekunden>60)
+	{
+		Sekunden=59;
+		Minuten--;
+		if (Minuten>60)
+		{
+			Minuten=59;
+			Stunden--;
+			if (Stunden>24)
+			{
+				Stunden=0;
+				Minuten=0;
+				Sekunden=0;
+				return 1;
+			}
+		}
+	}
+	return 0;
 }

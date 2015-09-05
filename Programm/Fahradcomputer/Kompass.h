@@ -65,6 +65,7 @@ public:
 	void initialize_HMC5883L();
 	uint8_t HMC5883L_readHeading();
 	double angle();
+	void kallibrierung_ruecksetzen();
 protected:
 private:
 	Kompass( const Kompass &c );

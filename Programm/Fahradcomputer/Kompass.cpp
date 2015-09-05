@@ -76,13 +76,30 @@ uint8_t Kompass::HMC5883L_readHeading(){
 		
 	}
 	i2c.twi_stop();
-	achsen[0] =(int16_t) (heading[1] | (heading[0] << 8))-offset[0];
-	achsen[2] =(int16_t) (heading[3] | (heading[2] << 8))-offset[2];
-	achsen[1] =(int16_t) (heading[5] | (heading[4] << 8))-offset[1];
+	achsen[0] =(int16_t) (heading[1] | (heading[0] << 8));
+	achsen[2] =(int16_t) (heading[3] | (heading[2] << 8));
+	achsen[1] =(int16_t) (heading[5] | (heading[4] << 8));
 	sei();
 	if (achsen[0]==-4096 || achsen[1]==-4096 || achsen[2]==-4096)
 	{
 		return 1;
+	}
+	//Kallibrierung durchfuehren, jedes mal, wenn eine abfrage stattfindet
+	//somit passive kalibrierung
+	else{
+		for(uint8_t i=0;i<3;i++){
+			if(achsen[i]>max[i]){
+				max[i]=achsen[i];
+				offset[i]=(max[i]+min[i])/2;
+			}
+			else if(achsen[i]<min[i]){
+				min[i]=achsen[i];
+				offset[i]=(max[i]+min[i])/2;
+			}
+			else {
+				achsen[i]-=offset[i];
+			}
+		}
 	}
 	
 	return 0;
@@ -111,4 +128,13 @@ double Kompass::angle(){
 	
 	HMC5883L_command(0x02,HMCSIGLEMODE);
 	return angle;
+}
+
+void Kompass::kallibrierung_ruecksetzen(){
+	for (uint8_t i=0;i<3;i++)
+	{
+		max[i]=0;
+		min[i]=0;
+		offset[i]=0;
+	}
 }

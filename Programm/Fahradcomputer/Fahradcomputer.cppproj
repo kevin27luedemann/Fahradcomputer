@@ -183,18 +183,6 @@
     <Compile Include="Taschenrechner.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="Tastatur.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="twiroutines.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="OLED.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="Zeit.h">
-      <SubType>compile</SubType>
-    </Compile>
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

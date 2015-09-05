@@ -17,6 +17,8 @@ Kompass kompass;
 
 #include "RTC.h"
 RTC rtc;
+RTC zaehler;
+RTC stoppuhr;
 
 #include "Display.h"
 Display oled;
@@ -28,6 +30,9 @@ Interface Tastatur;
 
 //Anzeigebits
 #define Uhrflag 0
+#define Timerflag 6
+#define Stoppuhrflag 7
+
 #define Fahradflag 1
 #define Kompasflag 2
 #define kompaskalibrierenflag 4
@@ -39,7 +44,7 @@ Interface Tastatur;
 #define refreshdisplay 15
 
 uint16_t anzeige;	//Flagregister fuer die Anziegenschaltung
-
+uint8_t pos;		//Handler fuer die Einganbe von Zahlen
 //Ausgelagerte Sammlung der einzelnen Seitenlayouts
 #include "Seiten.h"
 
@@ -56,7 +61,7 @@ void maininterupthandler();
 void anzeigehandler();
 
 void eingabehandler(uint8_t taste);
-	
+
 int main(void)
 {
 	//initialisierung
@@ -77,6 +82,7 @@ void initialisierung(){
 	//nullen der Flagregister
 	rtc.interupts=0;
 	anzeige=0;
+	pos=0;
 	//Ausgaenge und Eingaenge einstellen
 	DDRD = (1<<PIND0) | (1<<PIND1) | (1<<PIND2) | (1<<PIND3);	//Pins zur Ausgabe
 	DDRD &= ~((1<<PIND4) | (1<<PIND5) | (1<<PIND6));			//Restliche Pins als Eingaenge schalten
@@ -161,6 +167,30 @@ void anzeigehandler(){
 			fahradschirm(12.3,kompass.angle());
 			anzeige|=(1<<refreshdisplay);
 		}
+		else if ((anzeige&(1<<Einstellungsflag)) && (anzeige&(1<<Timerflag)))
+		{
+			timerseite();
+			anzeige|=(1<<refreshdisplay);
+		}
+		else if ((anzeige&(1<<Stoppuhrflag)))
+		{
+			if ((anzeige&(1<<Einstellungsflag)))
+			{
+				stoppuhr.Sekunden++;
+				stoppuhr.zeit();
+			}
+			Stoppuhrseite();
+			anzeige|=(1<<refreshdisplay);
+		}
+		else if ((anzeige&(1<<Timerflag)))
+		{
+			zaehler.Sekunden--;
+			if(zaehler.timer()){
+				anzeige|=(1<<blinkflag);
+			}
+			timerseite();
+			anzeige|=(1<<refreshdisplay);
+		}
 		rtc.interupts&=~(1<<sekundeninterupt);
 	}
 	//neuen Framebuffer an das Dispay senden
@@ -197,16 +227,20 @@ void eingabehandler(uint8_t taste){
 					break;
 				
 				case '2':
-					//starten der Stoppuhr momentan nicht aktiv, da nicht auf Handler niveau
-					//stoppuhr();
-					oled.clearFrame();
-					anzeige|=(1<<refreshdisplay);
+					//starten der Stoppuhr APP
+					stoppuhr.Sekunden=0;
+					stoppuhr.Minuten=0;
+					stoppuhr.Stunden=0;
+					anzeige|=(1<<refreshdisplay) | (1<<Stoppuhrflag);
 					break;
 				
 				case '3':
-					//Starten der Timer APP (nicht implementiert)
-					oled.clearFrame();
-					anzeige|=(1<<refreshdisplay);
+					//Starten der Timer APP
+					zaehler.Sekunden=0;
+					zaehler.Minuten=0;
+					zaehler.Stunden=0;
+					
+					anzeige|=(1<<Timerflag) | (1<<Einstellungsflag);
 					break;
 				
 				case '4':
@@ -227,18 +261,17 @@ void eingabehandler(uint8_t taste){
 			switch (taste)
 			{
 				case '1':
-					//einstellung zur Kalibrierung des Kompass
-					//calibrate_kompass();
-					//anzeige|=(1<<Kompasflag);
-					oled.clearFrame();
-					anzeige|=(1<<refreshdisplay);
+					//zuruecksetzen der Kalibrierung, da passive Kallibrierung eingebaut
+					kompass.kallibrierung_ruecksetzen();
+					anzeige|=(1<<Kompasflag);
 					break;
 				case '2':
 					//Gaineinstellung fuer den Kompass
 					anzeige|=(1<<Kompasgaineinstellenflag);
 					break;
 				case '3':
-					//uhreinstellen();
+					//dies ist eine der wenigen Funktinen, die die Handler Strucktur nicht anwenden, da sie die rtc anhaellt
+					uhreinstellen();
 					anzeige|=(1<<Uhrflag);
 					break;
 				default:
@@ -326,6 +359,116 @@ void eingabehandler(uint8_t taste){
 					break;
 			}
 		}
+		else if ((anzeige&(1<<Einstellungsflag)) && (anzeige&(1<<Timerflag)))
+		{
+			switch (pos)
+			{
+			case 0:
+				switch (taste)
+				{
+					case '#':
+						break;
+					case '*':
+						break;
+					default:
+						zaehler.Sekunden+=(taste-'0')*10;
+						pos++;
+						break;
+				}
+				break;
+			case 1:
+				switch (taste)
+				{
+					case '#':
+					break;
+					case '*':
+					break;
+					default:
+					zaehler.Sekunden+=(taste-'0');
+					pos++;
+					break;
+				}
+				break;
+			case 2:
+				switch (taste)
+				{
+					case '#':
+					break;
+					case '*':
+					break;
+					default:
+					zaehler.Minuten+=(taste-'0')*10;
+					pos++;
+					break;
+				}
+				break;
+			case 3:
+				switch (taste)
+				{
+					case '#':
+					break;
+					case '*':
+					break;
+					default:
+					zaehler.Minuten+=(taste-'0');
+					pos++;
+					break;
+				}
+				break;
+			case 4:
+				switch (taste)
+				{
+					case '#':
+					break;
+					case '*':
+					break;
+					default:
+					zaehler.Stunden+=(taste-'0')*10;
+					pos++;
+					break;
+				}
+				break;
+			case 5:
+				switch (taste)
+				{
+					case '#':
+					break;
+					case '*':
+					break;
+					default:
+					zaehler.Stunden+=(taste-'0');
+					pos++;
+					break;
+				}
+				pos=0;
+				anzeige&=~(1<<Einstellungsflag);
+				break;
+			}
+		}
+		else if ((anzeige&(1<<Stoppuhrflag)))
+		{
+			if (taste=='*')
+			{
+				if ((anzeige&(1<<Einstellungsflag)))
+				{
+					anzeige&=~(1<<Einstellungsflag);
+				}
+				else{
+					anzeige|=(1<<Einstellungsflag);
+				}
+			}
+			else if (taste=='0')
+			{
+				stoppuhr.Sekunden=0;
+				stoppuhr.Minuten=0;
+				stoppuhr.Stunden=0;
+			}
+			else if (taste=='#')
+			{
+				anzeige&=~((1<<Stoppuhrflag)|(1<<Einstellungsflag));
+				anzeige|=(1<<menueflag);
+			}
+		}
 		else if ((anzeige&(1<<Uhrflag)))
 		{
 			if (taste=='#')
@@ -350,9 +493,26 @@ void eingabehandler(uint8_t taste){
 				anzeige|=(1<<menueflag);	
 			}
 		}
+		else if ((anzeige&(1<<Timerflag)))
+		{
+			if (taste=='#')
+			{
+				anzeige&=~((1<<Timerflag)|(1<<blinkflag));
+				oled.invert(0);	//fuer den Fall, dass es invertiert blieb (50% der Faelle)
+				anzeige|=(1<<menueflag);
+			}
+		}
 		else if (anzeige==0)
 		{
 			anzeige|=(1<<menueflag);
+		}
+		if ((anzeige&(1<<blinkflag)))
+		{
+			if (taste=='*')
+			{
+				anzeige &=~(1<<blinkflag);
+				oled.invert(0);	//fuer den Fall, dass es invertiert blieb (50% der Faelle)
+			}
 		}
 	}
 }
