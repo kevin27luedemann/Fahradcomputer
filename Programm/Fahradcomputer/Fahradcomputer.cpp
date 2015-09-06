@@ -34,6 +34,8 @@ Interface Tastatur;
 #define Stoppuhrflag 7
 
 #define Fahradflag 1
+
+
 #define Kompasflag 2
 #define kompaskalibrierenflag 4
 #define Kompasgaineinstellenflag 5
@@ -50,8 +52,38 @@ uint8_t pos;		//Handler fuer die Einganbe von Zahlen
 
 ISR(TIMER2_OVF_vect){	//Vektor fuer die RTC
 	TCNT2=TIMER2RTCTIME;
-	rtc.HundSekunden++;
-	rtc.interupts|= (1<<hundinterupt);
+	rtc.Sekunden++;
+	rtc.interupts|= (1<<sekundeninterupt);
+}
+
+#define zeitproachtzaehlungen 0.001024
+#define zaehlungenprozeiteinheit 8.0
+
+double geschw;
+void geschwindigkeit(float radius){
+	//uint16_t zaehlungen = (TCNT1H<<8) | (TCNT1L);
+	uint16_t zaehlungen = TCNT1;
+	geschw = (radius/100.0)*2*M_PI/((zaehlungen/zaehlungenprozeiteinheit)*zeitproachtzaehlungen);
+	//TCNT1H = 0;
+	//TCNT1L = 0;
+	TCNT1 = 0;
+}
+
+uint8_t reed_debounce(volatile uint8_t *port, uint8_t pin)
+{
+	if ( !(*port & (1 << pin)) )
+	{
+		/* Pin wurde auf Masse gezogen, ms warten   */
+		_delay_us(50);
+		//_delay_us(50);
+		if ( (*port & (1 << pin)) )
+		{
+			/* Anwender Zeit zum Loslassen des Tasters geben */
+			_delay_us(1);
+			return 1;
+		}
+	}
+	return 0;
 }
 
 void initialisierung();
@@ -83,9 +115,15 @@ void initialisierung(){
 	rtc.interupts=0;
 	anzeige=0;
 	pos=0;
+	//initialisieren des Zaehler fuer die Winkelgeschw sowie den Timer
+	geschw=0;
+	TCNT1=0;
 	//Ausgaenge und Eingaenge einstellen
 	DDRD = (1<<PIND0) | (1<<PIND1) | (1<<PIND2) | (1<<PIND3);	//Pins zur Ausgabe
 	DDRD &= ~((1<<PIND4) | (1<<PIND5) | (1<<PIND6));			//Restliche Pins als Eingaenge schalten
+	//Eingang fuer den Reedkontak schalten mit internem Pullup
+	DDRC &= ~((1<<PORTC3)|(1<<PORTC2));
+	PORTC |= (1<<PORTC3) | (1<<PORTC2);
 	//I2C Interface
 	//twi_init();
 	//Display
@@ -120,9 +158,17 @@ void initialisierung(){
 
 void maininterupthandler(){
 	//interupt dierekt aus der rtc
-	if((rtc.interupts & (1<<hundinterupt))){
-		rtc.zeit();
-		rtc.interupts&=~(1<<hundinterupt);
+	//if((rtc.interupts & (1<<hundinterupt))){
+		//rtc.zeit();
+		//rtc.interupts&=~(1<<hundinterupt);
+	//}
+	if ((anzeige&(1<<Fahradflag)))
+	{
+		//debounce Funktion fuer den Reedswitch
+		if (reed_debounce(&PINC,PINC3))
+		{
+			geschwindigkeit(14.0*2.54);
+		}
 	}
 }
 
@@ -130,6 +176,7 @@ void anzeigehandler(){
 	//Handler fuer 1Hz Flag
 	if ((rtc.interupts & (1<<sekundeninterupt)))
 	{
+		rtc.zeit();
 		//Handler fuer die Anzeige der Seiten
 		//Die einzelnen Funktionen beschreiben nur den Framebuffer und nicht dierekt das Display
 		if ((anzeige&(1<<menueflag)) && (anzeige&(1<<Uhrflag)))
@@ -164,7 +211,9 @@ void anzeigehandler(){
 		}
 		else if ((anzeige&(1<<Fahradflag)))
 		{
-			fahradschirm(12.3,kompass.angle());
+			//fahradschirm(12.3,kompass.angle());
+			fahradschirm(geschw,kompass.angle());
+			geschw=0;
 			anzeige|=(1<<refreshdisplay);
 		}
 		else if ((anzeige&(1<<Einstellungsflag)) && (anzeige&(1<<Timerflag)))
@@ -287,6 +336,8 @@ void eingabehandler(uint8_t taste){
 			{
 				case '1':
 					anzeige|=(1<<Fahradflag);
+					//starten des Timers fuer die geschwindigkeit
+					TCCR1B |= ((1<<CS12) | (1<<CS10));
 					break;
 				
 				case '2':
@@ -490,7 +541,8 @@ void eingabehandler(uint8_t taste){
 			if (taste=='#')
 			{
 				anzeige&=~(1<<Fahradflag);
-				anzeige|=(1<<menueflag);	
+				anzeige|=(1<<menueflag);
+				TCCR1B &= ~((1<<CS12) | (1<<CS10));
 			}
 		}
 		else if ((anzeige&(1<<Timerflag)))
