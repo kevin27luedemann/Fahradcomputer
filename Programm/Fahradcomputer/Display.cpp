@@ -252,7 +252,7 @@ void Display::analog(uint8_t stunde, uint8_t minute, uint8_t sekunde){
 		drawPixel(x,y,0);
 	}
 
-	r=17;
+	r=21;
 	//Berechnen des Minutenzeigers
 	for(uint8_t i=0;i<r;i++){
 		winkel=(minute*6.0)*M_PI/180.0-M_PI/2.0;
@@ -262,7 +262,7 @@ void Display::analog(uint8_t stunde, uint8_t minute, uint8_t sekunde){
 		drawPixel(x,y,0);
 	}
 
-	r=10;
+	r=13;
 	//Berechnen des Stundenzeigers
 	for(uint8_t i=0;i<r;i++){
 		winkel=(stunde*30.0)*M_PI/180.0-M_PI/2.0;

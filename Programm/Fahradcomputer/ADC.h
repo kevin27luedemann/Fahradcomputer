@@ -32,7 +32,7 @@ uint16_t ADC_Read_Avg( uint8_t channel, uint8_t nsamples )
 double batterie;
 int8_t Batteriestatus(){
 	uint16_t ADCwert=ADC_Read(0);
-	batterie = (ADCwert/1023.0)*3.24*SPANNUNGSTEILER;
+	batterie = (ADCwert/1023.0)*3.2*SPANNUNGSTEILER;
 	return ((batterie-3.0)/(4.2-3.0)*100);
 }
 

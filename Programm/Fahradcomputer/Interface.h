@@ -9,7 +9,7 @@
 #ifndef __INTERFACE_H__
 #define __INTERFACE_H__
 
-#define F_CPU 3686400
+#define F_CPU 8000000
 
 #include <avr/io.h>
 #include "stdlib.h"

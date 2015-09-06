@@ -30,7 +30,7 @@ void willkommenpage(){
 	}
 	oled.sendFrame();
 	oled.clearFrame();
-	for (uint8_t i=0;i<20;i++)
+	for (uint8_t i=0;i<10;i++)
 	{
 		_delay_ms(50);
 		_delay_ms(50);

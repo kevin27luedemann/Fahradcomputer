@@ -10,12 +10,14 @@
 #define __RTC_H__
 
 //Konstanten
-#define TIMER2RTCTIME 112
+//#define TIMER2RTCTIME 112
+#define TIMER2RTCTIME 0
 #define bitsderrtc 8
 
 //interuptbits
 #define hundinterupt 0
 #define sekundeninterupt 1
+#define minuteninterupt 2
 //Stoppuhrbits
 #define stoppbit 2
 
@@ -43,6 +45,7 @@ public:
 	RTC();
 	~RTC();
 	uint8_t zeit();
+	uint8_t zeit_hund();
 	void dummyeinst();
 	void RTCstart();
 	void RTCstop();
