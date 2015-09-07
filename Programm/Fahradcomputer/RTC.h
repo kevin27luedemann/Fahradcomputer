@@ -29,6 +29,7 @@ class RTC
 //variables
 public:
 	char msg_uhr[bitsderrtc];
+	char msg_dat[bitsderrtc];
 	uint8_t Stunden;
 	uint8_t Minuten;
 	uint8_t Sekunden;
@@ -50,6 +51,8 @@ public:
 	void RTCstart();
 	void RTCstop();
 	uint8_t timer();
+	void ausgabezeitneu();
+	void ausgabedatumneu();
 protected:
 private:
 	RTC( const RTC &c );

@@ -24,8 +24,10 @@ RTC::RTC()
 	//Einstellungen des Ausgabebuffers
 	msg_uhr[2]=':';
 	msg_uhr[5]=':';
-	//msg_dat[2]='.';
-	//msg_dat[5]='.';
+	msg_dat[2]='.';
+	msg_dat[5]='.';
+	ausgabezeitneu();
+	ausgabedatumneu();
 } //RTC
 
 // default destructor
@@ -54,20 +56,7 @@ uint8_t RTC::zeit_hund(){
 			}
 		}
 	}
-	msg_uhr[0]='0'+Stunden/10;
-	msg_uhr[1]='0'+Stunden%10;
-	msg_uhr[3]='0'+Minuten/10;
-	msg_uhr[4]='0'+Minuten%10;
-	msg_uhr[6]='0'+Sekunden/10;
-	msg_uhr[7]='0'+Sekunden%10;
-/*
-	msg_dat[0]='0'+GetTime.Days/10;
-	msg_dat[1]='0'+GetTime.Days%10;
-	msg_dat[3]='0'+GetTime.Month/10;
-	msg_dat[4]='0'+GetTime.Month%10;
-	msg_dat[6]='0'+(GetTime.Year-2000)/10;
-	msg_dat[7]='0'+(GetTime.Year-2000)%10;
-	*/
+	ausgabezeitneu();
 	return 0;
 }
 
@@ -83,36 +72,96 @@ uint8_t RTC::zeit(){
 		}
 		if(Stunden >= 24){
 			Stunden = 0;
+			Tag++;
 			kalender();
 		}
 	}
+	ausgabezeitneu();
+	return 0;
+}
+
+void RTC::kalender(){
+	if (Monat==4||Monat==6||Monat==9||Monat==11)
+	{
+		if (Tag>=31)
+		{
+			Tag=1;
+			Monat++;
+			if (Monat>=13)
+			{
+				Monat=1;
+				Jahr++;
+			}
+		}
+	}
+	else if (Monat==2)
+	{
+		if (Jahr%4==0)
+		{
+			if (Tag>=30)
+			{
+				Tag=1;
+				Monat++;
+				if (Monat>=13)
+				{
+					Monat=1;
+					Jahr++;
+				}
+			}
+		}
+		else{
+			if (Tag>=29)
+			{
+				Tag=1;
+				Monat++;
+				if (Monat>=13)
+				{
+					Monat=1;
+					Jahr++;
+				}
+			}
+		}
+	}
+	else{
+		if (Tag>=32)
+		{
+			Tag=1;
+			Monat++;
+			if (Monat>=13)
+			{
+				Monat=1;
+				Jahr++;
+			}
+		}
+	}
+	ausgabedatumneu();
+}
+
+void RTC::ausgabezeitneu(){
 	msg_uhr[0]='0'+Stunden/10;
 	msg_uhr[1]='0'+Stunden%10;
 	msg_uhr[3]='0'+Minuten/10;
 	msg_uhr[4]='0'+Minuten%10;
 	msg_uhr[6]='0'+Sekunden/10;
 	msg_uhr[7]='0'+Sekunden%10;
-/*
-	msg_dat[0]='0'+GetTime.Days/10;
-	msg_dat[1]='0'+GetTime.Days%10;
-	msg_dat[3]='0'+GetTime.Month/10;
-	msg_dat[4]='0'+GetTime.Month%10;
-	msg_dat[6]='0'+(GetTime.Year-2000)/10;
-	msg_dat[7]='0'+(GetTime.Year-2000)%10;
-	*/
-	return 0;
 }
-
-void RTC::kalender(){
-	Tag++;
+void RTC::ausgabedatumneu(){
+	msg_dat[0]='0'+Tag/10;
+	msg_dat[1]='0'+Tag%10;
+	msg_dat[3]='0'+Monat/10;
+	msg_dat[4]='0'+Monat%10;
+	msg_dat[6]='0'+Jahr/10;
+	msg_dat[7]='0'+Jahr%10;
 }
 
 void RTC::dummyeinst(){
 	Stunden=10;
 	Minuten=30;
-	Tag=27;
-	Monat=8;
+	Tag=7;
+	Monat=9;
 	Jahr=15;
+	ausgabedatumneu();
+	ausgabezeitneu();
 }
 
 void RTC::RTCstart(){

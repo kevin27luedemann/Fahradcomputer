@@ -47,6 +47,7 @@ Interface Tastatur;
 
 uint16_t anzeige;	//Flagregister fuer die Anziegenschaltung
 uint8_t pos;		//Handler fuer die Einganbe von Zahlen
+
 //Ausgelagerte Sammlung der einzelnen Seitenlayouts
 #include "Seiten.h"
 
