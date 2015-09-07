@@ -13,19 +13,19 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
   4 .debug_aranges 000002f8  00000000  00000000  00004c8c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   0000655f  00000000  00000000  00004f84  2**0
+  5 .debug_info   00006560  00000000  00000000  00004f84  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 000010f2  00000000  00000000  0000b4e3  2**0
+  6 .debug_abbrev 000010dc  00000000  00000000  0000b4e4  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   00001217  00000000  00000000  0000c5d5  2**0
+  7 .debug_line   00001247  00000000  00000000  0000c5c0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  00000b94  00000000  00000000  0000d7ec  2**2
+  8 .debug_frame  00000b94  00000000  00000000  0000d808  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    00000e56  00000000  00000000  0000e380  2**0
+  9 .debug_str    00000e27  00000000  00000000  0000e39c  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    000052f3  00000000  00000000  0000f1d6  2**0
+ 10 .debug_loc    000052f3  00000000  00000000  0000f1c3  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000300  00000000  00000000  000144c9  2**0
+ 11 .debug_ranges 00000300  00000000  00000000  000144b6  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -5979,8 +5979,8 @@ void uhreinstellen(){
     2812:	08 95       	ret
 
 00002814 <__vector_9>:
-uint16_t anzeige;	//Flagregister fuer die Anziegenschaltung
 uint8_t pos;		//Handler fuer die Einganbe von Zahlen
+
 //Ausgelagerte Sammlung der einzelnen Seitenlayouts
 #include "Seiten.h"
 
@@ -7466,13 +7466,13 @@ Kompass kompass;
     311e:	08 95       	ret
 
 00003120 <_ZN3I2CC1Ev>:
-#include "I2C.h"
 
 // default constructor
 I2C::I2C()
 {
-	TWBR = 10; //Bit fuer 100khz an Tackrate, reicht gerade noch so
-    3120:	8a e0       	ldi	r24, 0x0A	; 10
+	//TWBR = 10; //Bit fuer 100khz an Tackrate, reicht gerade noch so
+	TWBR=2; //fuer 8MHz und 400kHz in SCL
+    3120:	82 e0       	ldi	r24, 0x02	; 2
     3122:	80 93 b8 00 	sts	0x00B8, r24
     3126:	08 95       	ret
 
