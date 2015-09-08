@@ -185,9 +185,17 @@ void uhranzeigen(){
 	for(uint8_t i=0;i<bitsderrtc;i++){oled.draw_ASCI(rtc.msg_uhr[i],65+i*charsize,0*charhighte);}
 	for(uint8_t i=0;i<bitsderrtc;i++){oled.draw_ASCI(rtc.msg_dat[i],65+i*charsize,7*charhighte);}
 	buffersize=sprintf(Buffer,"%i%%",Batteriestatus());
-	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(Buffer[i],65+i*charsize,2*charhighte);}
-	buffersize=sprintf(Buffer,"%.3fV",batterie);
-	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(Buffer[i],65+i*charsize,3*charhighte);}
+	for(uint8_t i=0;i<buffersize;i++){
+		if (Buffer[i]=='%')
+		{
+			oled.draw_ASCI(Buffer[i],73+i*numbersmalsize,3.5*charhighte);
+		}
+		else{
+			oled.draw_number16x16(Buffer[i]-'0',70+i*numbersmalsize,3*charhighte);
+		}
+	}
+	//buffersize=sprintf(Buffer,"%.3fV",batterie);
+	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(Buffer[i],65+i*charsize,3*charhighte);}
 }
 
 void fahradschirm(double winkelgeschw, double angle){

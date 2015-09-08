@@ -171,6 +171,12 @@
     <Compile Include="Kompass.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Pressure.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Pressure.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="RTC.cpp">
       <SubType>compile</SubType>
     </Compile>
