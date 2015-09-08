@@ -265,7 +265,7 @@ void Display::analog(uint8_t stunde, uint8_t minute, uint8_t sekunde){
 	r=13;
 	//Berechnen des Stundenzeigers
 	for(uint8_t i=0;i<r;i++){
-		winkel=(stunde*30.0)*M_PI/180.0-M_PI/2.0;
+		winkel=(stunde*30.0+minute/2.0)*M_PI/180.0-M_PI/2.0;
 		x= (uint8_t) i*cos(winkel) +Px;
 		y= (uint8_t) i*sin(winkel) +Py;
 

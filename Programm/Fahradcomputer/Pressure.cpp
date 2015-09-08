@@ -11,8 +11,8 @@
 // default constructor
 Pressure::Pressure()
 {
-	Pressure = 0;
-	Temperature = 0;
+	Press = 0;
+	Tempera = 0;
 	LPS25H_initialize();
 } //Pressure
 
@@ -21,10 +21,10 @@ Pressure::~Pressure()
 {
 } //~Pressure
 
-void Pressure::LPS25H_command(uint8_t register, uint8_t command){
+void Pressure::LPS25H_command(uint8_t add, uint8_t command){
 	i2c.twi_start();
 	i2c.twi_write(LPS25H_SA0_Write);
-	i2c.twi_write(register);
+	i2c.twi_write(add);
 	i2c.twi_write(command);
 	i2c.twi_stop();
 }
@@ -56,7 +56,8 @@ void Pressure::READ_Pressure_once(){
 	i2c.twi_start();
 	
 	i2c.twi_write(LPS25H_SA0_Write);
-	i2c.twi_write(PRESS_OUT_XL|(1<<autoincrement));
+	uint8_t temp =(uint8_t)(PRESS_OUT_XL | (1<<autoincrement));
+	i2c.twi_write(temp);
 	i2c.twi_start();
 	i2c.twi_write(LPS25H_SA0_READ);
 	Press=0;
@@ -67,7 +68,7 @@ void Pressure::READ_Pressure_once(){
 			Press |= (i2c.twi_read(1)<<i*8);
 		}
 		else{
-			Press |= (i2c.twi_read(0)<<i*8)
+			Press |= (i2c.twi_read(0)<<i*8);
 		}
 	}
 	i2c.twi_stop();
@@ -77,7 +78,7 @@ void Pressure::READ_Temperature(){
 	i2c.twi_start();
 	
 	i2c.twi_write(LPS25H_SA0_Write);
-	i2c.twi_write(TEMP_OUT_L|(1<<autoincrement));
+	i2c.twi_write((uint8_t)(TEMP_OUT_L|(1<<autoincrement)));
 	i2c.twi_start();
 	i2c.twi_write(LPS25H_SA0_READ);
 	Tempera=0;
@@ -88,7 +89,7 @@ void Pressure::READ_Temperature(){
 			Tempera |= (i2c.twi_read(1)<<i*8);
 		}
 		else{
-			Tempera |= (i2c.twi_read(0)<<i*8)
+			Tempera |= (i2c.twi_read(0)<<i*8);
 		}
 	}
 	i2c.twi_stop();

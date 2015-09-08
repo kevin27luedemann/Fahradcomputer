@@ -12,5 +12,7 @@ Interface.cpp
 
 Kompass.cpp
 
+Pressure.cpp
+
 RTC.cpp
 

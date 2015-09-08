@@ -74,7 +74,7 @@
 #define PP_OD	6	//PUSH-PULL/open drain on interrupt pad, default 0
 //Interrupt selection for INT1 pin
 #define INT1_S2	1
-#define INT1_S2	0
+#define INT1_S1	0
 /*
 	INT1_S2	INT1_S1 | INT1_Pin
 ------------------------------------------
@@ -195,7 +195,7 @@ protected:
 private:
 	Pressure( const Pressure &c );
 	Pressure& operator=( const Pressure &c );
-	void LPS25H_command(uint8_t register, uint8_t command);
+	void LPS25H_command(uint8_t add, uint8_t command);
 
 }; //Pressure
 
