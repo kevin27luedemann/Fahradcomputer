@@ -103,8 +103,8 @@
 #define P_OR	5	//Pressure data overrun, default 0
 //output of Pressure, 24bit
 #define PRESS_OUT_XL	0x28
-#define PRESS_OUT_L		0x29
-#define PRESS_OUT_H		0x2A
+#define PRESS_OUT_L	0x29
+#define PRESS_OUT_H	0x2A
 //output of Temperature, 16bit
 #define TEMP_OUT_L	0x2B
 #define TEMP_OUT_H	0x2C
@@ -168,6 +168,7 @@ When FIFO is active auto increment roll back to 0x28 after reading 0x2A for quic
 */
 
 #include <stdio.h>
+#include <avr/interrupt.h>
 #include <avr/io.h>
 #include "I2C.h"
 
@@ -175,10 +176,11 @@ class Pressure
 {
 //variables
 public:
-	int Press;
-	int16_t Tempera;
+	long int Press;
+	float Tempera;
 protected:
 private:
+	int8_t Tempoffset;
 	I2C i2c;
 
 //functions

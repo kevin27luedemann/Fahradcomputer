@@ -13,6 +13,7 @@ Pressure::Pressure()
 {
 	Press = 0;
 	Tempera = 0;
+	Tempoffset = -4;	//Aus Erfahrung
 	LPS25H_initialize();
 } //Pressure
 
@@ -23,7 +24,7 @@ Pressure::~Pressure()
 
 void Pressure::LPS25H_command(uint8_t add, uint8_t command){
 	i2c.twi_start();
-	i2c.twi_write(LPS25H_SA0_Write);
+	i2c.twi_write(LPS25H_SA1_Write);
 	i2c.twi_write(add);
 	i2c.twi_write(command);
 	i2c.twi_stop();
@@ -36,61 +37,68 @@ void Pressure::LPS25H_initialize(){
 	LPS25H_command(RES_CONF,temp);
 	temp=0;
 	//Enable device and set a single shot as well as Lock while reading
-	temp |= (1<<PD) | (1<<BDU);
+	temp |= (1<<PD) | (1<<BDU) | (1<<ODR1);
 	LPS25H_command(CTRL_REG1,temp);
 	temp=0;
-	//FIFO off, no watermark no reset, reboot memory content
-	temp |= (1<<BOOT);
+	//FIFO on, no watermark no reset, reboot memory content, FIFO MEAN Mode
+	temp |= (1<<BOOT) | (1<<FIFO_EN) | (1<<FIFO_MEAN_DEC);
 	LPS25H_command(CTRL_REG2,temp);
 	temp=0;
+	//FIFO Controll register for MEAN Mode und 8 moving averages
+	temp|=(1<<F_MODE2) | (1<<F_MODE1) | (1<<WTM_POINT0) | (1<<WTM_POINT1) | (1<<WTM_POINT2);
+	LPS25H_command(FIFO_CTRL,temp);
 	//CTRL_REG3 not set
 	//CTRL_REG4 not set
 	//INTERRUPT_CFG not set
-	//FIFO_CTRL not set
 	//no threshold used
 	//no Pressure offset used
 	
 }
 
 void Pressure::READ_Pressure_once(){
+	uint8_t Wertedruck[3];
+	cli();
 	i2c.twi_start();
-	
-	i2c.twi_write(LPS25H_SA0_Write);
-	uint8_t temp =(uint8_t)(PRESS_OUT_XL | (1<<autoincrement));
-	i2c.twi_write(temp);
+	i2c.twi_write(LPS25H_SA1_Write);
+	i2c.twi_write(PRESS_OUT_XL|(1<<autoincrement));
 	i2c.twi_start();
-	i2c.twi_write(LPS25H_SA0_READ);
-	Press=0;
+	i2c.twi_write(LPS25H_SA1_READ);
 	for (uint8_t i=0;i<3;i++)
 	{
 		if (i<2)
 		{
-			Press |= (i2c.twi_read(1)<<i*8);
+			Wertedruck[i] = i2c.twi_read(1);
 		}
 		else{
-			Press |= (i2c.twi_read(0)<<i*8);
+			Wertedruck[i] = i2c.twi_read(0);
 		}
 	}
 	i2c.twi_stop();
+	Press =(Wertedruck[0] + (Wertedruck[1]<<8) + (Wertedruck[2]<<16));
+	//Press/=4096.0;
+	sei();
 }
 
 void Pressure::READ_Temperature(){
+	cli();
+	uint8_t Wert[2];
 	i2c.twi_start();
-	
-	i2c.twi_write(LPS25H_SA0_Write);
-	i2c.twi_write((uint8_t)(TEMP_OUT_L|(1<<autoincrement)));
+	i2c.twi_write(LPS25H_SA1_Write);
+	i2c.twi_write(TEMP_OUT_L|(1<<autoincrement));
 	i2c.twi_start();
-	i2c.twi_write(LPS25H_SA0_READ);
-	Tempera=0;
+	i2c.twi_write(LPS25H_SA1_READ);
 	for (uint8_t i=0;i<2;i++)
 	{
 		if (i<1)
 		{
-			Tempera |= (i2c.twi_read(1)<<i*8);
+			Wert[i] = i2c.twi_read(1);
 		}
 		else{
-			Tempera |= (i2c.twi_read(0)<<i*8);
+			Wert[i] = i2c.twi_read(0);
 		}
 	}
 	i2c.twi_stop();
+	Tempera = ((int16_t)(Wert[0]+(Wert[1]<<8)))/480.0;
+	Tempera+=42.5+Tempoffset;
+	sei();
 }

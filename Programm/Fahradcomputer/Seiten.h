@@ -186,7 +186,7 @@ void uhranzeigen(){
 	for(uint8_t i=0;i<bitsderrtc;i++){oled.draw_ASCI(rtc.msg_dat[i],65+i*charsize,7*charhighte);}
 	buffersize=sprintf(Buffer,"%i%%",Batteriestatus());
 	for(uint8_t i=0;i<buffersize;i++){
-		if (Buffer[i]=='%')
+		if (Buffer[i]=='%' || Buffer[i]=='-')
 		{
 			oled.draw_ASCI(Buffer[i],73+i*numbersmalsize,3.5*charhighte);
 		}
@@ -194,8 +194,6 @@ void uhranzeigen(){
 			oled.draw_number16x16(Buffer[i]-'0',70+i*numbersmalsize,3*charhighte);
 		}
 	}
-	//buffersize=sprintf(Buffer,"%.3fV",batterie);
-	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(Buffer[i],65+i*charsize,3*charhighte);}
 }
 
 void fahradschirm(double winkelgeschw, double angle){
@@ -316,6 +314,26 @@ void Stoppuhrseite(){
 			oled.draw_number16x16(buffer[i],i*numbersmalsize,2*charhighte);
 		}
 	}
+}
+
+void Pressuresensor(){
+	Baro.READ_Pressure_once();
+	Baro.READ_Temperature();
+	char buffer[20];
+	uint8_t buffersize=0;
+	oled.clearFrame();
+	buffersize=sprintf(buffer,"Drucksensor: ");
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,0*charhighte);}
+	buffersize=sprintf(buffer,"%i",Baro.Press);
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,2*charhighte);}
+	buffersize=sprintf(buffer,"%.1f",(double)Baro.Tempera);
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,4*charhighte);}
+	//buffersize=sprintf(buffer,"%i",Baro.Wertedruck[0]);
+	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,3*charhighte);}
+	//buffersize=sprintf(buffer,"%i",Baro.Wertedruck[1]);
+	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,4*charhighte);}
+	//buffersize=sprintf(buffer,"%i",Baro.Wertedruck[2]);
+	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,5*charhighte);}
 }
 
 void uhreinstellen(){

@@ -30,6 +30,9 @@ Interface Tastatur;
 Output LED('D',PORTD7);
 Output Vibrationsmotor('B',PORTB0);
 
+#include "Pressure.h"
+Pressure Baro;
+
 #include "ADC.h"
 
 //Anzeigebits
@@ -207,6 +210,7 @@ void anzeigehandler(){
 		else if ((anzeige&(1<<Uhrflag)))
 		{
 			uhranzeigen();
+			//Pressuresensor();
 			anzeige|=(1<<refreshdisplay);
 		}
 		else if ((anzeige&(1<<Kompasflag)))
