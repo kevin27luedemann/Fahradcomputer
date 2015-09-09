@@ -177,6 +177,12 @@
     <Compile Include="LSM303D.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Output.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Output.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Pressure.cpp">
       <SubType>compile</SubType>
     </Compile>

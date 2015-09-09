@@ -42,6 +42,8 @@ C_SRCS +=  \
 ../I2C.cpp \
 ../Interface.cpp \
 ../Kompass.cpp \
+../LSM303D.cpp \
+../Output.cpp \
 ../Pressure.cpp \
 ../RTC.cpp
 
@@ -58,6 +60,8 @@ Fahradcomputer.o \
 I2C.o \
 Interface.o \
 Kompass.o \
+LSM303D.o \
+Output.o \
 Pressure.o \
 RTC.o
 
@@ -67,6 +71,8 @@ Fahradcomputer.o \
 I2C.o \
 Interface.o \
 Kompass.o \
+LSM303D.o \
+Output.o \
 Pressure.o \
 RTC.o
 
@@ -76,6 +82,8 @@ Fahradcomputer.d \
 I2C.d \
 Interface.d \
 Kompass.d \
+LSM303D.d \
+Output.d \
 Pressure.d \
 RTC.d
 
@@ -85,6 +93,8 @@ Fahradcomputer.d \
 I2C.d \
 Interface.d \
 Kompass.d \
+LSM303D.d \
+Output.d \
 Pressure.d \
 RTC.d
 
@@ -117,10 +127,14 @@ LINKER_SCRIPT_DEP+=
 
 
 
+
+
+
+
 ./%.o: .././%.cpp
 	@echo Building file: $<
 	@echo Invoking: AVR8/GNU C Compiler : 4.8.1
-	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\bin\avr-g++.exe$(QUOTE) -funsigned-char -funsigned-bitfields -DDEBUG  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega328p -c -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	$(QUOTE)C:\Program Files\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\bin\avr-g++.exe$(QUOTE) -funsigned-char -funsigned-bitfields -DDEBUG  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega328p -c -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
 	@echo Finished building: $<
 	
 
@@ -149,13 +163,13 @@ all: $(OUTPUT_FILE_PATH) $(ADDITIONAL_DEPENDENCIES)
 $(OUTPUT_FILE_PATH): $(OBJS) $(USER_OBJS) $(OUTPUT_FILE_DEP) $(LIB_DEP) $(LINKER_SCRIPT_DEP)
 	@echo Building target: $@
 	@echo Invoking: AVR8/GNU Linker : 4.8.1
-	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\bin\avr-g++.exe$(QUOTE) -o$(OUTPUT_FILE_PATH_AS_ARGS) $(OBJS_AS_ARGS) $(USER_OBJS) $(LIBS) -Wl,-Map="Fahradcomputer.map" -Wl,-u,vfprintf -Wl,--start-group -Wl,-lm -Wl,-lprintf_flt  -Wl,--end-group -Wl,--gc-sections -mmcu=atmega328p  
+	$(QUOTE)C:\Program Files\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\bin\avr-g++.exe$(QUOTE) -o$(OUTPUT_FILE_PATH_AS_ARGS) $(OBJS_AS_ARGS) $(USER_OBJS) $(LIBS) -Wl,-Map="Fahradcomputer.map" -Wl,-u,vfprintf -Wl,--start-group -Wl,-lm -Wl,-lprintf_flt  -Wl,--end-group -Wl,--gc-sections -mmcu=atmega328p  
 	@echo Finished building target: $@
-	"C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\bin\avr-objcopy.exe" -O ihex -R .eeprom -R .fuse -R .lock -R .signature -R .user_signatures  "Fahradcomputer.elf" "Fahradcomputer.hex"
-	"C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\bin\avr-objcopy.exe" -j .eeprom  --set-section-flags=.eeprom=alloc,load --change-section-lma .eeprom=0  --no-change-warnings -O ihex "Fahradcomputer.elf" "Fahradcomputer.eep" || exit 0
-	"C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\bin\avr-objdump.exe" -h -S "Fahradcomputer.elf" > "Fahradcomputer.lss"
-	"C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\bin\avr-objcopy.exe" -O srec -R .eeprom -R .fuse -R .lock -R .signature -R .user_signatures "Fahradcomputer.elf" "Fahradcomputer.srec"
-	"C:\Program Files (x86)\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\bin\avr-size.exe" "Fahradcomputer.elf"
+	"C:\Program Files\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\bin\avr-objcopy.exe" -O ihex -R .eeprom -R .fuse -R .lock -R .signature -R .user_signatures  "Fahradcomputer.elf" "Fahradcomputer.hex"
+	"C:\Program Files\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\bin\avr-objcopy.exe" -j .eeprom  --set-section-flags=.eeprom=alloc,load --change-section-lma .eeprom=0  --no-change-warnings -O ihex "Fahradcomputer.elf" "Fahradcomputer.eep" || exit 0
+	"C:\Program Files\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\bin\avr-objdump.exe" -h -S "Fahradcomputer.elf" > "Fahradcomputer.lss"
+	"C:\Program Files\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\bin\avr-objcopy.exe" -O srec -R .eeprom -R .fuse -R .lock -R .signature -R .user_signatures "Fahradcomputer.elf" "Fahradcomputer.srec"
+	"C:\Program Files\Atmel\Atmel Toolchain\AVR8 GCC\Native\3.4.1061\avr8-gnu-toolchain\bin\avr-size.exe" "Fahradcomputer.elf"
 	
 	
 

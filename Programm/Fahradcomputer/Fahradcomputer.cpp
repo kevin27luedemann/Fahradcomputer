@@ -26,6 +26,10 @@ Display oled;
 #include "Interface.h"
 Interface Tastatur;
 
+#include "Output.h"
+Output LED('D',PORTD7);
+Output Vibrationsmotor('B',PORTB0);
+
 #include "ADC.h"
 
 //Anzeigebits
@@ -250,6 +254,8 @@ void anzeigehandler(){
 		if ((anzeige&(1<<blinkflag)))
 		{
 			oled.invert(rtc.Sekunden%2);
+			LED.toggle();
+			Vibrationsmotor.on();
 		}
 		anzeige&=~(1<<refreshdisplay);
 	}
@@ -552,6 +558,9 @@ void eingabehandler(uint8_t taste){
 			{
 				anzeige&=~((1<<Timerflag)|(1<<blinkflag));
 				oled.invert(0);	//fuer den Fall, dass es invertiert blieb (50% der Faelle)
+				LED.off();
+				Vibrationsmotor.off();
+				
 				anzeige|=(1<<menueflag);
 			}
 		}
@@ -565,6 +574,8 @@ void eingabehandler(uint8_t taste){
 			{
 				anzeige &=~(1<<blinkflag);
 				oled.invert(0);	//fuer den Fall, dass es invertiert blieb (50% der Faelle)
+				LED.off();
+				Vibrationsmotor.off();
 			}
 		}
 	}
