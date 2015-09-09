@@ -16,7 +16,7 @@
 #define LPS25H_SA1_Write	0xBA
 
 //For use of autoincrement set 8th bit to one while write register adresse
-#define autoincrement 8
+#define autoincrement 7
 
 //Register adresses and Bits
 //Refferenzregister for Pressure, default = 0, 24bit

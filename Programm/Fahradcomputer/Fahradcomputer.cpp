@@ -5,7 +5,7 @@
  *  Author: kevin
  */ 
 #define SPANNUNGSTEILER 1.985
-#define VERSIONSNUMMER 1.2
+#define VERSIONSNUMMER 1.3
 
 #include <avr/io.h>
 #include <stdlib.h>
