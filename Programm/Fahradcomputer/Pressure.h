@@ -176,7 +176,7 @@ class Pressure
 {
 //variables
 public:
-	long int Press;
+	double Press;
 	float Tempera;
 protected:
 private:

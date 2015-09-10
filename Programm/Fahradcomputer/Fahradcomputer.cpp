@@ -39,6 +39,7 @@ Pressure Baro;
 #define Uhrflag 0
 #define Timerflag 6
 #define Stoppuhrflag 7
+#define Alarmflag 8
 
 #define Fahradflag 1
 
@@ -46,6 +47,8 @@ Pressure Baro;
 #define Kompasflag 2
 #define kompaskalibrierenflag 4
 #define Kompasgaineinstellenflag 5
+
+#define Druckflag 9
 
 #define Einstellungsflag 3
 #define menueflag 13
@@ -249,6 +252,11 @@ void anzeigehandler(){
 			timerseite();
 			anzeige|=(1<<refreshdisplay);
 		}
+		else if ((anzeige&(1<<Druckflag)))
+		{
+			Pressuresensor();
+			anzeige |= (1<<refreshdisplay);
+		}
 		rtc.interupts&=~(1<<sekundeninterupt);
 	}
 	//neuen Framebuffer an das Dispay senden
@@ -379,7 +387,9 @@ void eingabehandler(uint8_t taste){
 					oled.clearFrame();
 					anzeige|=(1<<refreshdisplay);
 					break;
-				
+				case '7':
+					anzeige |= (1<<Druckflag);
+					break;
 				default:
 					//menueflag erneut setzen um abschalten zu verhindern
 					anzeige|=(1<<menueflag);
@@ -554,6 +564,14 @@ void eingabehandler(uint8_t taste){
 				anzeige&=~(1<<Fahradflag);
 				anzeige|=(1<<menueflag);
 				TCCR1B &= ~((1<<CS12) | (1<<CS10));
+			}
+		}
+		else if ((anzeige&(1<<Druckflag)))
+		{
+			if (taste=='#')
+			{
+				anzeige&=~(1<<Druckflag);
+				anzeige|=(1<<menueflag);
 			}
 		}
 		else if ((anzeige&(1<<Timerflag)))

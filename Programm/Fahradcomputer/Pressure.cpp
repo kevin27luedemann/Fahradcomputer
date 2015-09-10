@@ -74,8 +74,11 @@ void Pressure::READ_Pressure_once(){
 		}
 	}
 	i2c.twi_stop();
-	Press =(Wertedruck[0] + (Wertedruck[1]<<8) + (Wertedruck[2]<<16));
-	//Press/=4096.0;
+	Press = ((double)Wertedruck[2]*65536);
+	Press += ((double)Wertedruck[1]*256);
+	Press += (double)Wertedruck[0];
+	//Press = (Wertedruck[0] + (Wertedruck[1]*256) + (Wertedruck[2]*65536));
+	Press/=4096.0;
 	sei();
 }
 

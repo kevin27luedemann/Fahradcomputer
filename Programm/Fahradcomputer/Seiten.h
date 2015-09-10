@@ -133,8 +133,8 @@ void menue_haupt(){
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,4*charhighte);}
 	buffersize=sprintf(buffer,"6:Display aus");
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,5*charhighte);}
-	//buffersize=sprintf(buffer,"7:Uhr einstellen");
-	//for(uint8_t i=0;i<buffersize;i++){draw_ASCI(oled.buffer[i],i*charsize,6*charhighte);}
+	buffersize=sprintf(buffer,"7:Drucksensor");
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,6*charhighte);}
 }
 void menue_einst(){
 	char buffer[20];
@@ -322,14 +322,14 @@ void Pressuresensor(){
 	char buffer[20];
 	uint8_t buffersize=0;
 	oled.clearFrame();
-	buffersize=sprintf(buffer,"Drucksensor: ");
-	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,0*charhighte);}
-	buffersize=sprintf(buffer,"%i",Baro.Press);
+	header(0);
+	bottom(0);
+	buffersize=sprintf(buffer,"LPS25H Daten:");
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,2*charhighte);}
-	buffersize=sprintf(buffer,"%.1f",(double)Baro.Tempera);
-	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,4*charhighte);}
-	//buffersize=sprintf(buffer,"%i",Baro.Wertedruck[0]);
-	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,3*charhighte);}
+	buffersize=sprintf(buffer,"%.2f HPa",Baro.Press);
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,3*charhighte);}
+	buffersize=sprintf(buffer,"%.1f C",(double)Baro.Tempera);
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,5*charhighte);}
 	//buffersize=sprintf(buffer,"%i",Baro.Wertedruck[1]);
 	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,4*charhighte);}
 	//buffersize=sprintf(buffer,"%i",Baro.Wertedruck[2]);
