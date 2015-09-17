@@ -170,6 +170,7 @@ When FIFO is active auto increment roll back to 0x28 after reading 0x2A for quic
 #include <stdio.h>
 #include <avr/interrupt.h>
 #include <avr/io.h>
+#include <math.h>
 #include "I2C.h"
 
 class Pressure
@@ -181,6 +182,7 @@ public:
 protected:
 private:
 	int8_t Tempoffset;
+	double Pressure0;
 	I2C i2c;
 
 //functions
@@ -191,6 +193,8 @@ public:
 	//no other Modes set yet, later
 	void READ_Pressure_once();
 	void READ_Temperature();
+	double altitude(double Pressurevalue);
+	void set_Pressure0(double Pressurevalue);
 	//For setting Mode it is important to read the register and then set the Mode
 	//reducing errors while trying to change something
 protected:

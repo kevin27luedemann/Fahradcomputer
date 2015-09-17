@@ -14,6 +14,7 @@ Pressure::Pressure()
 	Press = 0;
 	Tempera = 0;
 	Tempoffset = -4;	//Aus Erfahrung
+	Pressure0=1;
 	LPS25H_initialize();
 } //Pressure
 
@@ -104,4 +105,11 @@ void Pressure::READ_Temperature(){
 	Tempera = ((int16_t)(Wert[0]+(Wert[1]<<8)))/480.0;
 	Tempera+=42.5+Tempoffset;
 	sei();
+}
+
+double Pressure::altitude(double Pressurevalue){
+	return (Pressure0*100*log(Pressure0/Pressurevalue)/(1.2041*9.81));
+}
+void Pressure::set_Pressure0(double Pressurevalue){
+	Pressure0=Pressurevalue;
 }

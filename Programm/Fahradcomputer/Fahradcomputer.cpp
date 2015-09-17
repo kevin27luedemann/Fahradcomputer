@@ -573,6 +573,10 @@ void eingabehandler(uint8_t taste){
 				anzeige&=~(1<<Druckflag);
 				anzeige|=(1<<menueflag);
 			}
+			else if (taste=='*')
+			{
+				Baro.set_Pressure0(Baro.Press);
+			}
 		}
 		else if ((anzeige&(1<<Timerflag)))
 		{

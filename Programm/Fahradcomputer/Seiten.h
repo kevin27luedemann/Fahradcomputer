@@ -326,10 +326,12 @@ void Pressuresensor(){
 	bottom(0);
 	buffersize=sprintf(buffer,"LPS25H Daten:");
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,2*charhighte);}
-	buffersize=sprintf(buffer,"%.2f HPa",Baro.Press);
+	buffersize=sprintf(buffer,"%.1f HPa",Baro.Press);
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,3*charhighte);}
+	buffersize=sprintf(buffer,"Hoehe: %.1f m",(double)Baro.altitude(Baro.Press));
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,4*charhighte);}
 	buffersize=sprintf(buffer,"%.1f C",(double)Baro.Tempera);
-	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,5*charhighte);}
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,6*charhighte);}
 	//buffersize=sprintf(buffer,"%i",Baro.Wertedruck[1]);
 	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,4*charhighte);}
 	//buffersize=sprintf(buffer,"%i",Baro.Wertedruck[2]);
