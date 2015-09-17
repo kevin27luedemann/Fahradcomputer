@@ -169,8 +169,8 @@ void menue_uhr(){
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,2*charhighte);}
 	buffersize=sprintf(buffer,"4:Alarm");
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,3*charhighte);}
-	//buffersize=sprintf(buffer,"5:Kompass kalib.");
-	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,4*charhighte);}
+	buffersize=sprintf(buffer,"5:Uhr gross");
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,4*charhighte);}
 	//buffersize=sprintf(buffer,"6:HMC5883L Gain");
 	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,5*charhighte);}
 	//buffersize=sprintf(buffer,"7:Uhr einstellen");
@@ -181,7 +181,7 @@ void uhranzeigen(){
 	uint8_t buffersize;
 	char Buffer[20];
 	oled.clearFrame();
-	oled.analog(rtc.Stunden,rtc.Minuten,rtc.Sekunden);
+	oled.analog(rtc.Stunden,rtc.Minuten,rtc.Sekunden,1);
 	for(uint8_t i=0;i<bitsderrtc;i++){oled.draw_ASCI(rtc.msg_uhr[i],65+i*charsize,0*charhighte);}
 	for(uint8_t i=0;i<bitsderrtc;i++){oled.draw_ASCI(rtc.msg_dat[i],65+i*charsize,7*charhighte);}
 	buffersize=sprintf(Buffer,"%i%%",Batteriestatus());
@@ -194,6 +194,28 @@ void uhranzeigen(){
 			oled.draw_number16x16(Buffer[i]-'0',70+i*numbersmalsize,3*charhighte);
 		}
 	}
+}
+
+void uhranzeigenmin(){
+	oled.clearFrame();
+	oled.analog(rtc.Stunden,rtc.Minuten,rtc.Sekunden,0);
+	for(uint8_t i=0;i<(bitsderrtc-3);i++){oled.draw_ASCI(rtc.msg_uhr[i],65+i*charsize,0*charhighte);}
+	for(uint8_t i=0;i<bitsderrtc;i++){oled.draw_ASCI(rtc.msg_dat[i],65+i*charsize,7*charhighte);}
+	//show hours and minutes in big numbers
+	oled.draw_number16x16(rtc.msg_uhr[0]-'0',70,2*charhighte);
+	oled.draw_number16x16(rtc.msg_uhr[1]-'0',70+numbersmalsize,2*charhighte);
+	oled.draw_number16x16(rtc.msg_uhr[3]-'0',70,2*charhighte+numbersmalhight);
+	oled.draw_number16x16(rtc.msg_uhr[4]-'0',70+numbersmalsize,2*charhighte+numbersmalhight);
+	//buffersize=sprintf(Buffer,"%i%%",Batteriestatus());
+	//for(uint8_t i=0;i<buffersize;i++){
+		//if (Buffer[i]=='%' || Buffer[i]=='-')
+		//{
+			//oled.draw_ASCI(Buffer[i],73+i*numbersmalsize,3.5*charhighte);
+		//}
+		//else{
+			//oled.draw_number16x16(Buffer[i]-'0',70+i*numbersmalsize,3*charhighte);
+		//}
+	//}
 }
 
 void fahradschirm(double winkelgeschw, double angle){

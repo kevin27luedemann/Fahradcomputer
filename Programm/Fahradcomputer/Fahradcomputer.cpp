@@ -40,6 +40,7 @@ Pressure Baro;
 #define Timerflag 6
 #define Stoppuhrflag 7
 #define Alarmflag 8
+#define Uhrflaggross 10
 
 #define Fahradflag 1
 
@@ -213,7 +214,6 @@ void anzeigehandler(){
 		else if ((anzeige&(1<<Uhrflag)))
 		{
 			uhranzeigen();
-			//Pressuresensor();
 			anzeige|=(1<<refreshdisplay);
 		}
 		else if ((anzeige&(1<<Kompasflag)))
@@ -258,6 +258,16 @@ void anzeigehandler(){
 			anzeige |= (1<<refreshdisplay);
 		}
 		rtc.interupts&=~(1<<sekundeninterupt);
+	}
+	//Minuteninterrupt
+	if ((rtc.interupts&(1<<minuteninterupt)))
+	{
+		if ((anzeige&(1<<Uhrflaggross)))
+		{
+			uhranzeigenmin();
+			anzeige|=(1<<refreshdisplay);
+		}
+		rtc.interupts&=~(1<<minuteninterupt);
 	}
 	//neuen Framebuffer an das Dispay senden
 	if ((anzeige&(1<<refreshdisplay)))
@@ -315,6 +325,12 @@ void eingabehandler(uint8_t taste){
 					//Starten der Alarmapp, momentan nicht implementiert
 					oled.clearFrame();
 					anzeige|=(1<<refreshdisplay);
+					break;
+				
+				case '5':
+					//Wechseln auf grosse Uhr
+					rtc.interupts |=(1<<minuteninterupt);
+					anzeige |=(1<<Uhrflaggross) | (1<<refreshdisplay);	
 					break;
 				
 				default:
@@ -587,6 +603,14 @@ void eingabehandler(uint8_t taste){
 				LED.off();
 				Vibrationsmotor.off();
 				
+				anzeige|=(1<<menueflag);
+			}
+		}
+		else if ((anzeige&(1<<Uhrflaggross)))
+		{
+			if (taste=='#')
+			{
+				anzeige&=~(1<<Uhrflaggross);
 				anzeige|=(1<<menueflag);
 			}
 		}

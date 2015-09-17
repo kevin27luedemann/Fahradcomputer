@@ -236,41 +236,66 @@ void Display::draw_number16x16(uint8_t number, uint8_t x, uint8_t y){
 	}
 }
 
-void Display::analog(uint8_t stunde, uint8_t minute, uint8_t sekunde){
+void Display::analog(uint8_t stunde, uint8_t minute, uint8_t sekunde, uint8_t sekanzeige){
 	uint8_t r=25;
 	uint8_t Px=32-1;
 	uint8_t Py=32-1;
 	uint8_t x=0,y=0;
 	float winkel=0;
+	
+	if (sekanzeige)
+	{
+		//Berechnen des Sekundenzeigers
+		for(uint8_t i=0;i<r;i++){
+			winkel=(sekunde*6.0)*M_PI/180.0-M_PI/2.0;
+			x=(uint8_t) i*cos(winkel)+Px;
+			y=(uint8_t) i*sin(winkel)+Py;
 
-	//Berechnen des Sekundenzeigers
-	for(uint8_t i=0;i<r;i++){
-		winkel=(sekunde*6.0)*M_PI/180.0-M_PI/2.0;
-		x=(uint8_t) i*cos(winkel)+Px;
-		y=(uint8_t) i*sin(winkel)+Py;
+			drawPixel(x,y,0);
+		}
 
-		drawPixel(x,y,0);
+		r=21;
+		//Berechnen des Minutenzeigers
+		for(uint8_t i=0;i<r;i++){
+			winkel=(minute*6.0)*M_PI/180.0-M_PI/2.0;
+			x=(uint8_t) i*cos(winkel)+Px;
+			y=(uint8_t) i*sin(winkel)+Py;
+
+			drawPixel(x,y,0);
+		}
+
+		r=13;
+		//Berechnen des Stundenzeigers
+		for(uint8_t i=0;i<r;i++){
+			winkel=(stunde*30.0+minute/2.0)*M_PI/180.0-M_PI/2.0;
+			x= (uint8_t) i*cos(winkel) +Px;
+			y= (uint8_t) i*sin(winkel) +Py;
+
+			drawPixel(x,y,0);
+		}
 	}
+	else{
+		r=25;
+		//Berechnen des Minutenzeigers
+		for(uint8_t i=0;i<r;i++){
+			winkel=(minute*6.0)*M_PI/180.0-M_PI/2.0;
+			x=(uint8_t) i*cos(winkel)+Px;
+			y=(uint8_t) i*sin(winkel)+Py;
 
-	r=21;
-	//Berechnen des Minutenzeigers
-	for(uint8_t i=0;i<r;i++){
-		winkel=(minute*6.0)*M_PI/180.0-M_PI/2.0;
-		x=(uint8_t) i*cos(winkel)+Px;
-		y=(uint8_t) i*sin(winkel)+Py;
+			drawPixel(x,y,0);
+		}
 
-		drawPixel(x,y,0);
+		r=17;
+		//Berechnen des Stundenzeigers
+		for(uint8_t i=0;i<r;i++){
+			winkel=(stunde*30.0+minute/2.0)*M_PI/180.0-M_PI/2.0;
+			x= (uint8_t) i*cos(winkel) +Px;
+			y= (uint8_t) i*sin(winkel) +Py;
+
+			drawPixel(x,y,0);
+		}
 	}
-
-	r=13;
-	//Berechnen des Stundenzeigers
-	for(uint8_t i=0;i<r;i++){
-		winkel=(stunde*30.0+minute/2.0)*M_PI/180.0-M_PI/2.0;
-		x= (uint8_t) i*cos(winkel) +Px;
-		y= (uint8_t) i*sin(winkel) +Py;
-
-		drawPixel(x,y,0);
-	}
+	
 
 	//Anzeige der Zahlen
 	draw_ASCI('1',32-charsize,0);
