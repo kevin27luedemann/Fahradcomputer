@@ -18588,6 +18588,11 @@ Source: &lt;a href="http://www.national.com/ds/LM/LM2936.pdf"&gt; Data sheet&lt;
 <part name="R12" library="rcl" deviceset="R-EU_" device="0207/10" value="100k"/>
 <part name="C6" library="rcl" deviceset="C-EU" device="025-024X044" value="100nF"/>
 <part name="R13" library="rcl" deviceset="R-EU_" device="0207/10" value="100k"/>
+<part name="R14" library="rcl" deviceset="R-EU_" device="0207/10" value="100k"/>
+<part name="R15" library="rcl" deviceset="R-EU_" device="0207/10" value="100k"/>
+<part name="GND20" library="supply1" deviceset="GND" device=""/>
+<part name="GND21" library="supply1" deviceset="GND" device=""/>
+<part name="GND22" library="supply1" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -18673,9 +18678,9 @@ MK_2</text>
 <instance part="GND17" gate="1" x="50.8" y="106.68" rot="R270"/>
 <instance part="SD-KARTE" gate="A" x="124.46" y="111.76"/>
 <instance part="GND18" gate="1" x="99.06" y="119.38" rot="R270"/>
-<instance part="+3V16" gate="G$1" x="91.44" y="116.84" rot="R90"/>
-<instance part="R5" gate="G$1" x="96.52" y="106.68"/>
-<instance part="+3V17" gate="G$1" x="86.36" y="106.68" rot="R90"/>
+<instance part="+3V16" gate="G$1" x="78.74" y="116.84" rot="R90"/>
+<instance part="R5" gate="G$1" x="93.98" y="106.68"/>
+<instance part="+3V17" gate="G$1" x="78.74" y="106.68" rot="R90"/>
 <instance part="H1" gate="G$1" x="-76.2" y="152.4"/>
 <instance part="H2" gate="G$1" x="-53.34" y="152.4"/>
 <instance part="H3" gate="G$1" x="-30.48" y="152.4"/>
@@ -18683,7 +18688,12 @@ MK_2</text>
 <instance part="GND19" gate="1" x="134.62" y="-2.54"/>
 <instance part="R12" gate="G$1" x="134.62" y="7.62" rot="R90"/>
 <instance part="C6" gate="G$1" x="116.84" y="60.96"/>
-<instance part="R13" gate="G$1" x="167.64" y="144.78" rot="R90"/>
+<instance part="R13" gate="G$1" x="27.94" y="15.24" rot="R90"/>
+<instance part="R14" gate="G$1" x="30.48" y="15.24" rot="R90"/>
+<instance part="R15" gate="G$1" x="33.02" y="15.24" rot="R90"/>
+<instance part="GND20" gate="1" x="27.94" y="5.08"/>
+<instance part="GND21" gate="1" x="30.48" y="2.54"/>
+<instance part="GND22" gate="1" x="33.02" y="0"/>
 </instances>
 <busses>
 </busses>
@@ -18849,6 +18859,21 @@ MK_2</text>
 <wire x1="-68.58" y1="71.12" x2="-68.58" y2="68.58" width="0.1524" layer="91"/>
 <junction x="-68.58" y="68.58"/>
 </segment>
+<segment>
+<pinref part="R13" gate="G$1" pin="1"/>
+<pinref part="GND20" gate="1" pin="GND"/>
+<wire x1="27.94" y1="10.16" x2="27.94" y2="7.62" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="R14" gate="G$1" pin="1"/>
+<pinref part="GND21" gate="1" pin="GND"/>
+<wire x1="30.48" y1="10.16" x2="30.48" y2="5.08" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="R15" gate="G$1" pin="1"/>
+<pinref part="GND22" gate="1" pin="GND"/>
+<wire x1="33.02" y1="10.16" x2="33.02" y2="2.54" width="0.1524" layer="91"/>
+</segment>
 </net>
 <net name="+3V3" class="0">
 <segment>
@@ -18937,14 +18962,14 @@ MK_2</text>
 </segment>
 <segment>
 <pinref part="SD-KARTE" gate="A" pin="2"/>
-<wire x1="121.92" y1="116.84" x2="93.98" y2="116.84" width="0.1524" layer="91"/>
+<wire x1="121.92" y1="116.84" x2="81.28" y2="116.84" width="0.1524" layer="91"/>
 <label x="104.14" y="116.84" size="1.778" layer="95"/>
 <pinref part="+3V16" gate="G$1" pin="+3V3"/>
 </segment>
 <segment>
 <pinref part="R5" gate="G$1" pin="1"/>
 <pinref part="+3V17" gate="G$1" pin="+3V3"/>
-<wire x1="88.9" y1="106.68" x2="91.44" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="81.28" y1="106.68" x2="88.9" y2="106.68" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="RST" class="0">
@@ -19089,7 +19114,7 @@ MK_2</text>
 </segment>
 <segment>
 <pinref part="SD-KARTE" gate="A" pin="6"/>
-<wire x1="121.92" y1="106.68" x2="101.6" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="121.92" y1="106.68" x2="99.06" y2="106.68" width="0.1524" layer="91"/>
 <label x="104.14" y="106.68" size="1.778" layer="95"/>
 <pinref part="R5" gate="G$1" pin="2"/>
 </segment>
@@ -19325,34 +19350,6 @@ MK_2</text>
 <junction x="116.84" y="66.04"/>
 </segment>
 </net>
-<net name="N$11" class="0">
-<segment>
-<pinref part="MATRIXTASTATUR" gate="A" pin="7"/>
-<pinref part="IC1" gate="G$1" pin="PCINT26/INT0_PD2"/>
-<wire x1="22.86" y1="38.1" x2="35.56" y2="38.1" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$12" class="0">
-<segment>
-<pinref part="IC1" gate="G$1" pin="PCINT27/INT1_PD3"/>
-<pinref part="MATRIXTASTATUR" gate="A" pin="6"/>
-<wire x1="35.56" y1="35.56" x2="22.86" y2="35.56" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$13" class="0">
-<segment>
-<pinref part="MATRIXTASTATUR" gate="A" pin="5"/>
-<pinref part="IC1" gate="G$1" pin="PCINT28/OC1B_PD4"/>
-<wire x1="22.86" y1="33.02" x2="35.56" y2="33.02" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$15" class="0">
-<segment>
-<pinref part="MATRIXTASTATUR" gate="A" pin="4"/>
-<pinref part="IC1" gate="G$1" pin="PCINT29/OC1A_PD5"/>
-<wire x1="22.86" y1="30.48" x2="35.56" y2="30.48" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="N$16" class="0">
 <segment>
 <pinref part="MATRIXTASTATUR" gate="A" pin="3"/>
@@ -19449,6 +19446,46 @@ MK_2</text>
 <pinref part="IC1" gate="G$1" pin="PCINT4/ADC4_PA4"/>
 <wire x1="96.52" y1="66.04" x2="109.22" y2="66.04" width="0.1524" layer="91"/>
 <label x="99.06" y="66.04" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="N$15" class="0">
+<segment>
+<pinref part="IC1" gate="G$1" pin="PCINT29/OC1A_PD5"/>
+<pinref part="MATRIXTASTATUR" gate="A" pin="4"/>
+<wire x1="35.56" y1="30.48" x2="22.86" y2="30.48" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$11" class="0">
+<segment>
+<pinref part="MATRIXTASTATUR" gate="A" pin="7"/>
+<pinref part="IC1" gate="G$1" pin="PCINT26/INT0_PD2"/>
+<wire x1="22.86" y1="38.1" x2="27.94" y2="38.1" width="0.1524" layer="91"/>
+<pinref part="R13" gate="G$1" pin="2"/>
+<wire x1="27.94" y1="38.1" x2="35.56" y2="38.1" width="0.1524" layer="91"/>
+<wire x1="27.94" y1="20.32" x2="27.94" y2="38.1" width="0.1524" layer="91"/>
+<junction x="27.94" y="38.1"/>
+</segment>
+</net>
+<net name="N$12" class="0">
+<segment>
+<pinref part="IC1" gate="G$1" pin="PCINT27/INT1_PD3"/>
+<pinref part="MATRIXTASTATUR" gate="A" pin="6"/>
+<wire x1="35.56" y1="35.56" x2="30.48" y2="35.56" width="0.1524" layer="91"/>
+<pinref part="R14" gate="G$1" pin="2"/>
+<wire x1="30.48" y1="35.56" x2="22.86" y2="35.56" width="0.1524" layer="91"/>
+<wire x1="30.48" y1="20.32" x2="30.48" y2="35.56" width="0.1524" layer="91"/>
+<junction x="30.48" y="35.56"/>
+</segment>
+</net>
+<net name="N$13" class="0">
+<segment>
+<pinref part="IC1" gate="G$1" pin="PCINT28/OC1B_PD4"/>
+<pinref part="MATRIXTASTATUR" gate="A" pin="5"/>
+<wire x1="35.56" y1="33.02" x2="33.02" y2="33.02" width="0.1524" layer="91"/>
+<pinref part="R15" gate="G$1" pin="2"/>
+<wire x1="33.02" y1="33.02" x2="22.86" y2="33.02" width="0.1524" layer="91"/>
+<wire x1="33.02" y1="20.32" x2="33.02" y2="33.02" width="0.1524" layer="91"/>
+<junction x="33.02" y="33.02"/>
 </segment>
 </net>
 </nets>
