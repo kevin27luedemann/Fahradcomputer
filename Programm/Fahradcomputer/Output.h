@@ -28,6 +28,7 @@ public:
 	void on();
 	void off();
 	void toggle();
+	uint8_t ison();
 protected:
 private:
 	Output( const Output &c );

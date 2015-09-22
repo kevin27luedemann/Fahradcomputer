@@ -51,6 +51,35 @@ void Output::on(){
 	}
 }
 
+uint8_t Output::ison(){
+	uint8_t returnparam=0;
+	switch (Port)
+	{
+		case 'B':
+			if ((PORTB&(1<<Pin)))
+			{
+				returnparam = 1;
+			}
+			break;
+		case 'C':
+			if ((PORTC&(1<<Pin)))
+			{
+				returnparam = 1;
+			}
+			break;
+		case 'D':
+			if ((PORTD&(1<<Pin)))
+			{
+				returnparam = 1;
+			}
+			break;
+		default:
+		returnparam = 2;
+			break;
+	}
+	return returnparam;
+}
+
 void Output::off(){
 	switch (Port)
 	{

@@ -72,10 +72,12 @@ ISR(TIMER2_OVF_vect){	//Vektor fuer die RTC
 #define zaehlungenprozeiteinheit 8.0
 
 double geschw;
+double strecke;
+double maxgeschw;
 void geschwindigkeit(float radius){
 	//uint16_t zaehlungen = (TCNT1H<<8) | (TCNT1L);
 	uint16_t zaehlungen = TCNT1;
-	geschw = (radius/100.0)*2*M_PI/((zaehlungen/zaehlungenprozeiteinheit)*zeitproachtzaehlungen);
+	geschw = (radius/100.0)*2*M_PI/(((double)zaehlungen/zaehlungenprozeiteinheit)*zeitproachtzaehlungen);
 	//TCNT1H = 0;
 	//TCNT1L = 0;
 	TCNT1 = 0;
@@ -129,6 +131,8 @@ void initialisierung(){
 	pos=0;
 	//initialisieren des Zaehler fuer die Winkelgeschw sowie den Timer
 	geschw=0;
+	strecke = 0;
+	maxgeschw = 0;
 	TCNT1=0;
 	//Ausgaenge und Eingaenge einstellen
 	DDRD = (1<<PIND0) | (1<<PIND1) | (1<<PIND2) | (1<<PIND3);	//Pins zur Ausgabe
@@ -179,6 +183,7 @@ void maininterupthandler(){
 		//debounce Funktion fuer den Reedswitch
 		if (reed_debounce(&PINC,PINC3))
 		{
+			//Durchmesser ist 28 Zoll
 			geschwindigkeit(14.0*2.54);
 		}
 	}
@@ -224,7 +229,12 @@ void anzeigehandler(){
 		else if ((anzeige&(1<<Fahradflag)))
 		{
 			//fahradschirm(12.3,kompass.angle());
-			fahradschirm(geschw,kompass.angle());
+			if (geschw>maxgeschw)
+			{
+				maxgeschw=geschw;
+			}
+			strecke+=geschw;
+			fahradschirm(geschw,kompass.angle(),strecke,maxgeschw);
 			geschw=0;
 			anzeige|=(1<<refreshdisplay);
 		}
@@ -564,6 +574,16 @@ void eingabehandler(uint8_t taste){
 				anzeige&=~(1<<Uhrflag);
 				anzeige|=(1<<menueflag);
 			}
+			else if (taste=='0')
+			{
+				if (LED.ison())
+				{
+					LED.off();
+				}
+				else{
+					LED.on();
+				}
+			}
 		}
 		else if ((anzeige&(1<<Kompasflag)))
 		{
@@ -571,6 +591,16 @@ void eingabehandler(uint8_t taste){
 			{
 				anzeige&=~(1<<Kompasflag);
 				anzeige|=(1<<menueflag);
+			}
+			else if (taste=='0')
+			{
+				if (LED.ison())
+				{
+					LED.off();
+				}
+				else{
+					LED.on();
+				}
 			}
 		}
 		else if ((anzeige&(1<<Fahradflag)))
@@ -580,6 +610,16 @@ void eingabehandler(uint8_t taste){
 				anzeige&=~(1<<Fahradflag);
 				anzeige|=(1<<menueflag);
 				TCCR1B &= ~((1<<CS12) | (1<<CS10));
+			}
+			else if (taste=='0')
+			{
+				if (LED.ison())
+				{
+					LED.off();
+				}
+				else{
+					LED.on();
+				}
 			}
 		}
 		else if ((anzeige&(1<<Druckflag)))
@@ -592,6 +632,16 @@ void eingabehandler(uint8_t taste){
 			else if (taste=='*')
 			{
 				Baro.set_Pressure0(Baro.Press);
+			}
+			else if (taste=='0')
+			{
+				if (LED.ison())
+				{
+					LED.off();
+				}
+				else{
+					LED.on();
+				}
 			}
 		}
 		else if ((anzeige&(1<<Timerflag)))
@@ -612,6 +662,16 @@ void eingabehandler(uint8_t taste){
 			{
 				anzeige&=~(1<<Uhrflaggross);
 				anzeige|=(1<<menueflag);
+			}
+			else if (taste=='0')
+			{
+				if (LED.ison())
+				{
+					LED.off();
+				}
+				else{
+					LED.on();
+				}
 			}
 		}
 		else if (anzeige==0)
