@@ -218,7 +218,7 @@ void uhranzeigenmin(){
 	//}
 }
 
-void fahradschirm(double winkelgeschw, double angle, double weite, double maxgeschwinsigkeit){
+void fahradschirm(double winkelgeschw, double angle, double weite, double maxgeschwinsigkeit, uint32_t Zeit){
 	char buffer[10];
 	uint8_t buffersize=0;
 	oled.clearFrame();
@@ -247,6 +247,9 @@ void fahradschirm(double winkelgeschw, double angle, double weite, double maxges
 	//anzeige der max geschwindigkeit
 	buffersize=sprintf(buffer,"%.1fm/s",maxgeschwinsigkeit);
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize+70,5*charhighte);}
+	//anzeige der Fahrtzeit
+	buffersize=sprintf(buffer,"%lus",Zeit);
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize+70,6*charhighte);}
 }
 
 void Gaineinstellen(){

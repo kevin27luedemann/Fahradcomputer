@@ -74,6 +74,7 @@ ISR(TIMER2_OVF_vect){	//Vektor fuer die RTC
 double geschw;
 double strecke;
 double maxgeschw;
+uint32_t Fahrtzeit;
 void geschwindigkeit(float radius){
 	//uint16_t zaehlungen = (TCNT1H<<8) | (TCNT1L);
 	uint16_t zaehlungen = TCNT1;
@@ -88,7 +89,7 @@ uint8_t reed_debounce(volatile uint8_t *port, uint8_t pin)
 	if ( !(*port & (1 << pin)) )
 	{
 		/* Pin wurde auf Masse gezogen, ms warten   */
-		_delay_us(50);
+		_delay_us(35);
 		//_delay_us(50);
 		if ( (*port & (1 << pin)) )
 		{
@@ -133,6 +134,7 @@ void initialisierung(){
 	geschw=0;
 	strecke = 0;
 	maxgeschw = 0;
+	Fahrtzeit = 0;
 	TCNT1=0;
 	//Ausgaenge und Eingaenge einstellen
 	DDRD = (1<<PIND0) | (1<<PIND1) | (1<<PIND2) | (1<<PIND3);	//Pins zur Ausgabe
@@ -233,8 +235,12 @@ void anzeigehandler(){
 			{
 				maxgeschw=geschw;
 			}
+			if (geschw != 0)
+			{
+				Fahrtzeit++;
+			}
 			strecke+=geschw;
-			fahradschirm(geschw,kompass.angle(),strecke,maxgeschw);
+			fahradschirm(geschw,kompass.angle(),strecke,maxgeschw, Fahrtzeit);
 			geschw=0;
 			anzeige|=(1<<refreshdisplay);
 		}
@@ -610,6 +616,12 @@ void eingabehandler(uint8_t taste){
 				anzeige&=~(1<<Fahradflag);
 				anzeige|=(1<<menueflag);
 				TCCR1B &= ~((1<<CS12) | (1<<CS10));
+			}
+			else if (taste=='*')
+			{
+				maxgeschw = 0;
+				strecke = 0;
+				Fahrtzeit = 0;
 			}
 			else if (taste=='0')
 			{
