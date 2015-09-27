@@ -69,7 +69,7 @@ void bottom(uint8_t page){
 
 void anzeige_richtung(float winkel){
 	//finden der Ziffer fuer die Anzeige
-	if ((winkel<45/2) || (winkel == 360-45/2))
+	if ((winkel<45/2) || (winkel >= 360-45/2))
 	{
 		oled.draw_ASCI('N',80,3.5*charhighte);
 	}
@@ -178,6 +178,7 @@ void menue_uhr(){
 }
 
 void uhranzeigen(){
+	Baro.READ_Temperature();
 	uint8_t buffersize;
 	char Buffer[20];
 	oled.clearFrame();
@@ -188,12 +189,14 @@ void uhranzeigen(){
 	for(uint8_t i=0;i<buffersize;i++){
 		if (Buffer[i]=='%' || Buffer[i]=='-')
 		{
-			oled.draw_ASCI(Buffer[i],73+i*numbersmalsize,3.5*charhighte);
+			oled.draw_ASCI(Buffer[i],73+i*numbersmalsize,3*charhighte);
 		}
 		else{
-			oled.draw_number16x16(Buffer[i]-'0',70+i*numbersmalsize,3*charhighte);
+			oled.draw_number16x16(Buffer[i]-'0',70+i*numbersmalsize,2.5*charhighte);
 		}
 	}
+	buffersize=sprintf(Buffer,"%.1f C",(double)Baro.Tempera);
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(Buffer[i],70+i*charsize,5*charhighte);}
 }
 
 void uhranzeigenmin(){
@@ -202,10 +205,10 @@ void uhranzeigenmin(){
 	for(uint8_t i=0;i<(bitsderrtc-3);i++){oled.draw_ASCI(rtc.msg_uhr[i],65+i*charsize,0*charhighte);}
 	for(uint8_t i=0;i<bitsderrtc;i++){oled.draw_ASCI(rtc.msg_dat[i],65+i*charsize,7*charhighte);}
 	//show hours and minutes in big numbers
-	oled.draw_number16x16(rtc.msg_uhr[0]-'0',70,2*charhighte);
-	oled.draw_number16x16(rtc.msg_uhr[1]-'0',70+numbersmalsize,2*charhighte);
-	oled.draw_number16x16(rtc.msg_uhr[3]-'0',70,2*charhighte+numbersmalhight);
-	oled.draw_number16x16(rtc.msg_uhr[4]-'0',70+numbersmalsize,2*charhighte+numbersmalhight);
+	oled.draw_number16x16(rtc.msg_uhr[0]-'0',70,1.66*charhighte);
+	oled.draw_number16x16(rtc.msg_uhr[1]-'0',70+numbersmalsize,1.66*charhighte);
+	oled.draw_number16x16(rtc.msg_uhr[3]-'0',70,2.33*charhighte+numbersmalhight);
+	oled.draw_number16x16(rtc.msg_uhr[4]-'0',70+numbersmalsize,2.33*charhighte+numbersmalhight);
 	//buffersize=sprintf(Buffer,"%i%%",Batteriestatus());
 	//for(uint8_t i=0;i<buffersize;i++){
 		//if (Buffer[i]=='%' || Buffer[i]=='-')
@@ -276,12 +279,20 @@ void Gaineinstellen(){
 }
 
 void anzeige_kompass(double winkel){
+	Baro.READ_Pressure_once();
+	Baro.READ_Temperature();
 	oled.clearFrame();
 	char buffer[20];
 	uint8_t buffersize=0;
 	//Uhrzeit
 	for(uint8_t i=0;i<bitsderrtc;i++){oled.draw_ASCI(rtc.msg_uhr[i],65+i*charsize,0*charhighte);}
 	for(uint8_t i=0;i<bitsderrtc;i++){oled.draw_ASCI(rtc.msg_dat[i],65+i*charsize,7*charhighte);}
+	//Azeige der Hoehe ueber Altitude
+	buffersize=sprintf(buffer,"H: %.1f m",(double)Baro.altitude(Baro.Press));
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],65+i*charsize,1.33*charhighte);}
+	//Anzeige der Temperatur
+	buffersize=sprintf(buffer,"%.1f C",(double)Baro.Tempera);
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],65+i*charsize,5*charhighte);}
 	//winkel als Zahl ausgeben
 	buffersize=sprintf(buffer,"angle=%.0f",winkel);
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],65+i*charsize,6*charhighte);}

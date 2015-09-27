@@ -302,6 +302,7 @@ void anzeigehandler(){
 void eingabehandler(uint8_t taste){
 	if (taste!='A')
 	{
+		rtc.interupts |= (1<<sekundeninterupt);
 		if (anzeige==255)
 		{
 			oled.ssd1306_command(SSD1306_DISPLAYON);
