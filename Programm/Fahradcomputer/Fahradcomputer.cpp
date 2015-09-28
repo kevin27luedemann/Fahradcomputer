@@ -5,7 +5,7 @@
  *  Author: kevin
  */ 
 #define SPANNUNGSTEILER 1.985
-#define VERSIONSNUMMER 1.3
+#define VERSIONSNUMMER 1.4
 
 #include <avr/io.h>
 #include <stdlib.h>
@@ -70,15 +70,22 @@ ISR(TIMER2_OVF_vect){	//Vektor fuer die RTC
 
 #define zeitproachtzaehlungen 0.001024
 #define zaehlungenprozeiteinheit 8.0
+#define REEDMS 5
 
 double geschw;
 double strecke;
 double maxgeschw;
 uint32_t Fahrtzeit;
-void geschwindigkeit(float radius){
+void geschwindigkeit(float durch){
 	//uint16_t zaehlungen = (TCNT1H<<8) | (TCNT1L);
 	uint16_t zaehlungen = TCNT1;
-	geschw = (radius/100.0)*2*M_PI/(((double)zaehlungen/zaehlungenprozeiteinheit)*zeitproachtzaehlungen);
+	//geschw = durch*M_PI/(REEDMS+((double)zaehlungen/zaehlungenprozeiteinheit)*zeitproachtzaehlungen);
+	double umlaufzeit = (REEDMS/1000.0+(zaehlungen/zaehlungenprozeiteinheit)*zeitproachtzaehlungen);
+	//geschw = umlaufzeit;
+	geschw = durch*M_PI*3.6;
+	geschw /= umlaufzeit;
+	//im kn/h *3.6
+	//geschw*=3.6;
 	//TCNT1H = 0;
 	//TCNT1L = 0;
 	TCNT1 = 0;
@@ -89,8 +96,9 @@ uint8_t reed_debounce(volatile uint8_t *port, uint8_t pin)
 	if ( !(*port & (1 << pin)) )
 	{
 		/* Pin wurde auf Masse gezogen, ms warten   */
-		_delay_us(35);
 		//_delay_us(50);
+		//_delay_us(50);
+		_delay_ms(REEDMS);
 		if ( (*port & (1 << pin)) )
 		{
 			/* Anwender Zeit zum Loslassen des Tasters geben */
@@ -140,8 +148,8 @@ void initialisierung(){
 	DDRD = (1<<PIND0) | (1<<PIND1) | (1<<PIND2) | (1<<PIND3);	//Pins zur Ausgabe
 	DDRD &= ~((1<<PIND4) | (1<<PIND5) | (1<<PIND6));			//Restliche Pins als Eingaenge schalten
 	//Eingang fuer den Reedkontak schalten mit internem Pullup
-	DDRC &= ~((1<<PORTC3)|(1<<PORTC2));
-	PORTC |= (1<<PORTC3) | (1<<PORTC2);
+	DDRC &= ~((1<<PORTC3));
+	PORTC |= (1<<PORTC3);
 	//I2C Interface
 	//twi_init();
 	//Display
@@ -186,7 +194,7 @@ void maininterupthandler(){
 		if (reed_debounce(&PINC,PINC3))
 		{
 			//Durchmesser ist 28 Zoll
-			geschwindigkeit(14.0*2.54);
+			geschwindigkeit(28.0*2.54/100.);
 		}
 	}
 }
@@ -239,7 +247,7 @@ void anzeigehandler(){
 			{
 				Fahrtzeit++;
 			}
-			strecke+=geschw;
+			strecke+=geschw/3.6;
 			fahradschirm(geschw,kompass.angle(),strecke,maxgeschw, Fahrtzeit);
 			geschw=0;
 			anzeige|=(1<<refreshdisplay);
