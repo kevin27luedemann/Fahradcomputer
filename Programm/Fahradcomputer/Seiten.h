@@ -248,7 +248,7 @@ void fahradschirm(double winkelgeschw, double angle, double weite, double maxges
 	buffersize=sprintf(buffer,"%.1fm",weite);
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize+70,2*charhighte);}
 	//anzeige der max geschwindigkeit
-	buffersize=sprintf(buffer,"%.1fkm/s",maxgeschwinsigkeit);
+	buffersize=sprintf(buffer,"%.1fkm/h",maxgeschwinsigkeit);
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize+70,5*charhighte);}
 	//anzeige der Fahrtzeit
 	buffersize=sprintf(buffer,"%lus",Zeit);

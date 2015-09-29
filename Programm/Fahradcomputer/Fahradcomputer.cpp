@@ -5,7 +5,7 @@
  *  Author: kevin
  */ 
 #define SPANNUNGSTEILER 1.985
-#define VERSIONSNUMMER 1.4
+#define VERSIONSNUMMER 1.41
 
 #include <avr/io.h>
 #include <stdlib.h>
@@ -249,7 +249,10 @@ void anzeigehandler(){
 			}
 			strecke+=geschw/3.6;
 			fahradschirm(geschw,kompass.angle(),strecke,maxgeschw, Fahrtzeit);
-			geschw=0;
+			if (rtc.Sekunden%2)
+			{
+				geschw=0;
+			}
 			anzeige|=(1<<refreshdisplay);
 		}
 		else if ((anzeige&(1<<Einstellungsflag)) && (anzeige&(1<<Timerflag)))
