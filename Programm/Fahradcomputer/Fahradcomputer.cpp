@@ -82,8 +82,12 @@ void geschwindigkeit(float durch){
 	//geschw = durch*M_PI/(REEDMS+((double)zaehlungen/zaehlungenprozeiteinheit)*zeitproachtzaehlungen);
 	double umlaufzeit = (REEDMS/1000.0+(zaehlungen/zaehlungenprozeiteinheit)*zeitproachtzaehlungen);
 	//geschw = umlaufzeit;
-	geschw = durch*M_PI*3.6;
+	geschw = (durch)*M_PI*3.6;
 	geschw /= umlaufzeit;
+	if (geschw >=160)
+	{
+		geschw=0;
+	}
 	//im kn/h *3.6
 	//geschw*=3.6;
 	//TCNT1H = 0;
@@ -194,7 +198,7 @@ void maininterupthandler(){
 		if (reed_debounce(&PINC,PINC3))
 		{
 			//Durchmesser ist 28 Zoll
-			geschwindigkeit(28.0*2.54/100.);
+			geschwindigkeit(28.0*2.54/100.0);
 		}
 	}
 }
