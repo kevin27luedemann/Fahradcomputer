@@ -18,8 +18,12 @@ RTC::RTC()
 	Tag=0;
 	Monat=0;
 	Jahr=0;
+	WTag=0;
+	WMinuten=40;
+	WStunden=10;
 	for(uint8_t i=0;i<bitsderrtc;i++){
 		msg_uhr[i]=0;
+		msg_dat[i]=0;
 	}
 	//Einstellungen des Ausgabebuffers
 	msg_uhr[2]=':';
@@ -55,6 +59,7 @@ uint8_t RTC::zeit_hund(){
 				kalender();
 			}
 		}
+		Wecker();
 	}
 	ausgabezeitneu();
 	return 0;
@@ -69,12 +74,13 @@ uint8_t RTC::zeit(){
 		if(Minuten >= 60){
 			Minuten = 0;
 			Stunden++;
+			if(Stunden >= 24){
+				Stunden = 0;
+				Tag++;
+				kalender();
+			}
 		}
-		if(Stunden >= 24){
-			Stunden = 0;
-			Tag++;
-			kalender();
-		}
+		Wecker();
 	}
 	ausgabezeitneu();
 	return 0;
@@ -136,6 +142,20 @@ void RTC::kalender(){
 	}
 	ausgabedatumneu();
 }
+
+void RTC::Wecker(){
+	if ((interupts&(1<<Weckerein))&&!(interupts&(1<<Weckeractiv)))
+	{
+		if (WStunden==Stunden)
+		{
+			if (WMinuten==Minuten)
+			{
+				interupts|=(1<<Weckeractiv);
+			}
+		}
+	}
+}
+
 
 void RTC::ausgabezeitneu(){
 	msg_uhr[0]='0'+Stunden/10;

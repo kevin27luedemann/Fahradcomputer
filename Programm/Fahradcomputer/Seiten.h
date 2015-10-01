@@ -50,6 +50,12 @@ void header(uint8_t page){
 				oled.draw_ASCI(buffer[i-((SSD1306_WIDTH/charsize)-buffersize)],i*charsize,0);
 			}
 			break;
+		case 1:
+			buffersize=sprintf(buffer,"Bat: %i%%",Batteriestatus());
+			for(uint8_t i=((SSD1306_WIDTH/charsize)-buffersize);i<(SSD1306_WIDTH/charsize);i++){
+				oled.draw_ASCI(buffer[i-((SSD1306_WIDTH/charsize)-buffersize)],i*charsize,0);
+			}
+			break;
 		default:
 			break;
 	}
@@ -60,6 +66,11 @@ void bottom(uint8_t page){
 		case 0:	//standard Header fuer fast alle Pages
 			for(uint8_t i=0;i<8;i++){
 				oled.draw_ASCI(rtc.msg_dat[i],i*charsize+(SSD1306_WIDTH-bitsderrtc*charsize),7*charhighte);
+			}
+			break;
+		case 1:
+			for(uint8_t i=0;i<8;i++){
+				oled.draw_ASCI(rtc.msg_dat[i],5+i*charsize,7*charhighte);
 			}
 			break;
 		default:
@@ -147,8 +158,8 @@ void menue_einst(){
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,1*charhighte);}
 	buffersize=sprintf(buffer,"3:Uhr einstellen");
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,2*charhighte);}
-	//buffersize=sprintf(buffer,"4:Uhr");
-	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,3*charhighte);}
+	buffersize=sprintf(buffer,"4:Weckereinstellen");
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,3*charhighte);}
 	//buffersize=sprintf(buffer,"5:Kompass kalib.");
 	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,4*charhighte);}
 	//buffersize=sprintf(buffer,"6:HMC5883L Gain");
@@ -171,8 +182,8 @@ void menue_uhr(){
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,3*charhighte);}
 	buffersize=sprintf(buffer,"5:Uhr gross");
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,4*charhighte);}
-	//buffersize=sprintf(buffer,"6:HMC5883L Gain");
-	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,5*charhighte);}
+	buffersize=sprintf(buffer,"6:Wecker");
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,5*charhighte);}
 	//buffersize=sprintf(buffer,"7:Uhr einstellen");
 	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,6*charhighte);}
 }
@@ -219,6 +230,35 @@ void uhranzeigenmin(){
 			//oled.draw_number16x16(Buffer[i]-'0',70+i*numbersmalsize,3*charhighte);
 		//}
 	//}
+}
+
+void Weckeranzeige(){
+	oled.clearFrame();
+	bottom(1);
+	header(1);
+	//Uhr
+	oled.draw_number16x16(rtc.msg_uhr[0]-'0',5,1.66*charhighte);
+	oled.draw_number16x16(rtc.msg_uhr[1]-'0',5+numbersmalsize,1.66*charhighte);
+	oled.draw_number16x16(rtc.msg_uhr[3]-'0',5,2.33*charhighte+numbersmalhight);
+	oled.draw_number16x16(rtc.msg_uhr[4]-'0',5+numbersmalsize,2.33*charhighte+numbersmalhight);
+	
+	//Weckerzeit
+	oled.draw_number16x16(rtc.WStunden/10,70,1.66*charhighte);
+	oled.draw_number16x16(rtc.WStunden%10,70+numbersmalsize,1.66*charhighte);
+	oled.draw_number16x16(rtc.WMinuten/10,70,2.33*charhighte+numbersmalhight);
+	oled.draw_number16x16(rtc.WMinuten%10,70+numbersmalsize,2.33*charhighte+numbersmalhight);
+	
+	//Weckeraktiv Zeichen
+	if ((rtc.interupts&(1<<Weckerein)))
+	{
+		oled.draw_ASCI('o',0,0);
+	}
+	
+	//Einstellungsmoeglichekeit
+	if ((anzeige&(1<<Einstellungsflag)))
+	{
+		oled.draw_ASCI(pos+'0',1*charsize,0*charhighte);
+	}
 }
 
 void fahradschirm(double winkelgeschw, double angle, double weite, double maxgeschwinsigkeit, uint32_t Zeit){

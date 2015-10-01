@@ -18,8 +18,8 @@
 #define hundinterupt 0
 #define sekundeninterupt 1
 #define minuteninterupt 2
-//Stoppuhrbits
-#define stoppbit 2
+#define Weckerein 3
+#define Weckeractiv 4
 
 #include <avr/io.h>
 #include <stdlib.h>
@@ -35,9 +35,12 @@ public:
 	uint8_t Sekunden;
 	uint8_t HundSekunden;
 	uint8_t Tag;
+	uint8_t WTag;
 	uint8_t Monat;
 	uint8_t Jahr; //Jahr=Jahr ab 2000 als integer
 	uint8_t interupts;	//Flagregister, platz fuer 8 Flags
+	uint8_t WMinuten;
+	uint8_t WStunden;
 protected:
 private:
 
@@ -58,6 +61,7 @@ private:
 	RTC( const RTC &c );
 	RTC& operator=( const RTC &c );
 	void kalender();
+	void Wecker();
 
 }; //RTC
 

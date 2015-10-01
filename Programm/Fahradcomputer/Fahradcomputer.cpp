@@ -5,7 +5,7 @@
  *  Author: kevin
  */ 
 #define SPANNUNGSTEILER 1.985
-#define VERSIONSNUMMER 1.41
+#define VERSIONSNUMMER 1.42
 
 #include <avr/io.h>
 #include <stdlib.h>
@@ -41,6 +41,7 @@ Pressure Baro;
 #define Stoppuhrflag 7
 #define Alarmflag 8
 #define Uhrflaggross 10
+#define Weckeranzeigeflag 11
 
 #define Fahradflag 1
 
@@ -201,6 +202,14 @@ void maininterupthandler(){
 			geschwindigkeit(28.0*2.54/100.0);
 		}
 	}
+	if ((rtc.interupts&(1<<Weckeractiv)))
+	{
+		if ((rtc.interupts&(1<<Weckerein)))
+		{
+			anzeige |= (1<<blinkflag) | (1<<refreshdisplay);
+			rtc.interupts &= ~(1<<Weckerein);
+		}
+	}
 }
 
 void anzeigehandler(){
@@ -288,6 +297,17 @@ void anzeigehandler(){
 			Pressuresensor();
 			anzeige |= (1<<refreshdisplay);
 		}
+		else if ((anzeige&(1<<Weckeranzeigeflag))&&(anzeige&(1<<Einstellungsflag)))
+		{
+			Weckeranzeige();
+			anzeige|=(1<<refreshdisplay);
+		}
+		if ((anzeige&(1<<blinkflag)))
+		{
+			oled.invert(rtc.Sekunden%2);
+			LED.toggle();
+			Vibrationsmotor.on();
+		}
 		rtc.interupts&=~(1<<sekundeninterupt);
 	}
 	//Minuteninterrupt
@@ -298,18 +318,17 @@ void anzeigehandler(){
 			uhranzeigenmin();
 			anzeige|=(1<<refreshdisplay);
 		}
+		else if ((anzeige&(1<<Weckeranzeigeflag)))
+		{
+			Weckeranzeige();
+			anzeige|=(1<<refreshdisplay);
+		}
 		rtc.interupts&=~(1<<minuteninterupt);
 	}
 	//neuen Framebuffer an das Dispay senden
 	if ((anzeige&(1<<refreshdisplay)))
 	{
 		oled.sendFrame();
-		if ((anzeige&(1<<blinkflag)))
-		{
-			oled.invert(rtc.Sekunden%2);
-			LED.toggle();
-			Vibrationsmotor.on();
-		}
 		anzeige&=~(1<<refreshdisplay);
 	}
 }
@@ -364,7 +383,10 @@ void eingabehandler(uint8_t taste){
 					rtc.interupts |=(1<<minuteninterupt);
 					anzeige |=(1<<Uhrflaggross) | (1<<refreshdisplay);	
 					break;
-				
+				case '6':
+					rtc.interupts |=(1<<minuteninterupt);
+					anzeige |= (1<<Weckeranzeigeflag);
+					break;
 				default:
 					//menueflag erneu setzen
 					anzeige|=(1<<menueflag)|(1<<Uhrflag);
@@ -389,6 +411,9 @@ void eingabehandler(uint8_t taste){
 					//dies ist eine der wenigen Funktinen, die die Handler Strucktur nicht anwenden, da sie die rtc anhaellt
 					uhreinstellen();
 					anzeige|=(1<<Uhrflag);
+					break;
+				case '4':
+					anzeige |= (1<<Einstellungsflag) | (1<<Weckeranzeigeflag);
 					break;
 				default:
 					//Menueflag neu setzten
@@ -441,6 +466,74 @@ void eingabehandler(uint8_t taste){
 				default:
 					//menueflag erneut setzen um abschalten zu verhindern
 					anzeige|=(1<<menueflag);
+					break;
+			}
+		}
+		else if ((anzeige&(1<<Einstellungsflag))&&(anzeige&(1<<Weckeranzeigeflag)))
+		{
+			switch (pos)
+			{
+				case 0:
+					rtc.WStunden=0;
+					rtc.WMinuten=0;
+					rtc.interupts &= ~((1<<Weckerein)|(1<<Weckeractiv));
+					switch (taste)
+					{
+						case '#':
+							break;
+						case '*':
+							break;
+						default:
+							rtc.WStunden=(taste-'0')*10;
+							pos++;
+						break;
+					}
+					break;
+				case 1:
+					switch (taste)
+					{
+						case '#':
+							break;
+						case '*':
+							break;
+						default:
+							rtc.WStunden+=(taste-'0');
+							pos++;
+						break;
+					}
+					break;
+				case 2:
+					switch (taste)
+					{
+						case '#':
+							break;
+						case '*':
+							break;
+						default:
+							rtc.WMinuten=(taste-'0')*10;
+							pos++;
+						break;
+					}
+					break;
+				case 3:
+					switch (taste)
+					{
+						case '#':
+							break;
+						case '*':
+							break;
+						default:
+							rtc.WMinuten+=(taste-'0');
+							pos++;
+						break;
+					}
+					pos=0;
+					if (!(rtc.WStunden>=24) && !(rtc.WMinuten>=60))
+					{
+						anzeige&=~(1<<Einstellungsflag);
+						rtc.interupts|=(1<<Weckerein);
+						rtc.interupts|=(1<<minuteninterupt);
+					}
 					break;
 			}
 		}
@@ -702,6 +795,29 @@ void eingabehandler(uint8_t taste){
 				}
 			}
 		}
+		else if ((anzeige&(1<<Weckeranzeigeflag)))
+		{
+			if (taste=='#')
+			{
+				anzeige&=~(1<<Uhrflaggross);
+				anzeige|=(1<<menueflag);
+			}
+			if (taste=='*')
+			{
+				if (rtc.interupts&(1<<Weckeractiv))
+				{
+					rtc.interupts &= ~((1<<Weckerein) | (1<<Weckeractiv));
+				}
+				else if ((rtc.interupts&(1<<Weckerein)))
+				{
+					rtc.interupts &= ~(1<<Weckerein);
+				}
+				else{
+					rtc.interupts |= (1<<Weckerein);
+				}
+				rtc.interupts|=(1<<minuteninterupt);
+			}
+		}
 		else if (anzeige==0)
 		{
 			anzeige|=(1<<menueflag);
@@ -714,6 +830,13 @@ void eingabehandler(uint8_t taste){
 				oled.invert(0);	//fuer den Fall, dass es invertiert blieb (50% der Faelle)
 				LED.off();
 				Vibrationsmotor.off();
+				if ((rtc.interupts&(1<<Weckeractiv)))
+				{
+					if ((rtc.interupts&(1<<Weckerein)))
+					{
+						rtc.interupts &= ~((1<<Weckerein)|(1<<Weckeractiv));
+					}
+				}
 			}
 		}
 	}
