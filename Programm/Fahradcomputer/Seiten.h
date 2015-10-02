@@ -56,6 +56,12 @@ void header(uint8_t page){
 				oled.draw_ASCI(buffer[i-((SSD1306_WIDTH/charsize)-buffersize)],i*charsize,0);
 			}
 			break;
+		case 2:
+			buffersize=sprintf(buffer,"%i%%",Batteriestatus());
+			for(uint8_t i=((SSD1306_WIDTH/charsize)-buffersize);i<(SSD1306_WIDTH/charsize);i++){
+				oled.draw_ASCI(buffer[i-((SSD1306_WIDTH/charsize)-buffersize)],i*charsize,0);
+			}
+			break;
 		default:
 			break;
 	}
@@ -212,6 +218,7 @@ void uhranzeigen(){
 
 void uhranzeigenmin(){
 	oled.clearFrame();
+	header(2);
 	oled.analog(rtc.Stunden,rtc.Minuten,rtc.Sekunden,0);
 	for(uint8_t i=0;i<(bitsderrtc-3);i++){oled.draw_ASCI(rtc.msg_uhr[i],65+i*charsize,0*charhighte);}
 	for(uint8_t i=0;i<bitsderrtc;i++){oled.draw_ASCI(rtc.msg_dat[i],65+i*charsize,7*charhighte);}
