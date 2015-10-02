@@ -9349,9 +9349,9 @@ void eingabehandler(uint8_t taste){
     3ee0:	83 32       	cpi	r24, 0x23	; 35
     3ee2:	41 f4       	brne	.+16     	; 0x3ef4 <_Z14eingabehandlerh+0x712>
 			{
-				anzeige&=~(1<<Uhrflaggross);
+				anzeige&=~(1<<Weckeranzeigeflag);
     3ee4:	c9 01       	movw	r24, r18
-    3ee6:	9b 7f       	andi	r25, 0xFB	; 251
+    3ee6:	97 7f       	andi	r25, 0xF7	; 247
 				anzeige|=(1<<menueflag);
     3ee8:	90 62       	ori	r25, 0x20	; 32
     3eea:	90 93 2a 03 	sts	0x032A, r25

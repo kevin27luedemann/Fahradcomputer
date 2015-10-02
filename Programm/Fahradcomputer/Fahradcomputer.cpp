@@ -799,7 +799,7 @@ void eingabehandler(uint8_t taste){
 		{
 			if (taste=='#')
 			{
-				anzeige&=~(1<<Uhrflaggross);
+				anzeige&=~(1<<Weckeranzeigeflag);
 				anzeige|=(1<<menueflag);
 			}
 			if (taste=='*')
