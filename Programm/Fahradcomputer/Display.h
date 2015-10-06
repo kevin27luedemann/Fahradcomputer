@@ -62,6 +62,7 @@
 #include <math.h>
 #include <avr/pgmspace.h>
 #include "fonts.h"
+#include "Pikachu.h"
 
 class Display
 {
@@ -90,6 +91,7 @@ public:
 	void draw_ASCI(uint8_t sym,uint8_t x, uint8_t y);
 	void draw_number16x16(uint8_t number, uint8_t x, uint8_t y);
 	void analog(uint8_t stunde, uint8_t minute, uint8_t sekunde, uint8_t sekanzeige);
+	void draw_pikachu();
 protected:
 private:
 	Display( const Display &c );
