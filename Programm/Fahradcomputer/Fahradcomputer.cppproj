@@ -183,6 +183,9 @@
     <Compile Include="Output.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Pikachu.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Pressure.cpp">
       <SubType>compile</SubType>
     </Compile>
