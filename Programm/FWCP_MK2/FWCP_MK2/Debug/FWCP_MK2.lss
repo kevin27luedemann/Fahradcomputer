@@ -228,123 +228,111 @@ Disassembly of section .text:
 
 00000186 <__trampolines_end>:
 	...
-     1ce:	00 00       	nop
-     1d0:	20 60       	ori	r18, 0x00	; 0
-     1d2:	60 e0       	ldi	r22, 0x00	; 0
-     1d4:	c0 c0       	rjmp	.+384    	; 0x356 <__trampolines_end+0x1d0>
-     1d6:	80 80       	ld	r8, Z
-     1d8:	00 00       	nop
-     1da:	00 00       	nop
-     1dc:	00 80       	ld	r0, Z
-     1de:	80 c0       	rjmp	.+256    	; 0x2e0 <__trampolines_end+0x15a>
-     1e0:	c0 e0       	ldi	r28, 0x00	; 0
-     1e2:	e0 e0       	ldi	r30, 0x00	; 0
-     1e4:	e0 60       	ori	r30, 0x00	; 0
-     1e6:	40 80       	ld	r4, Z
-     1e8:	80 40       	sbci	r24, 0x00	; 0
-     1ea:	40 40       	sbci	r20, 0x00	; 0
-     1ec:	20 e0       	ldi	r18, 0x00	; 0
-     1ee:	e0 c0       	rjmp	.+448    	; 0x3b0 <_ZL11digits16x16+0x2a>
+     1d2:	00 3c       	cpi	r16, 0xC0	; 192
+     1d4:	f8 e0       	ldi	r31, 0x08	; 8
+     1d6:	c0 80       	ld	r12, Z
 	...
-     214:	01 03       	mulsu	r16, r17
-     216:	07 ff       	sbrs	r16, 7
-     218:	1f 07       	cpc	r17, r31
-     21a:	07 03       	mulsu	r16, r23
-     21c:	03 04       	cpc	r0, r3
-     21e:	04 07       	cpc	r16, r20
-     220:	03 60       	ori	r16, 0x03	; 3
-     222:	60 00       	.word	0x0060	; ????
-     224:	02 62       	ori	r16, 0x22	; 34
-     226:	9c 00       	.word	0x009c	; ????
-     228:	f8 fc       	.word	0xfcf8	; ????
-     22a:	fc fc       	.word	0xfcfc	; ????
-     22c:	fe fe       	.word	0xfefe	; ????
-     22e:	fe ff       	.word	0xfffe	; ????
+     1e4:	00 00       	nop
+     1e6:	80 80       	ld	r8, Z
+     1e8:	c0 c0       	rjmp	.+384    	; 0x36a <__trampolines_end+0x1e4>
+     1ea:	c0 e0       	ldi	r28, 0x00	; 0
+     1ec:	e0 78       	andi	r30, 0x80	; 128
+     1ee:	38 1c       	adc	r3, r8
+     1f0:	84 c0       	rjmp	.+264    	; 0x2fa <__trampolines_end+0x174>
+     1f2:	c0 e0       	ldi	r28, 0x00	; 0
+     1f4:	f8 fc       	.word	0xfcf8	; ????
+     1f6:	fe 7f       	andi	r31, 0xFE	; 254
+	...
+     214:	00 83       	st	Z, r16
+     216:	7f 7f       	andi	r23, 0xFF	; 255
+     218:	9f 06       	cpc	r9, r31
+     21a:	06 02       	muls	r16, r22
+     21c:	02 02       	muls	r16, r18
+     21e:	02 02       	muls	r16, r18
+     220:	82 42       	sbci	r24, 0x22	; 34
+     222:	42 c2       	rjmp	.+1156   	; 0x6a8 <__c.2159+0x8>
+     224:	83 07       	cpc	r24, r19
+     226:	07 1f       	adc	r16, r23
+     228:	3f e7       	ldi	r19, 0x7F	; 127
+     22a:	e7 81       	ldd	r30, Z+7	; 0x07
+     22c:	00 04       	cpc	r0, r0
+     22e:	de ff       	.word	0xffde	; ????
      230:	ff ff       	.word	0xffff	; ????
-     232:	ff fe       	.word	0xfeff	; ????
-     234:	fe fe       	.word	0xfefe	; ????
-     236:	fc fc       	.word	0xfcfc	; ????
-     238:	f8 f8       	.word	0xf8f8	; ????
-     23a:	f8 f8       	.word	0xf8f8	; ????
+     232:	ff ff       	.word	0xffff	; ????
+     234:	ff fd       	.word	0xfdff	; ????
+     236:	f8 e0       	ldi	r31, 0x08	; 8
+     238:	40 00       	.word	0x0040	; ????
 	...
-     254:	00 00       	nop
-     256:	c0 ff       	sbrs	r28, 0
-     258:	80 00       	.word	0x0080	; ????
-     25a:	00 00       	nop
-     25c:	38 64       	ori	r19, 0x48	; 72
-     25e:	64 7c       	andi	r22, 0xC4	; 196
-     260:	38 80       	ld	r3, Y
-     262:	80 80       	ld	r8, Z
-     264:	84 04       	cpc	r8, r4
-     266:	03 00       	.word	0x0003	; ????
-     268:	87 bf       	out	0x37, r24	; 55
-     26a:	bf ff       	.word	0xffbf	; ????
-     26c:	ff ff       	.word	0xffff	; ????
-     26e:	ff ff       	.word	0xffff	; ????
-     270:	ff ff       	.word	0xffff	; ????
-     272:	ff ff       	.word	0xffff	; ????
-     274:	ff 7f       	andi	r31, 0xFF	; 255
-     276:	7f ff       	.word	0xff7f	; ????
-     278:	9f c1       	rjmp	.+830    	; 0x5b8 <_ZL7font5x8+0xf2>
-     27a:	c1 c0       	rjmp	.+386    	; 0x3fe <_ZL11digits16x16+0x78>
+     252:	00 f8       	bld	r0, 0
+     254:	fe 7f       	andi	r31, 0xFE	; 254
+     256:	06 c6       	rjmp	.+3084   	; 0xe64 <_ZN7Display16draw_number16x16Ehhh+0x2>
+     258:	03 00       	.word	0x0003	; ????
+     25a:	00 98       	cbi	0x00, 0	; 0
+     25c:	98 00       	.word	0x0098	; ????
+     25e:	00 00       	nop
+     260:	c3 06       	cpc	r12, r19
+     262:	06 07       	cpc	r16, r22
+     264:	03 78       	andi	r16, 0x83	; 131
+     266:	fc fc       	.word	0xfcfc	; ????
+     268:	fc 78       	andi	r31, 0x8C	; 140
+     26a:	78 03       	fmul	r23, r16
+     26c:	9e f8       	.word	0xf89e	; ????
+     26e:	c0 00       	.word	0x00c0	; ????
+     270:	01 03       	mulsu	r16, r17
+     272:	03 07       	cpc	r16, r19
+     274:	9f ff       	.word	0xff9f	; ????
+     276:	fd 78       	andi	r31, 0x8D	; 141
 	...
-     290:	00 80       	ld	r0, Z
-     292:	80 e0       	ldi	r24, 0x00	; 0
-     294:	fc 7f       	andi	r31, 0xFC	; 252
-     296:	3f 1f       	adc	r19, r31
-     298:	9f 06       	cpc	r9, r31
-     29a:	06 1c       	adc	r0, r6
-     29c:	18 38       	cpi	r17, 0x88	; 136
-     29e:	20 60       	ori	r18, 0x00	; 0
-     2a0:	47 df       	rcall	.-370    	; 0x130 <__SREG__+0xf1>
-     2a2:	df 9f       	mul	r29, r31
-     2a4:	9f c7       	rjmp	.+3902   	; 0x11e4 <_ZN7Display6analogEhhhh+0x296>
-     2a6:	c0 e0       	ldi	r28, 0x00	; 0
-     2a8:	e0 f8       	bld	r14, 0
-     2aa:	f8 fc       	.word	0xfcf8	; ????
-     2ac:	f8 83       	st	Y, r31
-     2ae:	c3 81       	ldd	r28, Z+3	; 0x03
-     2b0:	00 03       	mulsu	r16, r16
-     2b2:	03 01       	movw	r0, r6
-     2b4:	00 00       	nop
-     2b6:	80 c1       	rjmp	.+768    	; 0x5b8 <_ZL7font5x8+0xf2>
-     2b8:	7f 1f       	adc	r23, r31
-     2ba:	1f 07       	cpc	r17, r31
+     290:	00 00       	nop
+     292:	00 c0       	rjmp	.+0      	; 0x294 <__trampolines_end+0x10e>
+     294:	b9 86       	std	Y+9, r11	; 0x09
+     296:	00 c0       	rjmp	.+0      	; 0x298 <__trampolines_end+0x112>
+     298:	f9 fd       	.word	0xfdf9	; ????
+     29a:	fd fc       	.word	0xfcfd	; ????
+     29c:	fc fd       	.word	0xfdfc	; ????
+     29e:	fd fd       	.word	0xfdfd	; ????
+     2a0:	fc f8       	.word	0xf8fc	; ????
+     2a2:	f8 f8       	.word	0xf8f8	; ????
+     2a4:	e0 fc       	sbrc	r14, 0
+     2a6:	80 80       	ld	r8, Z
+     2a8:	20 78       	andi	r18, 0x80	; 128
+     2aa:	78 7e       	andi	r23, 0xE8	; 232
+     2ac:	7f ff       	.word	0xff7f	; ????
+     2ae:	ff ff       	.word	0xffff	; ????
+     2b0:	f8 c0       	rjmp	.+496    	; 0x4a2 <_ZL11digits16x16+0x11c>
+     2b2:	c0 ff       	sbrs	r28, 0
+     2b4:	3f 1f       	adc	r19, r31
 	...
-     2d0:	86 c3       	rjmp	.+1804   	; 0x9de <_ZN7Display9drawPixelEhhh+0x46>
-     2d2:	c3 e1       	ldi	r28, 0x13	; 19
-     2d4:	f8 fc       	.word	0xfcf8	; ????
-     2d6:	fe 7f       	andi	r31, 0xFE	; 254
+     2d2:	00 01       	movw	r0, r0
+     2d4:	03 03       	mulsu	r16, r19
+     2d6:	1e ff       	.word	0xff1e	; ????
      2d8:	ff ff       	.word	0xffff	; ????
-     2da:	ff fe       	.word	0xfeff	; ????
+     2da:	ff ff       	.word	0xffff	; ????
      2dc:	ff ff       	.word	0xffff	; ????
-     2de:	fc f8       	.word	0xf8fc	; ????
-     2e0:	e0 c0       	rjmp	.+448    	; 0x4a2 <_ZL11digits16x16+0x11c>
-     2e2:	c0 80       	ld	r12, Z
-     2e4:	81 c1       	rjmp	.+770    	; 0x5e8 <_ZL7font5x8+0x122>
-     2e6:	e3 e3       	ldi	r30, 0x33	; 51
-     2e8:	e3 e7       	ldi	r30, 0x73	; 115
-     2ea:	e7 67       	ori	r30, 0x77	; 119
-     2ec:	3f 3f       	cpi	r19, 0xFF	; 255
-     2ee:	1f 07       	cpc	r17, r31
-     2f0:	04 04       	cpc	r0, r4
-     2f2:	04 06       	cpc	r0, r20
-     2f4:	02 03       	mulsu	r16, r18
-     2f6:	01 00       	.word	0x0001	; ????
+     2de:	ff ff       	.word	0xffff	; ????
+     2e0:	ff ff       	.word	0xffff	; ????
+     2e2:	ff ff       	.word	0xffff	; ????
+     2e4:	ff 7f       	andi	r31, 0xFF	; 255
+     2e6:	3b 19       	sub	r19, r11
+     2e8:	00 00       	nop
+     2ea:	00 00       	nop
+     2ec:	01 03       	mulsu	r16, r17
+     2ee:	83 e3       	ldi	r24, 0x33	; 51
+     2f0:	3f 01       	movw	r6, r30
+     2f2:	01 00       	.word	0x0001	; ????
 	...
-     30c:	00 00       	nop
-     30e:	02 03       	mulsu	r16, r18
-     310:	03 03       	mulsu	r16, r19
-     312:	03 03       	mulsu	r16, r19
-     314:	03 01       	movw	r0, r6
-     316:	00 00       	nop
-     318:	00 01       	movw	r0, r0
-     31a:	01 03       	mulsu	r16, r17
-     31c:	07 03       	mulsu	r16, r23
-     31e:	01 00       	.word	0x0001	; ????
-     320:	01 03       	mulsu	r16, r17
-     322:	03 03       	mulsu	r16, r19
-     324:	03 01       	movw	r0, r6
+     318:	03 3f       	cpi	r16, 0xF3	; 243
+     31a:	3f 3f       	cpi	r19, 0xFF	; 255
+     31c:	3f 3f       	cpi	r19, 0xFF	; 255
+     31e:	1f 07       	cpc	r17, r31
+     320:	07 07       	cpc	r16, r23
+     322:	07 03       	mulsu	r16, r23
+     324:	3b 3e       	cpi	r19, 0xEB	; 235
+     326:	3e 3c       	cpi	r19, 0xCE	; 206
+     328:	3c 1c       	adc	r3, r12
+     32a:	1c 04       	cpc	r1, r12
+     32c:	06 03       	mulsu	r16, r22
+     32e:	01 00       	.word	0x0001	; ????
 	...
 
 00000386 <_ZL11digits16x16>:
@@ -7610,9 +7598,6 @@ void initialisierung(){
     355e:	0e 9a       	sbi	0x01, 6	; 1
 	PORTA |= (1<<PORTA6);
     3560:	16 9a       	sbi	0x02, 6	; 2
-	//Ausgabe einstellen
-	//LED.on();
-	//Vibrationsmotor.on();
 	//Display
 	oled.InitializeDisplay();
     3562:	86 e4       	ldi	r24, 0x46	; 70
