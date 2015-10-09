@@ -200,7 +200,13 @@ void uhranzeigen(){
 	char Buffer[20];
 	oled.clearFrame();
 	//oled.analog(rtc.Stunden,rtc.Minuten,rtc.Sekunden,1);
-	oled.draw_pikachu();
+	if (pos==0)
+	{
+		oled.draw_pikachu();
+	}
+	else{
+		oled.draw_glurak();
+	}
 	for(uint8_t i=0;i<bitsderrtc;i++){oled.draw_ASCI(rtc.msg_uhr[i],65+i*charsize,0*charhighte);}
 	for(uint8_t i=0;i<bitsderrtc;i++){oled.draw_ASCI(rtc.msg_dat[i],65+i*charsize,7*charhighte);}
 	buffersize=sprintf(Buffer,"%i%%",Batteriestatus());

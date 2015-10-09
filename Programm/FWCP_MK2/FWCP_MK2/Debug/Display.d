@@ -16,7 +16,7 @@ Display.d Display.o: .././Display.cpp .././Display.h \
  c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-toolchain\avr\include\util\twi.h \
  c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-toolchain\avr\include\math.h \
  c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-toolchain\avr\include\avr\pgmspace.h \
- .././fonts.h .././Pikachu.h
+ .././fonts.h .././Pikachu.h .././006.h
 
 .././Display.h:
 
@@ -57,3 +57,5 @@ c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-g
 .././fonts.h:
 
 .././Pikachu.h:
+
+.././006.h:

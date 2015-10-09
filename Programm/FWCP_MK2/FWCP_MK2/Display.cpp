@@ -218,6 +218,16 @@ void Display::draw_pikachu(){
 	}
 }
 
+void Display::draw_glurak(){
+	for (uint8_t i = 0; i<8;i++)
+	{
+		for (uint8_t j = 0;j<64;j++)
+		{
+			Displayframe[i*SSD1306_WIDTH+j]=pgm_read_byte(&Glurak[i][j]);
+		}
+	}
+}
+
 void Display::draw_number16x16(uint8_t number, uint8_t x, uint8_t y){
 	uint16_t symbol;
 	if(number>=0 && number<10){

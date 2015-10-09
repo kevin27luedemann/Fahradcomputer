@@ -673,8 +673,17 @@ void eingabehandler(uint8_t taste){
 		{
 			if (taste=='#')
 			{
+				pos=0;
 				anzeige&=~(1<<Uhrflag);
 				anzeige|=(1<<menueflag);
+			}
+			else if (taste=='*')
+			{
+				pos++;
+				if (pos>1)
+				{
+					pos=0;
+				}
 			}
 			else if (taste=='0')
 			{
