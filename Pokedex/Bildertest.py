@@ -26,7 +26,7 @@ for i in range(0,8):
     for j in range(0,x[1]):
         zahl=0
         for k in range(0,8):
-            if pix[i*8+k,j][0]!=0:
+            if pix[j,i*8+k][0]!=0:
                zahl+=2**k
                print zahl
         if j!=x[1]-1:
