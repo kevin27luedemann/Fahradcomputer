@@ -84,43 +84,43 @@ void bottom(uint8_t page){
 		}
 }
 
-void anzeige_richtung(float winkel){
+void anzeige_richtung(float winkel, uint8_t x, uint8_t y){
 	//finden der Ziffer fuer die Anzeige
 	if ((winkel<45/2) || (winkel >= 360-45/2))
 	{
-		oled.draw_ASCI('N',80,3.5*charhighte);
+		oled.draw_ASCI('N',x,y*charhighte);
 	}
 	else if (winkel<90-45/2)
 	{
-		oled.draw_ASCI('N',80-charsize/2,3.5*charhighte);
-		oled.draw_ASCI('O',80+charsize/2,3.5*charhighte);
+		oled.draw_ASCI('N',x-charsize/2,y*charhighte);
+		oled.draw_ASCI('O',x+charsize/2,y*charhighte);
 	}
 	else if (winkel<135-45/2)
 	{
-		oled.draw_ASCI('O',80,3.5*charhighte);
+		oled.draw_ASCI('O',x,y*charhighte);
 	}
 	else if (winkel<180-45/2)
 	{
-		oled.draw_ASCI('S',80-charsize/2,3.5*charhighte);
-		oled.draw_ASCI('O',80+charsize/2,3.5*charhighte);
+		oled.draw_ASCI('S',x-charsize/2,y*charhighte);
+		oled.draw_ASCI('O',x+charsize/2,y*charhighte);
 	}
 	else if (winkel<225-45/2)
 	{
-		oled.draw_ASCI('S',80,3.5*charhighte);
+		oled.draw_ASCI('S',x,y*charhighte);
 	}
 	else if (winkel<270-45/2)
 	{
-		oled.draw_ASCI('S',80-charsize/2,3.5*charhighte);
-		oled.draw_ASCI('W',80+charsize/2,3.5*charhighte);
+		oled.draw_ASCI('S',x-charsize/2,y*charhighte);
+		oled.draw_ASCI('W',x+charsize/2,y*charhighte);
 	}
 	else if (winkel<315-45/2)
 	{
-		oled.draw_ASCI('W',80,3.5*charhighte);
+		oled.draw_ASCI('W',x,y*charhighte);
 	}
 	else if (winkel<360-45/2)
 	{
-		oled.draw_ASCI('N',80-charsize/2,3.5*charhighte);
-		oled.draw_ASCI('W',80+charsize/2,3.5*charhighte);
+		oled.draw_ASCI('N',x-charsize/2,y*charhighte);
+		oled.draw_ASCI('W',x+charsize/2,y*charhighte);
 	}
 }
 
@@ -274,27 +274,38 @@ void fahradschirm(double winkelgeschw, double angle, double weite, double maxges
 	oled.clearFrame();
 	header(1);
 	bottom(0);
+	//Rahmen zeichnen
+	oled.drawHLine(0,SSD1306_HEIGHT-9,SSD1306_WIDTH);
+	oled.drawHLine(0,numbersmalhight-1,SSD1306_WIDTH/2+5);
+	oled.drawHLine(SSD1306_WIDTH/2+5,8,SSD1306_WIDTH/2-5);
+	oled.drawVLine(SSD1306_WIDTH/2+5,0,numbersmalhight);
+	oled.drawHLine(SSD1306_WIDTH-4*numbersmalsize-1,5*charhighte,4*numbersmalsize+1);
+	oled.drawVLine(SSD1306_WIDTH-4*numbersmalsize-1,numbersmalhight,SSD1306_HEIGHT-numbersmalhight);
+	oled.drawHLine(SSD1306_WIDTH-4*numbersmalsize-1,3*charhighte,4*numbersmalsize+1);
+	
+	//lesbare Uhr
 	oled.draw_number16x16(rtc.msg_uhr[0]-'0',0*numbersmalsize,0*charhighte);
 	oled.draw_number16x16(rtc.msg_uhr[1]-'0',1*numbersmalsize,0*charhighte);
 	oled.draw_number16x16(rtc.msg_uhr[3]-'0',2.33*numbersmalsize,0*charhighte);
 	oled.draw_number16x16(rtc.msg_uhr[4]-'0',3.33*numbersmalsize,0*charhighte);
 	//Ausgabe der Geschwidigkeit
 	buffersize=sprintf(buffer,"%3.1f",winkelgeschw);
-	for(uint8_t i=((SSD1306_WIDTH/numbersmalsize)-buffersize-1);i<((SSD1306_WIDTH/numbersmalsize)-1);i++){
-		if(buffer[i-((SSD1306_WIDTH/numbersmalsize)-buffersize-1)]=='.'){
-			oled.draw_ASCI(buffer[i-((SSD1306_WIDTH/numbersmalsize)-buffersize-1)],i*numbersmalsize,4*charhighte);
+	for(uint8_t i=((SSD1306_WIDTH/numbersmalsize)-buffersize);i<((SSD1306_WIDTH/numbersmalsize));i++){
+		if(buffer[i-((SSD1306_WIDTH/numbersmalsize)-buffersize)]=='.'){
+			oled.draw_ASCI(buffer[i-((SSD1306_WIDTH/numbersmalsize)-buffersize)],i*numbersmalsize,4*charhighte);
 		}
 		else{
-			oled.draw_number16x16(buffer[i-((SSD1306_WIDTH/numbersmalsize)-buffersize-1)]-'0',i*numbersmalsize,3*charhighte);
+			oled.draw_number16x16(buffer[i-((SSD1306_WIDTH/numbersmalsize)-buffersize)]-'0',i*numbersmalsize,3*charhighte);
 		}
 	}
-	oled.draw_ASCI('k',((SSD1306_WIDTH/charsize-2)*charsize),3*charhighte);
-	oled.draw_ASCI('m',((SSD1306_WIDTH/charsize-1)*charsize),3*charhighte);
-	oled.draw_ASCI('h',((SSD1306_WIDTH/charsize-2)*charsize),4*charhighte);
+	//oled.draw_ASCI('k',((SSD1306_WIDTH/charsize-2)*charsize),3*charhighte);
+	//oled.draw_ASCI('m',((SSD1306_WIDTH/charsize-1)*charsize),3*charhighte);
+	//oled.draw_ASCI('h',((SSD1306_WIDTH/charsize-2)*charsize),4*charhighte);
 	//winkelausgabe
 	//entfernt aus platz und lesbarkeitsgruenden
 	//buffersize=sprintf(buffer,"%3.1f",angle);
 	//for (uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,7*charhighte);}
+	//Anzeige der Richtung als Alternative
 	anzeige_kleinenadel(31,31+8,angle);
 	//anzeige der gesammtstrecke
 	buffersize=sprintf(buffer,"%.1fm",weite);
@@ -351,7 +362,7 @@ void anzeige_kompass(double winkel){
 	//dreieck als Zeiger
 	anzeige_nadel(31,31,winkel);
 	//Richtung ausgeben
-	anzeige_richtung(winkel);	
+	anzeige_richtung(winkel,80,3.5);	
 }
 
 void timerseite(){

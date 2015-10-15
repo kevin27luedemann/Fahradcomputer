@@ -175,7 +175,7 @@ void initialisierung(){
 	//*********************************
 	rtc.RTCstart();
 	//ausgabe starten
-	anzeige|=(1<<Kompasflag);
+	anzeige|=(1<<Uhrflag);
 	sei();
 }
 
