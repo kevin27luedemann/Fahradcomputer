@@ -87,9 +87,13 @@ void geschwindigkeit(float durch){
 	uint16_t zaehlungen = TCNT1;
 	TCNT1 = 0;
 	//Berechnung
+	double temp = geschw;
 	double umlaufzeit = (REEDMS/1000.0+(zaehlungen/zaehlungenprozeiteinheit)*zeitproachtzaehlungen);
 	geschw = (durch)*M_PI*3.6;
 	geschw /= umlaufzeit;
+	//Mittelwert aus der letzten Messung zum Fehler minimieren
+	geschw += temp;
+	geschw /= 2.0;
 	if (geschw >=160)
 	{
 		geschw=0;
@@ -113,11 +117,8 @@ uint8_t reed_debounce(volatile uint8_t *port, uint8_t pin)
 }
 
 void initialisierung();
-
 void maininterupthandler();
-
 void anzeigehandler();
-
 void eingabehandler(uint8_t taste);
 
 int main(void)
@@ -193,6 +194,14 @@ void maininterupthandler(){
 			//Durchmesser ist 28 Zoll
 			geschwindigkeit(28.0*2.54/100.0);
 		}
+		//Hier mit werden geschwindigkeiten, die kleiner als 2.6km/h betragen gefiltert
+		//Somit wird die letzte Geschwindigkeit nach 3 Sekunden geloescht
+		//Das ist noch nicht die beste Variante
+		else if (TCNT1>23437)
+		{
+			TCNT1=0;
+			geschw=0;
+		}
 	}
 	if ((rtc.interupts&(1<<Weckeractiv)))
 	{
@@ -244,22 +253,22 @@ void anzeigehandler(){
 		}
 		else if ((anzeige&(1<<Fahradflag)))
 		{
-			//fahradschirm(12.3,kompass.angle());
 			if (geschw>maxgeschw)
 			{
 				maxgeschw=geschw;
 			}
-			if (geschw != 0)
+			if (geschw >= 1.0)
 			{
 				Fahrtzeit++;
 			}
 			strecke+=geschw/3.6;
 			Accelerometer.readacc();
 			fahradschirm(geschw,kompass.angle(Accelerometer.roll,Accelerometer.pitch),strecke,maxgeschw, Fahrtzeit);
-			if (rtc.Sekunden%2)
-			{
-				geschw=0;
-			}
+			//Fuer Testzwecke entfernt um neue Methode zu testen, siehe Oben
+			//if (rtc.Sekunden%2)
+			//{
+				//geschw=0;
+			//}
 			anzeige|=(1<<refreshdisplay);
 		}
 		else if ((anzeige&(1<<Stoppuhrflag)))
