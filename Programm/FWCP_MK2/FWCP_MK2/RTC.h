@@ -15,11 +15,13 @@
 #define bitsderrtc 8
 
 //interuptbits
-#define hundinterupt 0
+#define Alarm 0
 #define sekundeninterupt 1
 #define minuteninterupt 2
 #define Weckerein 3
 #define Weckeractiv 4
+#define Timerlauft 5
+#define Stoppuhrlauft 6
 
 #include <avr/io.h>
 #include <stdlib.h>
@@ -41,6 +43,8 @@ public:
 	uint8_t interupts;	//Flagregister, platz fuer 8 Flags
 	uint8_t WMinuten;
 	uint8_t WStunden;
+	unsigned int Timerzahler;
+	unsigned int Stoppuhrzahler;
 protected:
 private:
 
@@ -53,7 +57,6 @@ public:
 	void dummyeinst();
 	void RTCstart();
 	void RTCstop();
-	uint8_t timer();
 	void ausgabezeitneu();
 	void ausgabedatumneu();
 protected:

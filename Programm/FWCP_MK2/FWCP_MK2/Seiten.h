@@ -199,14 +199,7 @@ void uhranzeigen(){
 	uint8_t buffersize;
 	char Buffer[20];
 	oled.clearFrame();
-	//oled.analog(rtc.Stunden,rtc.Minuten,rtc.Sekunden,1);
-	if (pos==0)
-	{
-		oled.draw_pikachu();
-	}
-	else{
-		oled.draw_glurak();
-	}
+	oled.analog(rtc.Stunden,rtc.Minuten,rtc.Sekunden,1);
 	for(uint8_t i=0;i<bitsderrtc;i++){oled.draw_ASCI(rtc.msg_uhr[i],65+i*charsize,0*charhighte);}
 	for(uint8_t i=0;i<bitsderrtc;i++){oled.draw_ASCI(rtc.msg_dat[i],65+i*charsize,7*charhighte);}
 	buffersize=sprintf(Buffer,"%i%%",Batteriestatus());
@@ -279,8 +272,12 @@ void fahradschirm(double winkelgeschw, double angle, double weite, double maxges
 	char buffer[10];
 	uint8_t buffersize=0;
 	oled.clearFrame();
-	header(0);
+	header(1);
 	bottom(0);
+	oled.draw_number16x16(rtc.msg_uhr[0]-'0',0*numbersmalsize,0*charhighte);
+	oled.draw_number16x16(rtc.msg_uhr[1]-'0',1*numbersmalsize,0*charhighte);
+	oled.draw_number16x16(rtc.msg_uhr[3]-'0',2.33*numbersmalsize,0*charhighte);
+	oled.draw_number16x16(rtc.msg_uhr[4]-'0',3.33*numbersmalsize,0*charhighte);
 	//Ausgabe der Geschwidigkeit
 	buffersize=sprintf(buffer,"%3.1f",winkelgeschw);
 	for(uint8_t i=((SSD1306_WIDTH/numbersmalsize)-buffersize-1);i<((SSD1306_WIDTH/numbersmalsize)-1);i++){
@@ -295,9 +292,10 @@ void fahradschirm(double winkelgeschw, double angle, double weite, double maxges
 	oled.draw_ASCI('m',((SSD1306_WIDTH/charsize-1)*charsize),3*charhighte);
 	oled.draw_ASCI('h',((SSD1306_WIDTH/charsize-2)*charsize),4*charhighte);
 	//winkelausgabe
-	buffersize=sprintf(buffer,"%3.1f",angle);
-	for (uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,7*charhighte);}
-	anzeige_kleinenadel(31,31,angle);
+	//entfernt aus platz und lesbarkeitsgruenden
+	//buffersize=sprintf(buffer,"%3.1f",angle);
+	//for (uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,7*charhighte);}
+	anzeige_kleinenadel(31,31+8,angle);
 	//anzeige der gesammtstrecke
 	buffersize=sprintf(buffer,"%.1fm",weite);
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize+70,2*charhighte);}
@@ -366,15 +364,19 @@ void timerseite(){
 	{
 		oled.draw_ASCI(pos+'0',buffersize*charsize,0*charhighte);
 	}
-		
-	buffer[0]=zaehler.Stunden/10;
-	buffer[1]=zaehler.Stunden%10;
+	//Zeit berechnung
+	uint8_t STD = rtc.Timerzahler/3600;
+	uint8_t MIN = (rtc.Timerzahler%3600)/60;
+	uint8_t SEC = rtc.Timerzahler%60;
+	
+	buffer[0]=-STD/3600/10;
+	buffer[1]=STD%10;
 	buffer[2]=':';
-	buffer[3]=zaehler.Minuten/10;
-	buffer[4]=zaehler.Minuten%10;
+	buffer[3]=MIN/10;
+	buffer[4]=MIN%10;
 	buffer[5]=':';
-	buffer[6]=zaehler.Sekunden/10;
-	buffer[7]=zaehler.Sekunden%10;
+	buffer[6]=SEC/10;
+	buffer[7]=SEC%10;
 	for(uint8_t i=0;i<bitsderrtc;i++){
 		if (buffer[i]==':')
 		{
@@ -392,15 +394,19 @@ void Stoppuhrseite(){
 	oled.clearFrame();
 	buffersize=sprintf(buffer,"Stoppuhr: ");
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,0*charhighte);}
+	//Zeit berechnung
+	uint8_t STD = rtc.Stoppuhrzahler/3600;
+	uint8_t MIN = (rtc.Stoppuhrzahler%3600)/60;
+	uint8_t SEC = rtc.Stoppuhrzahler%60;
 	
-	buffer[0]=stoppuhr.Stunden/10;
-	buffer[1]=stoppuhr.Stunden%10;
+	buffer[0]=-STD/3600/10;
+	buffer[1]=STD%10;
 	buffer[2]=':';
-	buffer[3]=stoppuhr.Minuten/10;
-	buffer[4]=stoppuhr.Minuten%10;
+	buffer[3]=MIN/10;
+	buffer[4]=MIN%10;
 	buffer[5]=':';
-	buffer[6]=stoppuhr.Sekunden/10;
-	buffer[7]=stoppuhr.Sekunden%10;
+	buffer[6]=SEC/10;
+	buffer[7]=SEC%10;
 	for(uint8_t i=0;i<bitsderrtc;i++){
 		if (buffer[i]==':')
 		{
@@ -432,6 +438,46 @@ void Pressuresensor(){
 	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,4*charhighte);}
 	//buffersize=sprintf(buffer,"%i",Baro.Wertedruck[2]);
 	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,5*charhighte);}
+}
+
+void Pokedex(uint8_t Number){
+	header(0);
+	bottom(0);
+	switch (Number)
+	{
+	case 6:
+		oled.draw_glurak();
+		break;
+	case 25:
+		oled.draw_pikachu();
+		break;
+	default:
+		break;
+	}
+}
+
+void Wanderseite(){
+	char buffer[20];
+	uint8_t buffersize=0;
+	oled.clearFrame();
+	header(0);
+	bottom(0);
+	
+	Accelerometer.readtempera();
+	Accelerometer.readacc();
+	
+	buffersize=sprintf(buffer,"LSM303D Daten:");
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,1*charhighte);}
+	buffersize=sprintf(buffer,"X: %.1f",Accelerometer.roll*180.0/M_PI);
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,3*charhighte);}
+	buffersize=sprintf(buffer,"Y: %.1f",Accelerometer.pitch*180.0/M_PI);
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,4*charhighte);}
+	buffersize=sprintf(buffer,"Z: %.1i",Accelerometer.achsen_A[2]);
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,5*charhighte);}	
+		
+	buffersize=sprintf(buffer,"%i C",Accelerometer.Tempera);
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,6*charhighte);}
+	
 }
 
 void uhreinstellen(){

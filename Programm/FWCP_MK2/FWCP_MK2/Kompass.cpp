@@ -77,8 +77,8 @@ uint8_t Kompass::HMC5883L_readHeading(){
 	}
 	i2c.twi_stop();
 	achsen[0] =(int16_t) (heading[1] | (heading[0] << 8));
-	achsen[2] =(int16_t) (heading[3] | (heading[2] << 8));
-	achsen[1] =(int16_t) (heading[5] | (heading[4] << 8));
+	achsen[1] =(int16_t) (heading[3] | (heading[2] << 8));
+	achsen[2] =(int16_t) (heading[5] | (heading[4] << 8));
 	sei();
 	if (achsen[0]==-4096 || achsen[1]==-4096 || achsen[2]==-4096)
 	{
@@ -105,14 +105,23 @@ uint8_t Kompass::HMC5883L_readHeading(){
 	return 0;
 }
 
-double Kompass::angle(){
+double Kompass::angle(double roll, double pitch){
 	double angle=0;
+	int16_t temp_M[2];
 	if (HMC5883L_readHeading())
 	{
 		angle=-1.0;
 	}
 	else{
-		angle=atan2f(achsen[0],achsen[2])*180.0/M_PI+180.0;
+		temp_M[0] = achsen[0]*cos(pitch);
+		temp_M[0]+= achsen[1]*sin(roll)*cos(pitch);
+		temp_M[0]+= achsen[2]*cos(roll)*sin(pitch);
+		temp_M[1] = achsen[1]*cos(roll);
+		temp_M[1]+= achsen[2]*sin(roll);
+		//temp_M[0]=achsen[0];
+		//temp_M[1]=achsen[1];
+		angle=atan2(temp_M[0],temp_M[1])*180.0/M_PI+180.0;
+		//Tilt kompensation
 		//deklination
 		angle+=2.35;
 		//Normierung auf %360

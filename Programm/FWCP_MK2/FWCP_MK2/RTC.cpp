@@ -21,6 +21,8 @@ RTC::RTC()
 	WTag=0;
 	WMinuten=40;
 	WStunden=10;
+	Timerzahler=0;
+	Stoppuhrzahler=0;
 	for(uint8_t i=0;i<bitsderrtc;i++){
 		msg_uhr[i]=0;
 		msg_dat[i]=0;
@@ -83,6 +85,19 @@ uint8_t RTC::zeit(){
 		Wecker();
 	}
 	ausgabezeitneu();
+	if (interupts&(1<<Timerlauft))
+	{
+		Timerzahler--;
+		if (Timerzahler<=0)
+		{
+			interupts|=(1<<Alarm);
+			interupts&=~(1<<Timerlauft);
+		}
+	}
+	if (interupts&(1<<Stoppuhrlauft))
+	{
+		Stoppuhrzahler++;
+	}
 	return 0;
 }
 
@@ -206,23 +221,3 @@ void RTC::RTCstop(){
 	TCCR2B &= ~((1<<CS22) | (1<<CS21));
 }
 
-uint8_t RTC::timer(){
-	if (Sekunden>60)
-	{
-		Sekunden=59;
-		Minuten--;
-		if (Minuten>60)
-		{
-			Minuten=59;
-			Stunden--;
-			if (Stunden>24)
-			{
-				Stunden=0;
-				Minuten=0;
-				Sekunden=0;
-				return 1;
-			}
-		}
-	}
-	return 0;
-}

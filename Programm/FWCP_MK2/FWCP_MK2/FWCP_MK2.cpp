@@ -4,7 +4,7 @@
  * Created: 08.10.2015 08:41:30
  *  Author: Lüdemann
  */
-#define VERSIONSNUMMER 2.00
+#define VERSIONSNUMMER 2.10
 #define SPANNUNGSTEILER 2.0069
 
 #include <avr/io.h>
@@ -17,8 +17,6 @@ Kompass kompass;
 
 #include "RTC.h"
 RTC rtc;
-RTC zaehler;
-RTC stoppuhr;
 
 #include "Display.h"
 Display oled;
@@ -35,28 +33,35 @@ Output Sound('B',PORTB3);
 #include "Pressure.h"
 Pressure Baro;
 
+#include "LSM303D.h"
+LSM303D Accelerometer;
+
 #include "ADC.h"
 
 //Anzeigebits
-#define Uhrflag 0
-#define Timerflag 6
-#define Stoppuhrflag 7
-#define Alarmflag 8
-#define Uhrflaggross 10
-#define Weckeranzeigeflag 11
+#define Fahradflag 0
 
-#define Fahradflag 1
+#define Uhrflag 1
+#define Timerflag 2
+#define Stoppuhrflag 3
+#define Alarmflag 4
+#define Uhrflaggross 5
+#define Weckeranzeigeflag 6
 
-#define Kompasflag 2
-#define kompaskalibrierenflag 4
-#define Kompasgaineinstellenflag 5
+#define Kompasflag 7
+#define kompaskalibrierenflag 8
+#define Kompasgaineinstellenflag 9
 
-#define Druckflag 9
+#define Druckflag 10
 
-#define Einstellungsflag 3
+#define Wanderflag 11
+
+#define Einstellungsflag 12
 #define menueflag 13
+
 #define blinkflag 14
 #define refreshdisplay 15
+
 uint16_t anzeige;	//Flagregister fuer die Anziegenschaltung
 uint8_t pos;		//Handler fuer die Einganbe von Zahlen
 
@@ -170,7 +175,7 @@ void initialisierung(){
 	//*********************************
 	rtc.RTCstart();
 	//ausgabe starten
-	anzeige|=(1<<Uhrflag);
+	anzeige|=(1<<Kompasflag);
 	sei();
 }
 
@@ -233,7 +238,8 @@ void anzeigehandler(){
 		}
 		else if ((anzeige&(1<<Kompasflag)))
 		{
-			anzeige_kompass(kompass.angle());
+			Accelerometer.readacc();
+			anzeige_kompass(kompass.angle(Accelerometer.roll,Accelerometer.pitch));
 			anzeige|=(1<<refreshdisplay);
 		}
 		else if ((anzeige&(1<<Fahradflag)))
@@ -248,33 +254,25 @@ void anzeigehandler(){
 				Fahrtzeit++;
 			}
 			strecke+=geschw/3.6;
-			fahradschirm(geschw,kompass.angle(),strecke,maxgeschw, Fahrtzeit);
+			Accelerometer.readacc();
+			fahradschirm(geschw,kompass.angle(Accelerometer.roll,Accelerometer.pitch),strecke,maxgeschw, Fahrtzeit);
 			if (rtc.Sekunden%2)
 			{
 				geschw=0;
 			}
 			anzeige|=(1<<refreshdisplay);
 		}
-		else if ((anzeige&(1<<Einstellungsflag)) && (anzeige&(1<<Timerflag)))
-		{
-			timerseite();
-			anzeige|=(1<<refreshdisplay);
-		}
 		else if ((anzeige&(1<<Stoppuhrflag)))
 		{
-			if ((anzeige&(1<<Einstellungsflag)))
-			{
-				stoppuhr.Sekunden++;
-				stoppuhr.zeit();
-			}
 			Stoppuhrseite();
 			anzeige|=(1<<refreshdisplay);
 		}
 		else if ((anzeige&(1<<Timerflag)))
 		{
-			zaehler.Sekunden--;
-			if(zaehler.timer()){
-				anzeige|=(1<<blinkflag);
+			if (rtc.interupts&(1<<Alarm))
+			{
+				anzeige |= (1<<blinkflag);
+				rtc.interupts &= ~(1<<Alarm);
 			}
 			timerseite();
 			anzeige|=(1<<refreshdisplay);
@@ -282,6 +280,11 @@ void anzeigehandler(){
 		else if ((anzeige&(1<<Druckflag)))
 		{
 			Pressuresensor();
+			anzeige |= (1<<refreshdisplay);
+		}
+		else if ((anzeige&(1<<Wanderflag)))
+		{
+			Wanderseite();
 			anzeige |= (1<<refreshdisplay);
 		}
 		else if ((anzeige&(1<<Weckeranzeigeflag))&&(anzeige&(1<<Einstellungsflag)))
@@ -344,18 +347,11 @@ void eingabehandler(uint8_t taste){
 				
 				case '2':
 				//starten der Stoppuhr APP
-				stoppuhr.Sekunden=0;
-				stoppuhr.Minuten=0;
-				stoppuhr.Stunden=0;
 				anzeige|=(1<<refreshdisplay) | (1<<Stoppuhrflag);
 				break;
 				
 				case '3':
-				//Starten der Timer APP
-				zaehler.Sekunden=0;
-				zaehler.Minuten=0;
-				zaehler.Stunden=0;
-				
+				//Starten der Timer APP	
 				anzeige|=(1<<Timerflag) | (1<<Einstellungsflag);
 				break;
 				
@@ -420,11 +416,8 @@ void eingabehandler(uint8_t taste){
 				break;
 				
 				case '2':
-				//Taschenrechner starten
-				//Monentan deaktiv, da Umstellung der Handler
-				//operation(Flieskommazahleingabe());
-				oled.clearFrame();
-				anzeige|=(1<<refreshdisplay);
+				//Wanderanzeige schalten
+				anzeige|=(1<<refreshdisplay) | (1<<Wanderflag);
 				break;
 				
 				case '3':
@@ -564,108 +557,147 @@ void eingabehandler(uint8_t taste){
 			switch (pos)
 			{
 				case 0:
-				switch (taste)
-				{
-					case '#':
+					switch (taste)
+					{
+						case '#':
+							pos=0;
+							rtc.Timerzahler=0;
+							break;
+						case '*':
+							pos=0;
+							rtc.Timerzahler++;
+							anzeige&=~(1<<Einstellungsflag);
+							rtc.interupts|=(1<<Timerlauft);
+							break;
+						default:
+						rtc.Timerzahler=(taste-'0')*10;
+						pos++;
+						break;
+					}
 					break;
-					case '*':
-					break;
-					default:
-					zaehler.Sekunden+=(taste-'0')*10;
-					pos++;
-					break;
-				}
-				break;
 				case 1:
-				switch (taste)
-				{
-					case '#':
+					switch (taste)
+					{
+						case '#':
+							pos=0;
+							rtc.Timerzahler=0;
+							break;
+						case '*':
+							pos=0;
+							rtc.Timerzahler++;
+							anzeige&=~(1<<Einstellungsflag);
+							rtc.interupts|=(1<<Timerlauft);
+							break;
+						default:
+						rtc.Timerzahler+=(taste-'0');
+						pos++;
+						break;
+					}
 					break;
-					case '*':
-					break;
-					default:
-					zaehler.Sekunden+=(taste-'0');
-					pos++;
-					break;
-				}
-				break;
 				case 2:
-				switch (taste)
-				{
-					case '#':
+					switch (taste)
+					{
+						case '#':
+							pos=0;
+							rtc.Timerzahler=0;
+							break;
+						case '*':
+							pos=0;
+							rtc.Timerzahler++;
+							anzeige&=~(1<<Einstellungsflag);
+							rtc.interupts|=(1<<Timerlauft);;
+							break;
+						default:
+						rtc.Timerzahler+=(taste-'0')*10*60;
+						pos++;
+						break;
+					}
 					break;
-					case '*':
-					break;
-					default:
-					zaehler.Minuten+=(taste-'0')*10;
-					pos++;
-					break;
-				}
-				break;
 				case 3:
-				switch (taste)
-				{
-					case '#':
+					switch (taste)
+					{
+						case '#':
+							pos=0;
+							rtc.Timerzahler=0;
+							break;
+						case '*':
+							pos=0;
+							rtc.Timerzahler++;
+							anzeige&=~(1<<Einstellungsflag);
+							rtc.interupts|=(1<<Timerlauft);
+							break;
+						default:
+						rtc.Timerzahler+=(taste-'0')*60;
+						pos++;
+						break;
+					}
 					break;
-					case '*':
-					break;
-					default:
-					zaehler.Minuten+=(taste-'0');
-					pos++;
-					break;
-				}
-				break;
 				case 4:
-				switch (taste)
-				{
-					case '#':
+					switch (taste)
+					{
+						case '#':
+							pos=0;
+							rtc.Timerzahler=0;
+							break;
+						case '*':
+							pos=0;
+							rtc.Timerzahler++;
+							anzeige&=~(1<<Einstellungsflag);
+							rtc.interupts|=(1<<Timerlauft);
+							break;
+						default:
+						rtc.Timerzahler+=(taste-'0')*10*3600;
+						pos++;
+						break;
+					}
 					break;
-					case '*':
-					break;
-					default:
-					zaehler.Stunden+=(taste-'0')*10;
-					pos++;
-					break;
-				}
-				break;
 				case 5:
-				switch (taste)
-				{
-					case '#':
+					switch (taste)
+					{
+						case '#':
+							pos=0;
+							rtc.Timerzahler=0;
+							break;
+						case '*':
+							pos=0;
+							rtc.Timerzahler++;
+							anzeige&=~(1<<Einstellungsflag);
+							rtc.interupts|=(1<<Timerlauft);
+							break;
+						default:
+						rtc.Timerzahler+=(taste-'0')*3600;
+						pos++;
+						break;
+					}
+					pos=0;
+					rtc.Timerzahler++;
+					anzeige&=~(1<<Einstellungsflag);
+					rtc.interupts|=(1<<Timerlauft);
 					break;
-					case '*':
+				default:
 					break;
-					default:
-					zaehler.Stunden+=(taste-'0');
-					pos++;
-					break;
-				}
-				pos=0;
-				anzeige&=~(1<<Einstellungsflag);
-				break;
 			}
 		}
 		else if ((anzeige&(1<<Stoppuhrflag)))
 		{
 			if (taste=='*')
 			{
-				if ((anzeige&(1<<Einstellungsflag)))
+				if ((rtc.interupts&(1<<Stoppuhrlauft)))
 				{
-					anzeige&=~(1<<Einstellungsflag);
+					rtc.interupts&=~(1<<Stoppuhrlauft);
 				}
 				else{
-					anzeige|=(1<<Einstellungsflag);
+					rtc.interupts|=(1<<Stoppuhrlauft);
 				}
 			}
 			else if (taste=='0')
 			{
-				stoppuhr.Sekunden=0;
-				stoppuhr.Minuten=0;
-				stoppuhr.Stunden=0;
+				rtc.Stoppuhrzahler=0;
 			}
 			else if (taste=='#')
 			{
-				anzeige&=~((1<<Stoppuhrflag)|(1<<Einstellungsflag));
+				anzeige&=~((1<<Stoppuhrflag));
+				rtc.interupts&=~(1<<Stoppuhrlauft);
 				anzeige|=(1<<menueflag);
 			}
 		}
@@ -766,6 +798,7 @@ void eingabehandler(uint8_t taste){
 			if (taste=='#')
 			{
 				anzeige&=~((1<<Timerflag)|(1<<blinkflag));
+				rtc.interupts&=~((1<<Timerlauft)|(1<<Alarm));
 				oled.invert(0);	//fuer den Fall, dass es invertiert blieb (50% der Faelle)
 				LED.off();
 				Vibrationsmotor.off();
@@ -789,6 +822,14 @@ void eingabehandler(uint8_t taste){
 				else{
 					LED.on();
 				}
+			}
+		}
+		else if ((anzeige&(1<<Wanderflag)))
+		{
+			if (taste=='#')
+			{
+				anzeige &= ~(1<<Wanderflag);
+				anzeige |= (1<<menueflag);
 			}
 		}
 		else if ((anzeige&(1<<Weckeranzeigeflag)))
@@ -831,6 +872,7 @@ void eingabehandler(uint8_t taste){
 					if ((rtc.interupts&(1<<Weckerein)))
 					{
 						rtc.interupts &= ~((1<<Weckerein)|(1<<Weckeractiv));
+						rtc.interupts &= ~(1<<Alarm);
 					}
 				}
 			}

@@ -173,6 +173,12 @@
     <Compile Include="Kompass.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="LSM303D.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="LSM303D.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Output.cpp">
       <SubType>compile</SubType>
     </Compile>

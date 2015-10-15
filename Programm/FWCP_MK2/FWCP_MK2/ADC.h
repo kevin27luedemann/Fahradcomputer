@@ -32,8 +32,18 @@ uint16_t ADC_Read_Avg( uint8_t channel, uint8_t nsamples )
 double batterie;
 int8_t Batteriestatus(){
 	uint16_t ADCwert=ADC_Read(0);
-	batterie = (ADCwert/1023.0)*3.3*SPANNUNGSTEILER;
-	return ((batterie-3.0)/(4.2-3.0)*100);
+	batterie = (ADCwert/1023.0)*3.29*SPANNUNGSTEILER;
+	float stat = ((batterie-3.0)/(4.2-3.0)*100);
+	uint8_t temp =(uint8_t) (stat*10);
+	if (temp%10>=5)
+	{
+		stat = (uint8_t)stat+1;
+	}
+	else
+	{
+		stat = (uint8_t)stat;
+	}
+	return stat;
 }
 
 #endif /* ADC_H_ */

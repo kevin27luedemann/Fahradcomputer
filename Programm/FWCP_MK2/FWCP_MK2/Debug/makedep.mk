@@ -12,6 +12,8 @@ Interface.cpp
 
 Kompass.cpp
 
+LSM303D.cpp
+
 Output.cpp
 
 Pressure.cpp

@@ -64,7 +64,7 @@ public:
 	void HMC5883L_command(uint8_t adresse, uint8_t command);
 	void initialize_HMC5883L();
 	uint8_t HMC5883L_readHeading();
-	double angle();
+	double angle(double roll, double pitch);
 	void kallibrierung_ruecksetzen();
 protected:
 private:
