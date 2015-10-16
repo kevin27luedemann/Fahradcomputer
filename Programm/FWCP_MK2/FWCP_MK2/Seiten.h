@@ -477,18 +477,29 @@ void Wanderseite(){
 	Accelerometer.readtempera();
 	Accelerometer.readacc();
 	
-	buffersize=sprintf(buffer,"LSM303D Daten:");
-	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,1*charhighte);}
-	buffersize=sprintf(buffer,"X: %.1f",Accelerometer.roll*180.0/M_PI);
+	//Linse
+	//Range: Page 1 to Page 6 (8 bis (7*8-1) 53)
+	//ganz rechts SSDWIDTH-(53-8)
+	#define libelle	(53.0-8.0)
+	oled.drawRectangle(SSD1306_WIDTH-libelle,8,SSD1306_WIDTH-1,53,0);
+	oled.drawVLine(SSD1306_WIDTH-libelle/2.0,8,libelle);
+	oled.drawHLine(SSD1306_WIDTH-libelle,SSD1306_HEIGHT/2,libelle);
+	//Draw libelle uber die Winkel max ist 90 und -90 in beide richtungen
+	#define bereichgroese libelle/M_PI*2.0
+	#define breite 4
+	#define xpos SSD1306_WIDTH-libelle/2.0-breite/2.0
+	#define ypos SSD1306_HEIGHT/2.0-breite/2.0
+	float rollpix = Accelerometer.roll*bereichgroese;
+	float pitchpix = Accelerometer.pitch*bereichgroese;
+	oled.drawRectangle(xpos-rollpix,ypos+pitchpix,xpos+breite-rollpix,ypos+breite+pitchpix,1);
+
+	//Text debugging
+	buffersize=sprintf(buffer,"r:%.1f",Accelerometer.roll*180.0/M_PI);
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,2*charhighte);}
+	buffersize=sprintf(buffer,"p:%.1f",Accelerometer.pitch*180.0/M_PI);
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,3*charhighte);}
-	buffersize=sprintf(buffer,"Y: %.1f",Accelerometer.pitch*180.0/M_PI);
-	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,4*charhighte);}
-	buffersize=sprintf(buffer,"Z: %.1i",Accelerometer.achsen_A[2]);
-	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,5*charhighte);}	
-		
 	buffersize=sprintf(buffer,"%i C",Accelerometer.Tempera);
-	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,6*charhighte);}
-	
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,5*charhighte);}
 }
 
 void uhreinstellen(){

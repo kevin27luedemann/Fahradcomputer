@@ -188,8 +188,8 @@ void initialisierung(){
 	//*********************************
 	rtc.RTCstart();
 	//ausgabe starten
-	rtc.interupts|=(1<<minuteninterupt)|(1<<sekundeninterupt);
-	anzeige|=(1<<Uhrflaggross);
+	rtc.interupts|=(0<<minuteninterupt)|(1<<sekundeninterupt);
+	anzeige|=(1<<Wanderflag);
 	sei();
 }
 
