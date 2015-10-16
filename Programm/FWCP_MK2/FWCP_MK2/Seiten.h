@@ -184,12 +184,12 @@ void menue_uhr(){
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,1*charhighte);}
 	buffersize=sprintf(buffer,"3:Timer");
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,2*charhighte);}
-	buffersize=sprintf(buffer,"4:Alarm");
+	buffersize=sprintf(buffer,"4:Wecker");
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,3*charhighte);}
 	buffersize=sprintf(buffer,"5:Uhr gross");
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,4*charhighte);}
-	buffersize=sprintf(buffer,"6:Wecker");
-	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,5*charhighte);}
+	//buffersize=sprintf(buffer,"6:Wecker");
+	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,5*charhighte);}
 	//buffersize=sprintf(buffer,"7:Uhr einstellen");
 	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,6*charhighte);}
 }
@@ -710,6 +710,13 @@ void uhreinstellen(){
 	
 	rtc.Sekunden		= 0;
 	rtc.HundSekunden	= 0;
+	//speichern der neuen Zeit im EEPROM
+	EEPROM_Write(EEMINUTEN,rtc.Minuten);
+	EEPROM_Write(EESTUNDEN,rtc.Stunden);
+	EEPROM_Write(EETAGE,rtc.Tag);
+	EEPROM_Write(EEMONAT,rtc.Monat);
+	EEPROM_Write(EEJAHR,rtc.Jahr);
+	
 	oled.clearFrame();
 	rtc.ausgabedatumneu();
 	rtc.ausgabezeitneu();

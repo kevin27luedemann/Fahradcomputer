@@ -45,7 +45,8 @@ C_SRCS +=  \
 ../LSM303D.cpp \
 ../Output.cpp \
 ../Pressure.cpp \
-../RTC.cpp
+../RTC.cpp \
+../SOUND.cpp
 
 
 PREPROCESSING_SRCS += 
@@ -63,7 +64,8 @@ Kompass.o \
 LSM303D.o \
 Output.o \
 Pressure.o \
-RTC.o
+RTC.o \
+SOUND.o
 
 OBJS_AS_ARGS +=  \
 Display.o \
@@ -74,7 +76,8 @@ Kompass.o \
 LSM303D.o \
 Output.o \
 Pressure.o \
-RTC.o
+RTC.o \
+SOUND.o
 
 C_DEPS +=  \
 Display.d \
@@ -85,7 +88,8 @@ Kompass.d \
 LSM303D.d \
 Output.d \
 Pressure.d \
-RTC.d
+RTC.d \
+SOUND.d
 
 C_DEPS_AS_ARGS +=  \
 Display.d \
@@ -96,7 +100,8 @@ Kompass.d \
 LSM303D.d \
 Output.d \
 Pressure.d \
-RTC.d
+RTC.d \
+SOUND.d
 
 OUTPUT_FILE_PATH +=FWCP_MK2.elf
 
@@ -112,6 +117,8 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
 
 
 

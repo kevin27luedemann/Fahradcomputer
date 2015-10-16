@@ -10,7 +10,6 @@
 #define __RTC_H__
 
 //Konstanten
-//#define TIMER2RTCTIME 112
 #define TIMER2RTCTIME 0
 #define bitsderrtc 8
 

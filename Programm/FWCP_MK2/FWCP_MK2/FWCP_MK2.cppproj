@@ -149,6 +149,9 @@
     <Compile Include="Display.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="EEPROM.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="fonts.h">
       <SubType>compile</SubType>
     </Compile>
@@ -201,6 +204,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Seiten.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SOUND.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SOUND.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

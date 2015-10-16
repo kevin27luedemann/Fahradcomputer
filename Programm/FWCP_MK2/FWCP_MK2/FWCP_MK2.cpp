@@ -6,6 +6,7 @@
  */
 #define VERSIONSNUMMER 2.10
 #define SPANNUNGSTEILER 2.0069
+#define F_CPU 8000000
 
 #include <avr/io.h>
 #include <stdlib.h>
@@ -36,6 +37,9 @@ Pressure Baro;
 #include "LSM303D.h"
 LSM303D Accelerometer;
 
+#include "SOUND.h"
+SOUND Lautsprecher;
+
 #include "ADC.h"
 
 //Anzeigebits
@@ -65,11 +69,13 @@ LSM303D Accelerometer;
 uint16_t anzeige;	//Flagregister fuer die Anziegenschaltung
 uint8_t pos;		//Handler fuer die Einganbe von Zahlen
 
+//Einbau der Festspeicherung von Einstellungswerten im EEPROM
+#include "EEPROM.h"
 //Ausgelagerte Sammlung der einzelnen Seitenlayouts
 #include "Seiten.h"
 
 ISR(TIMER2_OVF_vect){	//Vektor fuer die RTC
-	TCNT2=TIMER2RTCTIME;
+	//TCNT2=TIMER2RTCTIME;
 	rtc.Sekunden++;
 	rtc.interupts|= (1<<sekundeninterupt);
 }
@@ -172,11 +178,18 @@ void initialisierung(){
 	//uhreinstellen();
 	//*************************************************
 	//Nur Test, damit es schneller geht beim Start
-	rtc.dummyeinst();
+	rtc.Sekunden= 0;
+	rtc.Minuten	= EEPROM_Read(EEMINUTEN);
+	rtc.Stunden	= EEPROM_Read(EESTUNDEN);
+	rtc.Tag		= EEPROM_Read(EETAGE);
+	rtc.Monat	= EEPROM_Read(EEMONAT);
+	rtc.Jahr	= EEPROM_Read(EEJAHR);
+	//rtc.dummyeinst();
 	//*********************************
 	rtc.RTCstart();
 	//ausgabe starten
-	anzeige|=(1<<Uhrflag);
+	rtc.interupts|=(1<<minuteninterupt)|(1<<sekundeninterupt);
+	anzeige|=(1<<Uhrflaggross);
 	sei();
 }
 
@@ -365,9 +378,8 @@ void eingabehandler(uint8_t taste){
 				break;
 				
 				case '4':
-				//Starten der Alarmapp, momentan nicht implementiert
-				oled.clearFrame();
-				anzeige|=(1<<refreshdisplay);
+				rtc.interupts |=(1<<minuteninterupt);
+				anzeige |= (1<<Weckeranzeigeflag);
 				break;
 				
 				case '5':
@@ -375,10 +387,7 @@ void eingabehandler(uint8_t taste){
 				rtc.interupts |=(1<<minuteninterupt);
 				anzeige |=(1<<Uhrflaggross) | (1<<refreshdisplay);
 				break;
-				case '6':
-				rtc.interupts |=(1<<minuteninterupt);
-				anzeige |= (1<<Weckeranzeigeflag);
-				break;
+				
 				default:
 				//menueflag erneu setzen
 				anzeige|=(1<<menueflag)|(1<<Uhrflag);
@@ -402,7 +411,7 @@ void eingabehandler(uint8_t taste){
 				case '3':
 				//dies ist eine der wenigen Funktinen, die die Handler Strucktur nicht anwenden, da sie die rtc anhaellt
 				uhreinstellen();
-				anzeige|=(1<<Uhrflag);
+				anzeige|=(1<<Uhrflaggross);
 				break;
 				case '4':
 				anzeige |= (1<<Einstellungsflag) | (1<<Weckeranzeigeflag);
@@ -827,9 +836,11 @@ void eingabehandler(uint8_t taste){
 				if (LED.ison())
 				{
 					LED.off();
+					Lautsprecher.off();
 				}
 				else{
 					LED.on();
+					Lautsprecher.on();
 				}
 			}
 		}
