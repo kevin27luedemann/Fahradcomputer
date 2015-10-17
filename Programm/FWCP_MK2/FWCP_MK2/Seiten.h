@@ -491,7 +491,10 @@ void Wanderseite(){
 	#define ypos SSD1306_HEIGHT/2.0-breite/2.0
 	float rollpix = Accelerometer.roll*bereichgroese;
 	float pitchpix = Accelerometer.pitch*bereichgroese;
-	oled.drawRectangle(xpos-rollpix,ypos+pitchpix,xpos+breite-rollpix,ypos+breite+pitchpix,1);
+	if (rollpix<libelle/2.0 && pitchpix<libelle/2.0)
+	{
+		oled.drawRectangle(xpos-rollpix,ypos+pitchpix,xpos+breite-rollpix,ypos+breite+pitchpix,1);
+	}
 
 	//Text debugging
 	buffersize=sprintf(buffer,"r:%.1f",Accelerometer.roll*180.0/M_PI);

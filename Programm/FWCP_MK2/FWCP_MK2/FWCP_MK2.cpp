@@ -184,11 +184,12 @@ void initialisierung(){
 	rtc.Tag		= EEPROM_Read(EETAGE);
 	rtc.Monat	= EEPROM_Read(EEMONAT);
 	rtc.Jahr	= EEPROM_Read(EEJAHR);
+	rtc.ausgabedatumneu();
 	//rtc.dummyeinst();
 	//*********************************
 	rtc.RTCstart();
 	//ausgabe starten
-	rtc.interupts|=(0<<minuteninterupt)|(1<<sekundeninterupt);
+	rtc.interupts|=(0<<minuteninterupt)|(0<<sekundeninterupt);
 	anzeige|=(1<<Wanderflag);
 	sei();
 }
