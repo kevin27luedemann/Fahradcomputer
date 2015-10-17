@@ -16,7 +16,11 @@ Interface::Interface()
 	//Pullups ausschalten
 	PORTC &= ~((1<<PINC2) | (1<<PINC3));
 	DDRC |= (1<<PINC2) | (1<<PINC3);
-	DDRD &= ~((1<<PIND2) | (1<<PIND3) | (1<<PIND4));			//Restliche Pins als Eingaenge schalten
+	DDRD &= ~((1<<PIND2) | (1<<PIND3) | (1<<PIND4));//Restliche Pins als Eingaenge schalten
+	for (uint8_t i = 0;i<12;i++)
+	{
+		stat[i]=0;
+	}
 } //Interface
 
 // default destructor
@@ -36,6 +40,24 @@ uint8_t Interface::debounce(volatile uint8_t *port, uint8_t pin)
 			_delay_us(10);
 			return 1;
 		}
+	}
+	return 0;
+}
+
+uint8_t Interface::paradeb(volatile uint8_t *port, uint8_t pin, uint8_t *tasterstat)
+{
+	if ( (*port & (1 << pin)) )
+	{
+		
+		*tasterstat = 1;
+	}
+	else if ((*tasterstat==1) && !(*port & (1 << pin)))
+	{
+		*tasterstat=0;
+		return 1;
+	}
+	else{
+		*tasterstat=0;
 	}
 	return 0;
 }
@@ -165,14 +187,14 @@ uint8_t Interface::Taster(){
 	//erste Zeile
 	PORTC |= (1<<PORTC3);
 	_delay_us(1);
-	if(debounce(&PIND,PIND4)){
+	if(paradeb(&PIND,PIND4,&stat[2])){//debounce(&PIND,PIND4)){
 		taste = '3';
 	}
-	else if (debounce(&PIND,PIND3))
+	else if (paradeb(&PIND,PIND3,&stat[1]))//debounce(&PIND,PIND3))
 	{
 		taste = '2';
 	}
-	else if (debounce(&PIND,PIND2))
+	else if (paradeb(&PIND,PIND2,&stat[0]))//debounce(&PIND,PIND2))
 	{
 		taste = '1';
 	}
@@ -181,14 +203,14 @@ uint8_t Interface::Taster(){
 	//zweite Zeile
 	PORTC |= (1<<PORTC2);
 	_delay_us(1);
-	if(debounce(&PIND,PIND4)){
+	if(paradeb(&PIND,PIND4,&stat[5])){//debounce(&PIND,PIND4)){
 		taste = '6';
 	}
-	else if (debounce(&PIND,PIND3))
+	else if (paradeb(&PIND,PIND3,&stat[4]))//debounce(&PIND,PIND3))
 	{
 		taste = '5';
 	}
-	else if (debounce(&PIND,PIND2))
+	else if (paradeb(&PIND,PIND2,&stat[3]))//debounce(&PIND,PIND2))
 	{
 		taste = '4';
 	}
@@ -197,14 +219,14 @@ uint8_t Interface::Taster(){
 	//dritte Zeile
 	PORTD |= (1<<PORTD6);
 	_delay_us(1);
-	if(debounce(&PIND,PIND4)){
+	if(paradeb(&PIND,PIND4,&stat[8])){//debounce(&PIND,PIND4)){
 		taste = '9';
 	}
-	else if (debounce(&PIND,PIND3))
+	else if (paradeb(&PIND,PIND3,&stat[7]))//debounce(&PIND,PIND3))
 	{
 		taste = '8';
 	}
-	else if (debounce(&PIND,PIND2))
+	else if (paradeb(&PIND,PIND2,&stat[6]))//debounce(&PIND,PIND2))
 	{
 		taste = '7';
 	}
@@ -213,14 +235,14 @@ uint8_t Interface::Taster(){
 	//vierte Zeile
 	PORTD |= (1<<PORTD5);
 	_delay_us(1);
-	if(debounce(&PIND,PIND4)){
+	if(paradeb(&PIND,PIND4,&stat[11])){//debounce(&PIND,PIND4)){
 		taste = '#';
 	}
-	else if (debounce(&PIND,PIND3))
+	else if (paradeb(&PIND,PIND3,&stat[10]))//debounce(&PIND,PIND3))
 	{
 		taste = '0';
 	}
-	else if (debounce(&PIND,PIND2))
+	else if (paradeb(&PIND,PIND2,&stat[9]))//debounce(&PIND,PIND2))
 	{
 		taste = '*';
 	}

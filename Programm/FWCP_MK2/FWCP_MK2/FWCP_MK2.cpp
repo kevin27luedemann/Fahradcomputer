@@ -67,11 +67,16 @@ SOUND Lautsprecher;
 #define refreshdisplay 15
 
 uint16_t anzeige;	//Flagregister fuer die Anziegenschaltung
+
+#define updaterate 0
+
+uint8_t statusreg;
 uint8_t pos;		//Handler fuer die Einganbe von Zahlen
 
 //Einbau der Festspeicherung von Einstellungswerten im EEPROM
 #include "EEPROM.h"
 //Ausgelagerte Sammlung der einzelnen Seitenlayouts
+uint8_t FPS;
 #include "Seiten.h"
 
 ISR(TIMER2_OVF_vect){	//Vektor fuer die RTC
@@ -79,6 +84,12 @@ ISR(TIMER2_OVF_vect){	//Vektor fuer die RTC
 	rtc.Sekunden++;
 	rtc.interupts|= (1<<sekundeninterupt);
 }
+
+ISR(TIMER1_COMPA_vect){
+	statusreg |= (1<<updaterate);
+}
+
+
 
 #define zeitproachtzaehlungen 0.001024
 #define zaehlungenprozeiteinheit 8.0
@@ -123,6 +134,7 @@ uint8_t reed_debounce(volatile uint8_t *port, uint8_t pin)
 }
 
 void initialisierung();
+void inittimer(uint8_t stat);
 void maininterupthandler();
 void anzeigehandler();
 void eingabehandler(uint8_t taste);
@@ -146,13 +158,15 @@ void initialisierung(){
 	//nullen der Flagregister
 	rtc.interupts=0;
 	anzeige=0;
+	statusreg=0;
 	pos=0;
+	FPS=0;
 	//initialisieren des Zaehler fuer die Winkelgeschw sowie den Timer
 	geschw=0;
 	strecke = 0;
 	maxgeschw = 0;
 	Fahrtzeit = 0;
-	TCNT1=0;
+	inittimer(0);
 	//Tastatur inm Contruktor initialisiert
 	//Eingang fuer den Reedkontak schalten mit internem Pullup
 	DDRA |= ((1<<PORTA6));
@@ -190,8 +204,32 @@ void initialisierung(){
 	rtc.RTCstart();
 	//ausgabe starten
 	rtc.interupts|=(0<<minuteninterupt)|(0<<sekundeninterupt);
-	anzeige|=(1<<Wanderflag);
+	inittimer(2);
+	anzeige|=(1<<Uhrflag);
 	sei();
+}
+
+/*
+formel: f=f_CPU/(2*N*(1+OCR1A))
+		N*(1+OCR1A)	= f_CPU/(f*2)
+					= 8000000/(24*2)
+					= 166667
+		=> N=64 bei OCR1A=2604-1 bei f=24
+		=> CS11 und CS10
+*/
+void inittimer(uint8_t stat){
+	TCNT1 = 0;
+	if (stat==1)
+	{
+		TIMSK1 = 0;
+		TCCR1B = ((1<<CS12) | (1<<CS10));
+	}
+	else if (stat==2)
+	{
+		OCR1A = 2603*2;
+		TCCR1B = (1<<WGM12)|(1<<CS11)|(1<<CS10);
+		TIMSK1 = (1<<OCIE1A);
+	}
 }
 
 void maininterupthandler(){
@@ -229,6 +267,33 @@ void maininterupthandler(){
 
 void anzeigehandler(){
 	//Handler fuer 1Hz Flag
+	if ((statusreg&(1<<updaterate)))
+	{
+		FPS++;
+		if ((anzeige&(1<<Kompasflag)))
+		{
+			Accelerometer.readacc();
+			anzeige_kompass(kompass.angle(Accelerometer.roll,Accelerometer.pitch));
+			anzeige|=(1<<refreshdisplay);
+		}
+		else if ((anzeige&(1<<Fahradflag)))
+		{
+			Accelerometer.readacc();
+			fahradschirm(geschw,kompass.angle(Accelerometer.roll,Accelerometer.pitch),strecke,maxgeschw, Fahrtzeit);
+			anzeige|=(1<<refreshdisplay);
+		}
+		else if ((anzeige&(1<<Druckflag)))
+		{
+			Pressuresensor();
+			anzeige |= (1<<refreshdisplay);
+		}
+		else if ((anzeige&(1<<Wanderflag)))
+		{
+			Wanderseite();
+			anzeige |= (1<<refreshdisplay);
+		}
+		statusreg &= ~(1<<updaterate);
+	}
 	if ((rtc.interupts & (1<<sekundeninterupt)))
 	{
 		rtc.zeit();
@@ -321,6 +386,7 @@ void anzeigehandler(){
 			LED.toggle();
 			Vibrationsmotor.on();
 		}
+		FPS=0;
 		rtc.interupts&=~(1<<sekundeninterupt);
 	}
 	//Minuteninterrupt
@@ -412,6 +478,7 @@ void eingabehandler(uint8_t taste){
 				case '3':
 				//dies ist eine der wenigen Funktinen, die die Handler Strucktur nicht anwenden, da sie die rtc anhaellt
 				uhreinstellen();
+				rtc.interupts |= (1<<minuteninterupt);
 				anzeige|=(1<<Uhrflaggross);
 				break;
 				case '4':
@@ -431,7 +498,7 @@ void eingabehandler(uint8_t taste){
 				case '1':
 				anzeige|=(1<<Fahradflag);
 				//starten des Timers fuer die geschwindigkeit
-				TCCR1B |= ((1<<CS12) | (1<<CS10));
+				inittimer(1);
 				break;
 				
 				case '2':
@@ -771,7 +838,7 @@ void eingabehandler(uint8_t taste){
 			{
 				anzeige&=~(1<<Fahradflag);
 				anzeige|=(1<<menueflag);
-				TCCR1B &= ~((1<<CS12) | (1<<CS10));
+				inittimer(2);
 			}
 			else if (taste=='*')
 			{
