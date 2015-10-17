@@ -35,29 +35,25 @@ void Pressure::LPS25H_initialize(){
 	uint8_t temp=0;
 	//internal averages Pressure and Temperature (both 8)
 	temp &= ~((1<<AVGT1) | (1<<AVGT0) | (1<<AVGP1) | (1<<AVGP0)); 
-	LPS25H_command(RES_CONF,temp);
-	temp=0;
+	//LPS25H_command(RES_CONF,temp);
 	//Enable device and set a single shot as well as Lock while reading
-	temp |= (1<<PD) | (1<<BDU) | (1<<ODR1);
-	LPS25H_command(CTRL_REG1,temp);
-	temp=0;
+	LPS25H_command(CTRL_REG1,(1<<PD) | (1<<BDU) | (1<<ODR1));
 	//FIFO on, no watermark no reset, reboot memory content, FIFO MEAN Mode
-	temp |= (1<<BOOT) | (1<<FIFO_EN) | (1<<FIFO_MEAN_DEC);
-	LPS25H_command(CTRL_REG2,temp);
-	temp=0;
+	//LPS25H_command(CTRL_REG2,(1<<BOOT) | (1<<FIFO_EN) | (1<<FIFO_MEAN_DEC));
 	//FIFO Controll register for MEAN Mode und 8 moving averages
-	temp|=(1<<F_MODE2) | (1<<F_MODE1) | (1<<WTM_POINT0) | (1<<WTM_POINT1) | (1<<WTM_POINT2);
-	LPS25H_command(FIFO_CTRL,temp);
+	//LPS25H_command(FIFO_CTRL,(1<<F_MODE2) | (1<<F_MODE1) | (1<<WTM_POINT0) | (1<<WTM_POINT1) | (1<<WTM_POINT2));
 	//CTRL_REG3 not set
 	//CTRL_REG4 not set
 	//INTERRUPT_CFG not set
 	//no threshold used
-	//no Pressure offset used
+	//no Pressure offset used but reset
+	LPS25H_command(RPDS_L,0);
+	LPS25H_command(RPDS_H,0);
 	
 }
 
 void Pressure::READ_Pressure_once(){
-	uint8_t Wertedruck[3];
+	//uint8_t Wertedruck[3];
 	cli();
 	i2c.twi_start();
 	i2c.twi_write(LPS25H_SA1_Write);
@@ -75,9 +71,9 @@ void Pressure::READ_Pressure_once(){
 		}
 	}
 	i2c.twi_stop();
-	Press = ((double)Wertedruck[2]*65536);
-	Press += ((double)Wertedruck[1]*256);
-	Press += (double)Wertedruck[0];
+	Press = (Wertedruck[2]*65536.0);
+	Press += (Wertedruck[1]*256.0);
+	Press += Wertedruck[0];
 	//Press = (Wertedruck[0] + (Wertedruck[1]*256) + (Wertedruck[2]*65536));
 	Press/=4096.0;
 	sei();
@@ -85,7 +81,7 @@ void Pressure::READ_Pressure_once(){
 
 void Pressure::READ_Temperature(){
 	cli();
-	uint8_t Wert[2];
+	//uint8_t Wert[2];
 	i2c.twi_start();
 	i2c.twi_write(LPS25H_SA1_Write);
 	i2c.twi_write(TEMP_OUT_L|(1<<autoincrement));

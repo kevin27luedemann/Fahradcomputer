@@ -19,7 +19,7 @@
 //Register and Bits (at the Moment only Accelerometer)
 //Temperature output (only active after request)
 #define TEMP_OUT_L_A	0x05
-#define TEMP_OUT_H_H	0x06
+#define TEMP_OUT_H_A	0x06
 #define STATUS_M	0x07	//Status Register for Temperature an Megnetometer (not in use)
 //Outputregister for Magnetometer not in use
 

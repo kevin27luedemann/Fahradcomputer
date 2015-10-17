@@ -195,7 +195,6 @@ void menue_uhr(){
 }
 
 void uhranzeigen(){
-	Baro.READ_Temperature();
 	uint8_t buffersize;
 	char Buffer[20];
 	oled.clearFrame();
@@ -212,8 +211,6 @@ void uhranzeigen(){
 			oled.draw_number16x16(Buffer[i]-'0',70+i*numbersmalsize,2.5*charhighte);
 		}
 	}
-	buffersize=sprintf(Buffer,"%.1f C",(double)Baro.Tempera);
-	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(Buffer[i],70+i*charsize,5*charhighte);}
 }
 
 void uhranzeigenmin(){
@@ -342,8 +339,8 @@ void Gaineinstellen(){
 }
 
 void anzeige_kompass(double winkel){
-	Baro.READ_Pressure_once();
-	Baro.READ_Temperature();
+	//Baro.READ_Pressure_once();
+	//Baro.READ_Temperature();
 	oled.clearFrame();
 	char buffer[20];
 	uint8_t buffersize=0;
@@ -351,11 +348,11 @@ void anzeige_kompass(double winkel){
 	for(uint8_t i=0;i<bitsderrtc;i++){oled.draw_ASCI(rtc.msg_uhr[i],65+i*charsize,0*charhighte);}
 	for(uint8_t i=0;i<bitsderrtc;i++){oled.draw_ASCI(rtc.msg_dat[i],65+i*charsize,7*charhighte);}
 	//Azeige der Hoehe ueber Altitude
-	buffersize=sprintf(buffer,"H: %.1f m",(double)Baro.altitude(Baro.Press));
-	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],65+i*charsize,1.33*charhighte);}
+	//buffersize=sprintf(buffer,"H: %.1f m",(double)Baro.altitude(Baro.Press));
+	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],65+i*charsize,1.33*charhighte);}
 	//Anzeige der Temperatur
-	buffersize=sprintf(buffer,"%.1f C",(double)Baro.Tempera);
-	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],65+i*charsize,5*charhighte);}
+	//buffersize=sprintf(buffer,"%.1f C",(double)Baro.Tempera);
+	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],65+i*charsize,5*charhighte);}
 	//winkel als Zahl ausgeben
 	buffersize=sprintf(buffer,"angle=%.0f",winkel);
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],65+i*charsize,6*charhighte);}
@@ -430,8 +427,8 @@ void Stoppuhrseite(){
 }
 
 void Pressuresensor(){
-	Baro.READ_Pressure_once();
-	Baro.READ_Temperature();
+	//Baro.READ_Pressure_once();
+	//Baro.READ_Temperature();
 	char buffer[20];
 	uint8_t buffersize=0;
 	oled.clearFrame();
@@ -439,12 +436,12 @@ void Pressuresensor(){
 	bottom(0);
 	buffersize=sprintf(buffer,"LPS25H Daten:");
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,2*charhighte);}
-	buffersize=sprintf(buffer,"%.1f HPa",Baro.Press);
-	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,3*charhighte);}
-	buffersize=sprintf(buffer,"Hoehe: %.1f m",(double)Baro.altitude(Baro.Press));
-	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,4*charhighte);}
-	buffersize=sprintf(buffer,"%.1f C",(double)Baro.Tempera);
-	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,6*charhighte);}
+	//buffersize=sprintf(buffer,"%i HPa",Baro.Wertedruck[0]);
+	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,3*charhighte);}
+	//buffersize=sprintf(buffer,"Hoehe: %.1f m",(double)Baro.altitude(Baro.Press));
+	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,4*charhighte);}
+	//buffersize=sprintf(buffer,"%.1f C",(double)Baro.Tempera);
+	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,6*charhighte);}
 	//buffersize=sprintf(buffer,"%i",Baro.Wertedruck[1]);
 	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,4*charhighte);}
 	//buffersize=sprintf(buffer,"%i",Baro.Wertedruck[2]);

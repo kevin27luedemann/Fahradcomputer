@@ -7,6 +7,7 @@
 #define VERSIONSNUMMER 2.10
 #define SPANNUNGSTEILER 2.0069
 #define F_CPU 8000000
+#define BATMIN 3.6
 
 #include <avr/io.h>
 #include <stdlib.h>
@@ -31,11 +32,11 @@ Output Vibrationsmotor('B',PORTB2);
 Output IRLED('D',PORTD7);
 Output Sound('B',PORTB3);
 
-#include "Pressure.h"
-Pressure Baro;
-
 #include "LSM303D.h"
 LSM303D Accelerometer;
+
+//#include "Pressure.h"
+//Pressure Baro;
 
 #include "SOUND.h"
 SOUND Lautsprecher;
@@ -88,8 +89,6 @@ ISR(TIMER2_OVF_vect){	//Vektor fuer die RTC
 ISR(TIMER1_COMPA_vect){
 	statusreg |= (1<<updaterate);
 }
-
-
 
 #define zeitproachtzaehlungen 0.001024
 #define zaehlungenprozeiteinheit 8.0
@@ -280,12 +279,8 @@ void anzeigehandler(){
 		{
 			Accelerometer.readacc();
 			fahradschirm(geschw,kompass.angle(Accelerometer.roll,Accelerometer.pitch),strecke,maxgeschw, Fahrtzeit);
+			//fahradschirm(geschw,kompass.angle(0,0),strecke,maxgeschw, Fahrtzeit);
 			anzeige|=(1<<refreshdisplay);
-		}
-		else if ((anzeige&(1<<Druckflag)))
-		{
-			Pressuresensor();
-			anzeige |= (1<<refreshdisplay);
 		}
 		else if ((anzeige&(1<<Wanderflag)))
 		{
@@ -343,6 +338,7 @@ void anzeigehandler(){
 			strecke+=geschw/3.6;
 			Accelerometer.readacc();
 			fahradschirm(geschw,kompass.angle(Accelerometer.roll,Accelerometer.pitch),strecke,maxgeschw, Fahrtzeit);
+			//fahradschirm(geschw,kompass.angle(0,0),strecke,maxgeschw, Fahrtzeit);
 			//Fuer Testzwecke entfernt um neue Methode zu testen, siehe Oben
 			//if (rtc.Sekunden%2)
 			//{
@@ -866,7 +862,7 @@ void eingabehandler(uint8_t taste){
 			}
 			else if (taste=='*')
 			{
-				Baro.set_Pressure0(Baro.Press);
+				//Baro.set_Pressure0(Baro.Press);
 			}
 			else if (taste=='0')
 			{

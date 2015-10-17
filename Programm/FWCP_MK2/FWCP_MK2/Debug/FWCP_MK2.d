@@ -24,8 +24,8 @@ FWCP_MK2.d FWCP_MK2.o: .././FWCP_MK2.cpp \
  .././fonts.h .././Pikachu.h .././006.h .././Interface.h \
  c:\program\ files\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-toolchain\avr\include\util\delay.h \
  c:\program\ files\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-toolchain\avr\include\util\delay_basic.h \
- .././Output.h .././Pressure.h .././LSM303D.h .././SOUND.h .././ADC.h \
- .././EEPROM.h .././Seiten.h
+ .././Output.h .././LSM303D.h .././SOUND.h .././ADC.h .././EEPROM.h \
+ .././Seiten.h
 
 c:\program\ files\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-toolchain\avr\include\avr\io.h:
 
@@ -86,8 +86,6 @@ c:\program\ files\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-tool
 c:\program\ files\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-toolchain\avr\include\util\delay_basic.h:
 
 .././Output.h:
-
-.././Pressure.h:
 
 .././LSM303D.h:
 

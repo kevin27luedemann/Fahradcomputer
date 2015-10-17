@@ -179,6 +179,8 @@ class Pressure
 public:
 	double Press;
 	float Tempera;
+	uint8_t Wertedruck[3];
+	uint8_t Wert[2];
 protected:
 private:
 	int8_t Tempoffset;
