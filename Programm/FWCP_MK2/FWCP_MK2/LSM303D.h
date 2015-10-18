@@ -228,9 +228,15 @@ public:
 	int16_t Tempera;
 	double roll;
 	double pitch;
+	uint16_t Schrittzaehler;
+	uint32_t gravity;
 protected:
 private:
 	I2C i2c;
+	uint32_t Daten[50];
+	uint32_t higher;
+	uint32_t lower;
+	int16_t threschold;
 
 //functions
 public:
@@ -241,11 +247,14 @@ public:
 	void readtempera();
 	void ACCStreammode();
 	void ACCBypassmode();
+	void get_gravity();
+	void schritt(uint8_t stat);
 protected:
 private:
 	LSM303D( const LSM303D &c );
 	LSM303D& operator=( const LSM303D &c );
 	void LSM303_command(uint8_t reg, uint8_t c);
+	void readacc_fast();
 
 }; //LSM303D
 

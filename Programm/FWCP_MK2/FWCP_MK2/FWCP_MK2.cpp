@@ -282,7 +282,7 @@ void anzeigehandler(){
 			//fahradschirm(geschw,kompass.angle(0,0),strecke,maxgeschw, Fahrtzeit);
 			anzeige|=(1<<refreshdisplay);
 		}
-		else if ((anzeige&(1<<Wanderflag)))
+		else if ((anzeige&(1<<Wanderflag))&&!(anzeige&(1<<Einstellungsflag)))
 		{
 			Wanderseite();
 			anzeige |= (1<<refreshdisplay);
@@ -366,8 +366,26 @@ void anzeigehandler(){
 			Pressuresensor();
 			anzeige |= (1<<refreshdisplay);
 		}
+		else if ((anzeige&(1<<Einstellungsflag)&&(anzeige&(1<<Wanderflag))))
+		{
+			if (pos<7)
+			{
+				pos--;
+			}
+			if (pos<6)
+			{
+				Accelerometer.get_gravity();
+			}
+			if (pos==0)
+			{
+				anzeige &= ~(1<<Einstellungsflag);
+			}
+			find_gravity();
+			anzeige |= (1<<refreshdisplay);
+		}
 		else if ((anzeige&(1<<Wanderflag)))
 		{
+			Accelerometer.schritt(rtc.Sekunden%2);
 			Wanderseite();
 			anzeige |= (1<<refreshdisplay);
 		}
@@ -480,6 +498,11 @@ void eingabehandler(uint8_t taste){
 				case '4':
 				anzeige |= (1<<Einstellungsflag) | (1<<Weckeranzeigeflag);
 				break;
+				case '5':
+				Accelerometer.ACCStreammode();
+				pos=7;
+				anzeige |= (1<<Einstellungsflag) | (1<<Wanderflag);
+				break;
 				default:
 				//Menueflag neu setzten
 				anzeige|=(1<<menueflag)|(1<<Einstellungsflag);
@@ -499,6 +522,7 @@ void eingabehandler(uint8_t taste){
 				
 				case '2':
 				//Wanderanzeige schalten
+				Accelerometer.ACCStreammode();
 				anzeige|=(1<<refreshdisplay) | (1<<Wanderflag);
 				break;
 				
@@ -760,6 +784,19 @@ void eingabehandler(uint8_t taste){
 					break;
 			}
 		}
+		else if (((anzeige&(1<<Einstellungsflag))&&(anzeige&(1<<Wanderflag))))
+		{
+			if (pos==7)
+			{
+				if (taste == '*')
+				{
+					pos=6;
+				}
+			}
+			else{
+				pos=6;
+			}
+		}
 		else if ((anzeige&(1<<Stoppuhrflag)))
 		{
 			if (taste=='*')
@@ -914,6 +951,7 @@ void eingabehandler(uint8_t taste){
 			{
 				anzeige &= ~(1<<Wanderflag);
 				anzeige |= (1<<menueflag);
+				Accelerometer.ACCBypassmode();
 			}
 		}
 		else if ((anzeige&(1<<Weckeranzeigeflag)))

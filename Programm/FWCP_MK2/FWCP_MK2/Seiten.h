@@ -166,8 +166,8 @@ void menue_einst(){
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,2*charhighte);}
 	buffersize=sprintf(buffer,"4:Weckereinstellen");
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,3*charhighte);}
-	//buffersize=sprintf(buffer,"5:Kompass kalib.");
-	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,4*charhighte);}
+	buffersize=sprintf(buffer,"5:g messen");
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,4*charhighte);}
 	//buffersize=sprintf(buffer,"6:HMC5883L Gain");
 	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,5*charhighte);}
 	//buffersize=sprintf(buffer,"7:Uhr einstellen");
@@ -192,6 +192,23 @@ void menue_uhr(){
 	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,5*charhighte);}
 	//buffersize=sprintf(buffer,"7:Uhr einstellen");
 	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,6*charhighte);}
+}
+
+void find_gravity(){
+	uint8_t buffersize;
+	char buffer[20];
+	oled.clearFrame();
+	header(0);
+	bottom(0);
+	buffersize=sprintf(buffer,"Geraet nicht bewegen");
+	for (uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,2*charhighte);}
+	buffersize=sprintf(buffer,"* fuer start");
+	for (uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,3*charhighte);}
+	if (pos<6)
+	{
+		buffersize=sprintf(buffer,"Noch %i Sekunden",pos);
+		for (uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,5*charhighte);}
+	}
 }
 
 void uhranzeigen(){
@@ -494,11 +511,17 @@ void Wanderseite(){
 	}
 
 	//Text debugging
-	buffersize=sprintf(buffer,"r:%.1f",Accelerometer.roll*180.0/M_PI);
+	//buffersize=sprintf(buffer,"r:%.1f",Accelerometer.roll*180.0/M_PI);
+	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,2*charhighte);}
+	//buffersize=sprintf(buffer,"p:%.1f",Accelerometer.pitch*180.0/M_PI);
+	//for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,3*charhighte);}
+	buffersize=sprintf(buffer,"%i",Accelerometer.achsen_A[0]);
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,2*charhighte);}
-	buffersize=sprintf(buffer,"p:%.1f",Accelerometer.pitch*180.0/M_PI);
+	buffersize=sprintf(buffer,"%i",Accelerometer.achsen_A[1]);
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,3*charhighte);}
-	buffersize=sprintf(buffer,"%i C",Accelerometer.Tempera);
+	buffersize=sprintf(buffer,"%i",Accelerometer.achsen_A[2]);
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,4*charhighte);}
+	buffersize=sprintf(buffer,"%u",Accelerometer.Schrittzaehler);
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,5*charhighte);}
 }
 
