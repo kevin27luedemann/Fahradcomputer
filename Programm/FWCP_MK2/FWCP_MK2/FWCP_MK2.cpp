@@ -216,6 +216,7 @@ formel: f=f_CPU/(2*N*(1+OCR1A))
 		=> N=64 bei OCR1A=2604-1 bei f=24
 		=> CS11 und CS10
 */
+
 void inittimer(uint8_t stat){
 	TCNT1 = 0;
 	if (stat==1)

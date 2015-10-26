@@ -90,7 +90,8 @@ public:
 	void draw_line(uint8_t x, uint8_t y, uint8_t length, float phi);
 	void draw_triangle(uint8_t basecenter_x, uint8_t basecenter_y, uint8_t baselength, float baseangle, float rotationangle);
 	void draw_ASCI(uint8_t sym,uint8_t x, uint8_t y);
-	void draw_number16x16(uint8_t number, uint8_t x, uint8_t y);
+	void draw_number16x16(uint8_t buch, uint8_t x, uint8_t y);
+	void draw_BIGASCI(uint8_t number, uint8_t x, uint8_t y);
 	void analog(uint8_t stunde, uint8_t minute, uint8_t sekunde, uint8_t sekanzeige);
 	void draw_pikachu();
 	void draw_glurak();

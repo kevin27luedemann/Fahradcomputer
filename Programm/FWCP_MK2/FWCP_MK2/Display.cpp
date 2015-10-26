@@ -256,6 +256,40 @@ void Display::draw_number16x16(uint8_t number, uint8_t x, uint8_t y){
 	}
 }
 
+void Display::draw_BIGASCI(uint8_t buch, uint8_t x, uint8_t y){
+	uint16_t symbol;
+	if(buch!=' ' && buch>='t'){
+		buch -= 't';
+		for(uint8_t i = 0; i < 16;i++){
+			symbol = pgm_read_byte(&font8x16_terminal[buch][i]);
+			symbol = symbol << y%8;
+			if(i<8){
+				Displayframe[x+(y/8)*SSD1306_WIDTH+i] |=(uint8_t) (symbol & 0x00FF);
+				if(((symbol&0xFF00)>>8)==0){
+					Displayframe[x+(y/8+1)*SSD1306_WIDTH+i] |= 0;
+				}
+				else {
+					Displayframe[x+(y/8+1)*SSD1306_WIDTH+i] |= (uint8_t) ((symbol & 0xFF00)>>8);
+				}
+			}
+			else {
+				Displayframe[x+(y/8+1)*SSD1306_WIDTH+(i-16)] |= (uint8_t) (symbol & 0x00FF);
+				if(((symbol&0xFF00)>>8)==0){
+					Displayframe[x+(y/8+2)*SSD1306_WIDTH+(i-16)] |= 0;
+				}
+				else {
+					Displayframe[x+(y/8+2)*SSD1306_WIDTH+(i-16)] |= (uint8_t) ((symbol & 0xFF00)>>8);
+				}
+			}
+		}
+	}
+	else{
+		for(uint8_t i = 0; i < 7; i++){
+			Displayframe[x+(y/8)*SSD1306_WIDTH+i] |= 0;
+		}
+	}
+}
+
 void Display::analog(uint8_t stunde, uint8_t minute, uint8_t sekunde, uint8_t sekanzeige){
 	uint8_t r=25;
 	uint8_t Px=32-1;

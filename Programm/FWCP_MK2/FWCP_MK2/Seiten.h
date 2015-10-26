@@ -66,7 +66,6 @@ void header(uint8_t page){
 			break;
 	}
 }
-
 void bottom(uint8_t page){
 	switch (page) {
 		case 0:	//standard Header fuer fast alle Pages
@@ -123,7 +122,6 @@ void anzeige_richtung(float winkel, uint8_t x, uint8_t y){
 		oled.draw_ASCI('W',x+charsize/2,y*charhighte);
 	}
 }
-
 void anzeige_nadel(uint8_t x, uint8_t y, float angle){
 	//fixed parameters for drawing the arrow
 	oled.draw_triangle(x,y,20,70,angle);
@@ -132,6 +130,24 @@ void anzeige_kleinenadel(uint8_t x, uint8_t y, float angle){
 	//fixed parameters for drawing the arrow
 	oled.draw_triangle(x,y,10,70,angle);
 }
+
+#define Einstellungstextanzahl 5
+uint8_t Einstellungstext[] PROGMEM ={
+	'Uhrzeit\0',
+	'Wecker\0',
+	'Kompgain\0',
+	'Kompkalib\0',
+	'Energie\0'
+}
+
+void menue(uint8_t pos){
+	
+	oled.clearFrame();
+	header(0);
+	bottom(0);
+
+}
+
 
 void menue_haupt(){
 	char buffer[20];
