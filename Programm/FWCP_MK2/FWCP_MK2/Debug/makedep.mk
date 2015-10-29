@@ -6,6 +6,8 @@ Display.cpp
 
 FWCP_MK2.cpp
 
+GOL.cpp
+
 I2C.cpp
 
 Interface.cpp

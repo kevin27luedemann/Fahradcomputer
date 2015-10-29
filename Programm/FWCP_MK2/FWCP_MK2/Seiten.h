@@ -131,15 +131,6 @@ void anzeige_kleinenadel(uint8_t x, uint8_t y, float angle){
 	oled.draw_triangle(x,y,10,70,angle);
 }
 
-#define Einstellungstextanzahl 5
-uint8_t Einstellungstext[] PROGMEM ={
-	'Uhrzeit\0',
-	'Wecker\0',
-	'Kompgain\0',
-	'Kompkalib\0',
-	'Energie\0'
-}
-
 void menue(uint8_t pos){
 	
 	oled.clearFrame();
@@ -148,6 +139,12 @@ void menue(uint8_t pos){
 
 }
 
+void GOL_seite(){
+	for (uint16_t i=0; i<GOL_SIZE;i++)
+	{
+		oled.Displayframe[i]=gol.playground[i];
+	}
+}
 
 void menue_haupt(){
 	char buffer[20];

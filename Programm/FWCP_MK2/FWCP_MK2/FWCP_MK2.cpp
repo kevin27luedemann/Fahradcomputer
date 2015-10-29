@@ -41,6 +41,9 @@ LSM303D Accelerometer;
 #include "SOUND.h"
 SOUND Lautsprecher;
 
+#include "GOL.h"
+GOL gol;
+
 #include "ADC.h"
 
 //Anzeigebits
@@ -364,7 +367,8 @@ void anzeigehandler(){
 		}
 		else if ((anzeige&(1<<Druckflag)))
 		{
-			Pressuresensor();
+			gol.iteration();
+			GOL_seite();
 			anzeige |= (1<<refreshdisplay);
 		}
 		else if ((anzeige&(1<<Einstellungsflag)&&(anzeige&(1<<Wanderflag))))
@@ -548,6 +552,7 @@ void eingabehandler(uint8_t taste){
 				anzeige|=(1<<refreshdisplay);
 				break;
 				case '7':
+				gol.set_startvalue();
 				anzeige |= (1<<Druckflag);
 				break;
 				default:
