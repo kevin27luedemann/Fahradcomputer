@@ -88,7 +88,6 @@ uint8_t GOL::build_sum(uint8_t x, uint8_t y){
 	check_x(&temp_x);
 	temp_y = y;
 	check_y(&temp_y);
-	summe+=playground[temp_x];
 	if (playground[temp_x+(temp_y/8)*GOL_WIDTH]&(1<<temp_y&7))
 	{
 		summe++;
@@ -99,7 +98,6 @@ uint8_t GOL::build_sum(uint8_t x, uint8_t y){
 	check_x(&temp_x);
 	temp_y = y;
 	check_y(&temp_y);
-	summe+=playground[temp_x];
 	if (playground[temp_x+(temp_y/8)*GOL_WIDTH]&(1<<temp_y&7))
 	{
 		summe++;
@@ -110,7 +108,6 @@ uint8_t GOL::build_sum(uint8_t x, uint8_t y){
 	check_x(&temp_x);
 	temp_y = y+1;
 	check_y(&temp_y);
-	summe+=playground[temp_x];
 	if (playground[temp_x+(temp_y/8)*GOL_WIDTH]&(1<<temp_y&7))
 	{
 		summe++;
@@ -121,7 +118,6 @@ uint8_t GOL::build_sum(uint8_t x, uint8_t y){
 	check_x(&temp_x);
 	temp_y = y-1;
 	check_y(&temp_y);
-	summe+=playground[temp_x];
 	if (playground[temp_x+(temp_y/8)*GOL_WIDTH]&(1<<temp_y&7))
 	{
 		summe++;
@@ -132,7 +128,6 @@ uint8_t GOL::build_sum(uint8_t x, uint8_t y){
 	check_x(&temp_x);
 	temp_y = y-1;
 	check_y(&temp_y);
-	summe+=playground[temp_x];
 	if (playground[temp_x+(temp_y/8)*GOL_WIDTH]&(1<<temp_y&7))
 	{
 		summe++;
@@ -143,7 +138,6 @@ uint8_t GOL::build_sum(uint8_t x, uint8_t y){
 	check_x(&temp_x);
 	temp_y = y+1;
 	check_y(&temp_y);
-	summe+=playground[temp_x];
 	if (playground[temp_x+(temp_y/8)*GOL_WIDTH]&(1<<temp_y&7))
 	{
 		summe++;
@@ -154,7 +148,6 @@ uint8_t GOL::build_sum(uint8_t x, uint8_t y){
 	check_x(&temp_x);
 	temp_y = y+1;
 	check_y(&temp_y);
-	summe+=playground[temp_x];
 	if (playground[temp_x+(temp_y/8)*GOL_WIDTH]&(1<<temp_y&7))
 	{
 		summe++;
@@ -165,7 +158,6 @@ uint8_t GOL::build_sum(uint8_t x, uint8_t y){
 	check_x(&temp_x);
 	temp_y = y-1;
 	check_y(&temp_y);
-	summe+=playground[temp_x];
 	if (playground[temp_x+(temp_y/8)*GOL_WIDTH]&(1<<temp_y&7))
 	{
 		summe++;
