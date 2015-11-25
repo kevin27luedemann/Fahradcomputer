@@ -551,10 +551,10 @@ void eingabehandler(uint8_t taste){
 				oled.clearFrame();
 				anzeige|=(1<<refreshdisplay);
 				break;
-				case '7':
-				gol.set_startvalue();
-				anzeige |= (1<<Druckflag);
-				break;
+				//case '7':
+				//gol.set_startvalue();
+				//anzeige |= (1<<Druckflag);
+				//break;
 				default:
 				//menueflag erneut setzen um abschalten zu verhindern
 				anzeige|=(1<<menueflag);
@@ -801,6 +801,10 @@ void eingabehandler(uint8_t taste){
 			}
 			else{
 				pos=6;
+			}
+			if (taste=='0')
+			{
+				Accelerometer.Schrittzaehler = 0;
 			}
 		}
 		else if ((anzeige&(1<<Stoppuhrflag)))

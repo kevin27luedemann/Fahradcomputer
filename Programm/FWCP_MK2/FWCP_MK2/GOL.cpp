@@ -52,6 +52,10 @@ void GOL::set_startvalue(){
 	set_value(GOL_WIDTH/2,GOL_HIGHT/2);
 	set_value(GOL_WIDTH/2,GOL_HIGHT/2+1);
 	set_value(GOL_WIDTH/2,GOL_HIGHT/2-1);
+	for (uint16_t i=0; i<GOL_SIZE;i++)
+	{
+		playground[i]=playground_2[i];
+	}
 }
 
 void GOL::delete_playground(uint8_t pos){

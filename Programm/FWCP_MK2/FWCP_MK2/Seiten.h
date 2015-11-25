@@ -173,7 +173,7 @@ void menue_einst(){
 	oled.clearFrame();
 	buffersize=sprintf(buffer,"1:Kompass kalib.");
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,0*charhighte);}
-	buffersize=sprintf(buffer,"2:Kompassverstaerkung");
+	buffersize=sprintf(buffer,"2:Kompassverst");
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,1*charhighte);}
 	buffersize=sprintf(buffer,"3:Uhr einstellen");
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,2*charhighte);}
