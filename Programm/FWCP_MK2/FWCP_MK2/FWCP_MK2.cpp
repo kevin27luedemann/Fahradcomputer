@@ -802,10 +802,7 @@ void eingabehandler(uint8_t taste){
 			else{
 				pos=6;
 			}
-			if (taste=='0')
-			{
-				Accelerometer.Schrittzaehler = 0;
-			}
+			
 		}
 		else if ((anzeige&(1<<Stoppuhrflag)))
 		{
@@ -962,6 +959,22 @@ void eingabehandler(uint8_t taste){
 				anzeige &= ~(1<<Wanderflag);
 				anzeige |= (1<<menueflag);
 				Accelerometer.ACCBypassmode();
+			}
+			else if (taste=='*')
+			{
+				Accelerometer.Schrittzaehler = 0;
+			}
+			else if (taste=='0')
+			{
+				if (LED.ison())
+				{
+					LED.off();
+					//Lautsprecher.off();
+				}
+				else{
+					LED.on();
+					//Lautsprecher.on();
+				}
 			}
 		}
 		else if ((anzeige&(1<<Weckeranzeigeflag)))
