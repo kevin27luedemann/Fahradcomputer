@@ -16,6 +16,7 @@ Display::Display()
 		//Displayframe[i]=0;
 	//}
 	InitializeDisplay();
+	clearFrame();
 } //Display
 
 // default destructor

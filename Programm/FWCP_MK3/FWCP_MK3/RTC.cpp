@@ -209,8 +209,9 @@ void RTC::RTCstart(){
 	msg_uhr[5]=':';
 	msg_uhr[6]='0';
 	msg_uhr[7]='0';
+	interupts = 0;
 	//Timer2 als 1ms Timer fuer die RTC
-	//asynchron mit 32.768 kHz (noch synchrom)
+	//asynchron mit 32.768 kHz 
 	TCNT2 = TIMER2RTCTIME;
 	ASSR |= (1<<AS2);
 	TIMSK2 = (1<<TOIE2);

@@ -182,7 +182,7 @@ uint8_t Interface::Taste(uint8_t wahl){
 }
 
 uint8_t Interface::Taster(){
-	uint8_t taste = 'A';
+	uint8_t taste = ' ';
 	
 	//erste Zeile
 	PORTC |= (1<<PORTC3);
@@ -255,13 +255,13 @@ uint8_t Interface::unified(){
 	switch (Taster())
 	{
 	case '1':
-		return 'A';
+		return 'B';
 		break;
 	case '2':
 		return 'u';
 		break;
 	case '3':
-		return 'B';
+		return 'A';
 		break;
 	case '4':
 		return 'l';
@@ -273,13 +273,13 @@ uint8_t Interface::unified(){
 		return 'r';
 		break;
 	case '7':
-		return 'X';
+		return 'Y';
 		break;
 	case '8':
 		return 'd';
 		break;
 	case '9':
-		return 'Y';
+		return 'X';
 		break;
 	case '*':
 		return 'e';
@@ -289,6 +289,9 @@ uint8_t Interface::unified(){
 		break;
 	case '#':
 		return 'm';
+		break;
+	default:
+		return ' ';
 		break;
 	}
 }
