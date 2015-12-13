@@ -346,6 +346,13 @@ class einstellungen: public monitor
 		}
 		else if (posy==0 && posx==1)
 		{
+			//Uhreinstellung machen
+			//noch etwas bloed, aber mit eigener Funktion
+			uhreinstellen();
+			posx=0;
+		}
+		else if (posy==1 && posx==1)
+		{
 			//g bestimmen einbauen
 			buffersize=sprintf(buffer,"Geraet nicht bewegen");
 			for (uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,2*charhighte);}
@@ -361,13 +368,6 @@ class einstellungen: public monitor
 				posx--;
 			}
 		}
-		else if (posy==0 && posx==1)
-		{
-			//Uhreinstellung machen
-			//noch etwas bloed, aber mit eigener Funktion
-			uhreinstellen();
-			posx=0;
-		}
 		else if (posy==2 && posx==1)
 		{
 			buffersize=sprintf(buffer,"Version: %.2f",(double)VERSIONSNUMMER);
@@ -378,13 +378,6 @@ class einstellungen: public monitor
 		}
 		else if (posy==3 && posx==1)
 		{
-			/*
-			buffersize=sprintf(buffer,"Version: %.2f",(double)VERSIONSNUMMER);
-			for(uint8_t i=0; i < buffersize;i++){
-				oled->draw_ASCI(buffer[i],(i+2)*charsize,3.5*charhighte);
-
-			}
-			*/
 			soft_reset();
 		}
 		send();	
