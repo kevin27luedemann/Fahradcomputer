@@ -31,6 +31,8 @@ public:
 	~Interface();
 	uint8_t Taste(uint8_t wahl);
 	uint8_t Taster();
+	//new unified Layout similar to the GameBoy
+	uint8_t unified();
 	uint8_t ZahlenausTastatur();
 protected:
 private:

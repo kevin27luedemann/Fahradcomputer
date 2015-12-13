@@ -251,6 +251,48 @@ uint8_t Interface::Taster(){
 	return taste;
 }
 
+uint8_t Interface::unified(){
+	switch (Taster())
+	{
+	case '1':
+		return 'A';
+		break;
+	case '2':
+		return 'u';
+		break;
+	case '3':
+		return 'B';
+		break;
+	case '4':
+		return 'l';
+		break;
+	case '5':
+		return 'o';
+		break;
+	case '6':
+		return 'r';
+		break;
+	case '7':
+		return 'X';
+		break;
+	case '8':
+		return 'd';
+		break;
+	case '9':
+		return 'Y';
+		break;
+	case '*':
+		return 'e';
+		break;
+	case '0':
+		return '0';
+		break;
+	case '#':
+		return 'm';
+		break;
+	}
+}
+
 uint8_t Interface::ZahlenausTastatur(){
 	while(true){
 		uint8_t taste = Taster();
