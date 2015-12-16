@@ -5,3 +5,5 @@ Programm und andere Sachen fuer den Fahradcomputer
 
 07.10.2015 MK2 begonnen und Programm portiert
 
+13.12.2015 Softwareversion 3.0 begonnen: mit neuer Oberflächensteuerung
+
