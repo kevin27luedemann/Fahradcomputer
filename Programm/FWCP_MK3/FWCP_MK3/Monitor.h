@@ -12,6 +12,10 @@
 #include <stdlib.h>
 #include "Display.h"
 
+#ifndef numberofpages
+#define numberofpages 4
+#endif
+
 class monitor
 {
 	private:
@@ -254,7 +258,7 @@ class tacho: public monitor
 		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+70,5*charhighte);}
 
 		//anzeige der Fahrtzeit
-		buffersize=sprintf(buffer,"%lus",Fahrtzeit);
+		buffersize=sprintf(buffer,"%02i:%02i:%02i",uint8_t(Fahrtzeit/3600),uint8_t(Fahrtzeit/60),uint8_t(Fahrtzeit%60));
 		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+70,6*charhighte);}
 		
 		//anzeige der durschschnittsgeschw
@@ -445,14 +449,63 @@ class menue: public monitor
 				name[i] = ' ';
 			}
 	}
+	
+	uint8_t tastendruck(uint8_t *tast){
+		if (*tast=='u')
+		{
+			pos--;
+		}
+		else if (*tast=='d')
+		{
+			pos++;
+		}
+		else if (*tast=='o' || *tast=='r')
+		{
+			position=pos;
+		}
+		if (pos > 100)
+		{
+			pos=numberofpages-1;
+		}
+		else if (pos>numberofpages-1)
+		{
+			pos=0;
+		}
+		return 0;
+	}
 
 	void draw(){
 		monitor::draw();
 		header();
 		bottom();
+		//menueeintrag zeichnen
+		buffersize=sprintf(buffer,"Uhr");
+		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,2*charhighte);}
+		buffersize=sprintf(buffer,"Tacho");
+		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,3*charhighte);}
+		buffersize=sprintf(buffer,"Einstellungen");
+		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,4*charhighte);}
+		buffersize=sprintf(buffer,"Display aus");
+		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,5*charhighte);}
+		oled->draw_ASCI('>',0*charsize,(pos+2)*charhighte);
+		send();
+	}
+	
+};
+
+class offscreen: public monitor
+{
+	private:
+	
+	public:
+	offscreen(Display *ol, RTC *rt):monitor(ol,rt){
 		
 	}
 	
+	void draw(){
+		monitor::draw();
+		send();
+	}
 };
 
 #endif /* MONITOR_H_ */

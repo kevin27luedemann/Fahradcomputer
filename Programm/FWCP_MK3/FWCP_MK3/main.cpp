@@ -144,8 +144,8 @@ void geschwindigkeit(float durch){
 }
 
 //hier wird der neue Displayhandler verwendet
+#define numberofpages 4
 #include "Monitor.h"
-#define numberofpages 3
 
 void initialisierung();
 void maininterupthandler(monitor *mon, uint8_t taste);
@@ -153,11 +153,13 @@ void maininterupthandler(monitor *mon, uint8_t taste);
 int main(void)
 {
     initialisierung();
-    monitor* Folien[numberofpages] =
+    monitor* Folien[numberofpages+1] =
 	{
 		new uhr(&oled,&rtc),
 		new tacho(&oled,&rtc),
-		new einstellungen(&oled,&rtc)
+		new einstellungen(&oled,&rtc),
+		new offscreen(&oled,&rtc),
+		new menue(&oled,&rtc)
 	};
 
 
@@ -220,11 +222,16 @@ void maininterupthandler(monitor *mon, uint8_t taste){
 			case 'm':
 				//Menue aufrufen
 				//abtrakt, da nur 2 Folien
-				position++;
+				position = numberofpages;
+				/*
 				if (position > numberofpages-1)
 				{
 					position=0;
-				}
+				}*/
+				anzeige |= (1<<refreshdisplay);
+				break;
+			case 'l':
+				position = numberofpages;
 				anzeige |= (1<<refreshdisplay);
 				break;
 			case '0':
