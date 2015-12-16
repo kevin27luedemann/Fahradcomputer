@@ -218,9 +218,9 @@ class tacho: public monitor
 		//Rahmen zeichnen
 		oled->drawHLine(0,SSD1306_HEIGHT-9,SSD1306_WIDTH);
 		oled->drawHLine(0,numbersmalhight-1,SSD1306_WIDTH/2+5);
-		oled->drawHLine(SSD1306_WIDTH/2+5,8,SSD1306_WIDTH/2-5);
+		oled->drawHLine(SSD1306_WIDTH/2+5,charhighte-1,SSD1306_WIDTH/2-5);
 		oled->drawVLine(SSD1306_WIDTH/2+5,0,numbersmalhight);
-		oled->drawHLine(SSD1306_WIDTH-4*numbersmalsize-1,5*charhighte,4*numbersmalsize+1);
+		oled->drawHLine(SSD1306_WIDTH-4*numbersmalsize-1,5*charhighte-1,4*numbersmalsize+1);
 		oled->drawVLine(SSD1306_WIDTH-4*numbersmalsize-1,numbersmalhight,SSD1306_HEIGHT-numbersmalhight);
 		oled->drawHLine(SSD1306_WIDTH-4*numbersmalsize-1,3*charhighte,4*numbersmalsize+1);
 
@@ -246,7 +246,7 @@ class tacho: public monitor
 		//anzeige_kleinenadel(31,31+8,angle);
 
 		//anzeige der gesammtstrecke
-		buffersize=sprintf(buffer,"%.1fm",strecke);
+		buffersize=sprintf(buffer,"%.3fkm",strecke/1000);
 		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+70,2*charhighte);}
 
 		//anzeige der max geschwindigkeit
@@ -256,6 +256,16 @@ class tacho: public monitor
 		//anzeige der Fahrtzeit
 		buffersize=sprintf(buffer,"%lus",Fahrtzeit);
 		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+70,6*charhighte);}
+		
+		//anzeige der durschschnittsgeschw
+		if (Fahrtzeit==0)
+		{
+			buffersize=sprintf(buffer,"%.1fkm/h",0.0);
+		}
+		else {
+			buffersize=sprintf(buffer,"%.1fkm/h",(strecke/Fahrtzeit)*3.6);
+		}
+		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+75,1*charhighte);}
 
 		send();
 	}
