@@ -217,22 +217,58 @@ void initialisierung(){
 void maininterupthandler(monitor *mon, uint8_t taste){
 	if (taste!=' ')
 	{
+		anzeige |= (1<<refreshdisplay);
 		switch (taste)							//Tastendruck ueberpruefen
 		{
 			case 'm':
-				//Menue aufrufen
-				//abtrakt, da nur 2 Folien
 				position = numberofpages;
-				/*
-				if (position > numberofpages-1)
-				{
-					position=0;
-				}*/
-				anzeige |= (1<<refreshdisplay);
 				break;
 			case 'l':
-				position = numberofpages;
-				anzeige |= (1<<refreshdisplay);
+				if (mon->posx==0)
+				{
+					position = numberofpages;
+				}
+				else{
+					mon->posx--;
+				}
+				break;
+			case 'r':
+				if (position==numberofpages)
+				{
+					position=mon->posy;
+				}
+				else if (!(mon->posx >= mon->maxentriesx))
+				{
+					mon->posx++;
+				}
+				break;
+				case 'o':
+					if (position==numberofpages)
+					{
+						position=mon->posy;
+					}
+					else if (!(mon->posx >= mon->maxentriesx))
+					{
+						mon->posx++;
+					}
+					break;
+			case 'd':
+				if (!(mon->posy >= mon->maxentries-1))
+				{
+					mon->posy++;
+				}
+				else{
+					mon->posy = 0;
+				}
+				break;
+			case 'u':
+				if (!(mon->posy == 0))
+				{
+					mon->posy--;
+				}
+				else{
+					mon->posy=mon->maxentries-1;
+				}
 				break;
 			case '0':
 				//Licht an/aus
@@ -247,7 +283,6 @@ void maininterupthandler(monitor *mon, uint8_t taste){
 			default:
 				//alle anderen Tasten werden an den jeweiligen Handler weiter gegeben
 				mon->tastendruck(&taste);
-				anzeige |= (1<<refreshdisplay);
 				break;
 		}
 	}

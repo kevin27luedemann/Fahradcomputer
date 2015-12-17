@@ -28,11 +28,18 @@ class monitor
 		#define namesize 10
 		char name[10];
 	public:
+		uint8_t posy;
+		uint8_t posx;
+		uint8_t maxentries;
+		uint8_t maxentriesx;
 	monitor(Display *ol, RTC *rt)
 	{
 		buffersize = 0;
 		oled = ol;
 		rtc = rt;
+		posy=0;
+		posx=0;
+		maxentriesx = 1;
 	}
 	
 	//getter Funktion fuer name
@@ -140,6 +147,7 @@ class uhr:public monitor
 			}
 		}
 		Zeiger = 1;
+		maxentries = 3;
 	}
 	
 	//Zeiger setter und getter Funktion
@@ -286,10 +294,7 @@ class wandern: public monitor
 
 class einstellungen: public monitor
 {
-	#define maxentries 4
 	private:
-		uint8_t posy;
-		uint8_t posx;
 	public:
 	einstellungen(Display *ol,RTC *rt): monitor(ol,rt)
 	{
@@ -304,8 +309,7 @@ class einstellungen: public monitor
 				name[i] = ' ';
 			}
 		}
-		posy=0;
-		posx=0;
+		maxentries = 4;
 	}
 	
 	//Uhreinstellungs Funktion
@@ -314,30 +318,6 @@ class einstellungen: public monitor
 	
 	//Tastenhandler
 	uint8_t tastendruck(uint8_t *tast){
-		if (*tast=='o' || *tast=='r')
-		{
-			posx++;
-		}
-		else if (*tast=='l')
-		{
-			posx--;
-		}
-		else if (*tast=='u')
-		{
-			posy--;
-		}
-		else if (*tast=='d')
-		{
-			posy++;
-		}
-		if (posx>2)
-		{
-			posx=0;
-		}
-		if (posy>maxentries-1)
-		{
-			posy=0;
-		}
 		return 0;
 	}
 	
@@ -433,11 +413,9 @@ class wilkommen: public monitor
 class menue: public monitor
 {
 	private:
-		uint8_t pos;
 	public:
 	menue(Display *ol, RTC *rt):monitor(ol,rt)
 	{
-		pos = 0;
 		char na[] = "Menue";
 		for(uint8_t i =0; i< namesize;i++)
 			if (i<sizeof(na))
@@ -448,29 +426,11 @@ class menue: public monitor
 			{
 				name[i] = ' ';
 			}
+			maxentriesx = 0;
+			maxentries = numberofpages;
 	}
 	
 	uint8_t tastendruck(uint8_t *tast){
-		if (*tast=='u')
-		{
-			pos--;
-		}
-		else if (*tast=='d')
-		{
-			pos++;
-		}
-		else if (*tast=='o' || *tast=='r')
-		{
-			position=pos;
-		}
-		if (pos > 100)
-		{
-			pos=numberofpages-1;
-		}
-		else if (pos>numberofpages-1)
-		{
-			pos=0;
-		}
 		return 0;
 	}
 
@@ -487,7 +447,7 @@ class menue: public monitor
 		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,4*charhighte);}
 		buffersize=sprintf(buffer,"Display aus");
 		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,5*charhighte);}
-		oled->draw_ASCI('>',0*charsize,(pos+2)*charhighte);
+		oled->draw_ASCI('>',0*charsize,(posy+2)*charhighte);
 		send();
 	}
 	
