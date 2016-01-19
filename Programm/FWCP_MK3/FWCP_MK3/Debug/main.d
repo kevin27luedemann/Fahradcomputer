@@ -23,8 +23,8 @@ main.d main.o: .././main.cpp \
  .././fonts.h .././Pikachu.h .././006.h .././Interface.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay_basic.h \
- .././SOUND.h .././LSM303D.h .././Kompass.h .././ADC.h .././Output.h \
- .././EEPROM.h .././Monitor.h
+ .././SOUND.h .././LSM303D.h .././ADC.h .././Output.h .././EEPROM.h \
+ .././Monitor.h
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h:
 
@@ -87,8 +87,6 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 .././SOUND.h:
 
 .././LSM303D.h:
-
-.././Kompass.h:
 
 .././ADC.h:
 

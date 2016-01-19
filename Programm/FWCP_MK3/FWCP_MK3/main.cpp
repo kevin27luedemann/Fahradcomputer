@@ -60,8 +60,8 @@ SOUND Lautsprecher;
 #include "LSM303D.h"
 LSM303D Accelerometer;
 
-#include "Kompass.h"
-Kompass kompass;
+//#include "Kompass.h"
+//Kompass kompass;
 
 #include "ADC.h"
 
