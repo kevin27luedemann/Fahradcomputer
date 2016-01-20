@@ -4,13 +4,14 @@
  * Created: 28.11.2015 18:12:54
  * Author : Lüdemann
  */ 
-#define VERSIONSNUMMER 3.01
+#define VERSIONSNUMMER 3.02
 #define SPANNUNGSTEILER 2.0069
 #define F_CPU 8000000
 #define BATMIN 3.6
 #define zeitproachtzaehlungen 0.001024
 #define zaehlungenprozeiteinheit 8.0
 #define REEDMS 5
+#define GMT 1
 
 #include <avr/io.h>
 #include <stdlib.h>
@@ -99,6 +100,65 @@ ISR(TIMER1_COMPA_vect){
 	statusreg |= (1<<updaterate);
 }
 
+#define message		0
+#define valid		1
+#define complete	2
+#define fix			7
+//GPS sachen
+uint8_t gpsstatus;
+uint8_t gpsdata[72];
+uint8_t gpscounter;
+double lat;
+double lon;
+float gpsspeed;
+uint8_t gpsstunde;
+uint8_t gpsminute;
+uint8_t gpssekunde;
+uint8_t gpsTag;
+uint8_t gpsMonat;
+uint8_t gpsJahr;
+
+ISR(USART0_RX_vect){
+	uint8_t temp = UDR0;
+	if (temp == '$' && !(gpsstatus&(1<<complete)))
+	{
+		gpscounter = 0;
+		gpsstatus |= (1<<message);
+	}
+	if ((gpsstatus&(1<<message)))
+	{
+		gpsdata[gpscounter] = temp;
+		gpscounter++;
+		if (gpscounter>72)
+		{
+			gpsstatus &= ~(1<<message);
+		}
+		else if (gpscounter==19)
+		{
+			if (gpsdata[18]!='A')
+			{
+				gpsstatus &= ~(1<<valid);
+				gpsstatus &= ~(1<<message);
+			}
+			else if (gpsdata[4]=='M' && gpsdata[5]=='C')
+			{
+				gpsstatus |= (1<<valid);
+			}
+			else{
+				gpsstatus &= ~(1<<valid);
+				gpsstatus &= ~(1<<message);
+			}
+		}
+		else if ((gpsstatus&(1<<valid)) && gpscounter == 63)
+		{
+			gpsstatus |= (1<<complete);
+			gpsstatus &= ~(1<<message);
+		}
+	}
+}
+
+
+//Tacho funktionen
 double geschw;
 double strecke;
 double maxgeschw;
@@ -144,11 +204,12 @@ void geschwindigkeit(float durch){
 }
 
 //hier wird der neue Displayhandler verwendet
-#define numberofpages 4
+#define numberofpages 5
 #include "Monitor.h"
 
 void initialisierung();
 void maininterupthandler(monitor *mon, uint8_t taste);
+void gpshandler();
 
 int main(void)
 {
@@ -157,6 +218,7 @@ int main(void)
 	{
 		new uhr(&oled,&rtc),
 		new tacho(&oled,&rtc),
+		new wandern(&oled,&rtc),
 		new einstellungen(&oled,&rtc),
 		new offscreen(&oled,&rtc),
 		new menue(&oled,&rtc)
@@ -166,6 +228,7 @@ int main(void)
 	while (1) 
     {
 		maininterupthandler(Folien[position],Tastatur.unified());
+		gpshandler();
     }
 }
 
@@ -173,7 +236,7 @@ void initialisierung(){
 	//nullen der Flagregister
 	anzeige=0;
 	statusreg=0;
-	position=0;
+	position=2;
 	FPS=0;
 	
 	//initialisieren des Zaehler fuer die Winkelgeschw sowie den Timer
@@ -193,6 +256,25 @@ void initialisierung(){
 	while (ADCSRA & (1<<ADSC) ) {}
 	(void) ADCW;
 	
+	//USART initalisieren, aktivieren erst spaeter
+	PIND &= ~((1<<PIND1) | (1<<PIND2));
+	DDRD &= ~((1<<PIND1) | (1<<PIND2));
+	UBRR0H = 0;
+	UBRR0L = 51;							//9600 Baud
+	UCSR0C = (1<<UCSZ00) | (1<<UCSZ01);	// 8Bit Frame
+	UCSR0B = (1<<RXCIE0);
+	gpscounter = 0;
+	gpsstatus = (1<<fix);
+	lat = 0;
+	lon = 0;
+	gpsspeed = 0;
+	gpsstunde = 0;
+	gpsminute = 0;
+	gpssekunde = 0;
+	gpsTag = 0;
+	gpsMonat = 0;
+	gpsJahr = 0;
+	
 	//Wilkommensanzeige
 	wilkommen wil(&oled,&rtc);
 	wil.draw();
@@ -211,6 +293,10 @@ void initialisierung(){
 	rtc.Jahr	= EEPROM_Read(EEJAHR);
 	rtc.ausgabedatumneu();
 	rtc.RTCstart();
+	
+	//USART aktivieren jetzt nur hier zum testen
+	UCSR0B |= (1<<RXEN0);
+	
 	sei();
 }
 
@@ -349,6 +435,63 @@ void maininterupthandler(monitor *mon, uint8_t taste){
 			rtc.interupts &= ~(1<<Weckerein);
 		}
 	}*/
+}
+
+void gpshandler(){
+	if ((gpsstatus&(1<<complete)) && (gpsstatus&(1<<fix)))
+	{
+		//brechnung von Latitutde, Longitude, Zeit und Datum
+		//Zeit
+		gpsstunde =		(gpsdata[7] - '0')*10;
+		gpsstunde +=	(gpsdata[8] - '0');
+		gpsstunde += GMT;
+		gpsminute =		(gpsdata[9] - '0')*10;
+		gpsminute +=	(gpsdata[10] - '0');
+		gpssekunde =	(gpsdata[11] - '0')*10;
+		gpssekunde +=	(gpsdata[12] - '0');
+		
+		//Latitude
+		lat =	(gpsdata[20] - '0')*10;
+		lat +=	(gpsdata[21] - '0');
+		float latmin =	(gpsdata[22] - '0')*10;
+		latmin +=		(gpsdata[23] - '0');
+		latmin +=		(gpsdata[25] - '0')/10.0;
+		latmin +=		(gpsdata[26] - '0')/100.0;
+		latmin +=		(gpsdata[27] - '0')/1000.0;
+		latmin +=		(gpsdata[28] - '0')/10000.0;
+		lat +=	latmin/60.0;
+		if (gpsdata[30] != 'N')
+		{
+			lat *= -1;
+		}
+		
+		//Longitude
+		lon =	(gpsdata[32] - '0')*100;
+		lon +=	(gpsdata[33] - '0')*10;
+		lon +=	(gpsdata[34] - '0');
+		float lonmin =	(gpsdata[35] - '0')*10;
+		lonmin +=		(gpsdata[36] - '0');
+		lonmin +=		(gpsdata[38] - '0')/10.0;
+		lonmin +=		(gpsdata[39] - '0')/100.0;
+		lonmin +=		(gpsdata[40] - '0')/1000.0;
+		lonmin +=		(gpsdata[41] - '0')/10000.0;
+		lon +=			lonmin/60.0;
+		if (gpsdata[43] != 'E')
+		{
+			lon *= -1;
+		}
+		
+		//Datum
+		gpsTag =	(gpsdata[57] - '0')*10;
+		gpsTag +=	(gpsdata[58] - '0');
+		gpsMonat =	(gpsdata[59] - '0')*10;
+		gpsMonat +=	(gpsdata[60] - '0');
+		gpsJahr =	(gpsdata[61] - '0')*10;
+		gpsJahr +=	(gpsdata[62] - '0');
+		
+		gpsstatus &= ~(1<<complete);
+	}
+	//fix status pruefen, wenn implementiert
 }
 
 void uhreinstellen(){
