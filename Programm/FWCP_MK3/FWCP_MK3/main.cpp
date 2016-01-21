@@ -100,10 +100,11 @@ ISR(TIMER1_COMPA_vect){
 	statusreg |= (1<<updaterate);
 }
 
-#define message		0
-#define valid		1
-#define complete	2
-#define fix			7
+#define message				0
+#define valid				1
+#define complete			2
+#define completenotvalid	3
+#define fix					7
 //GPS sachen
 uint8_t gpsstatus;
 uint8_t gpsdata[72];
@@ -135,21 +136,21 @@ ISR(USART0_RX_vect){
 		}
 		else if (gpscounter==19)
 		{
-			if (gpsdata[18]!='A')
-			{
-				gpsstatus &= ~(1<<valid);
-				gpsstatus &= ~(1<<message);
-			}
-			else if (gpsdata[4]=='M' && gpsdata[5]=='C')
+			if (gpsdata[4]=='M' && gpsdata[5]=='C')
 			{
 				gpsstatus |= (1<<valid);
+				if (gpsdata[18]!='A')
+				{
+					gpsstatus &= ~((1<<valid) | (1<<message));
+					gpsstatus |= (1<<completenotvalid);
+				}
 			}
 			else{
 				gpsstatus &= ~(1<<valid);
 				gpsstatus &= ~(1<<message);
 			}
 		}
-		else if ((gpsstatus&(1<<valid)) && gpscounter == 63)
+		else if ((gpsstatus&(1<<valid)) && gpscounter == 70)
 		{
 			gpsstatus |= (1<<complete);
 			gpsstatus &= ~(1<<message);
@@ -490,6 +491,19 @@ void gpshandler(){
 		gpsJahr +=	(gpsdata[62] - '0');
 		
 		gpsstatus &= ~(1<<complete);
+	}
+	else if ((gpsstatus&(1<<completenotvalid)))
+	{
+		//Zeit
+		gpsstunde =		(gpsdata[7] - '0')*10;
+		gpsstunde +=	(gpsdata[8] - '0');
+		gpsstunde += GMT;
+		gpsminute =		(gpsdata[9] - '0')*10;
+		gpsminute +=	(gpsdata[10] - '0');
+		gpssekunde =	(gpsdata[11] - '0')*10;
+		gpssekunde +=	(gpsdata[12] - '0');
+		
+		gpsstunde &= ~(1<<completenotvalid);
 	}
 	//fix status pruefen, wenn implementiert
 }
