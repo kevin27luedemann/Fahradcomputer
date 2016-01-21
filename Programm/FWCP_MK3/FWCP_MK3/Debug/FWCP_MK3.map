@@ -939,14 +939,14 @@ END GROUP
                 0x00002026       0xd2 main.o
                 0x00002026                _Z15geschwindigkeitf
  .text._Z15initialisierungv
-                0x000020f8      0x280 main.o
+                0x000020f8      0x27e main.o
                 0x000020f8                _Z15initialisierungv
  .text._Z19maininterupthandlerP7monitorh
-                0x00002378      0x29e main.o
-                0x00002378                _Z19maininterupthandlerP7monitorh
+                0x00002376      0x29e main.o
+                0x00002376                _Z19maininterupthandlerP7monitorh
  .text._Z10gpshandlerv
-                0x00002616      0x49e main.o
-                0x00002616                _Z10gpshandlerv
+                0x00002614      0x4a0 main.o
+                0x00002614                _Z10gpshandlerv
  .text.main     0x00002ab4      0x2e4 main.o
                 0x00002ab4                main
  .text._Z13uhreinstellenv
@@ -1412,16 +1412,16 @@ END GROUP
  .debug_abbrev  0x0000151d      0x256 RTC.o
  .debug_abbrev  0x00001773      0x1d0 SOUND.o
 
-.debug_line     0x00000000     0x33d4
+.debug_line     0x00000000     0x33da
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x839 Display.o
  .debug_line    0x00000839      0x197 I2C.o
  .debug_line    0x000009d0      0x551 Interface.o
  .debug_line    0x00000f21      0x55b LSM303D.o
- .debug_line    0x0000147c     0x179f main.o
- .debug_line    0x00002c1b      0x217 Output.o
- .debug_line    0x00002e32      0x44d RTC.o
- .debug_line    0x0000327f      0x155 SOUND.o
+ .debug_line    0x0000147c     0x17a5 main.o
+ .debug_line    0x00002c21      0x217 Output.o
+ .debug_line    0x00002e38      0x44d RTC.o
+ .debug_line    0x00003285      0x155 SOUND.o
 
 .debug_frame    0x00000000      0xfbc
  *(.debug_frame)

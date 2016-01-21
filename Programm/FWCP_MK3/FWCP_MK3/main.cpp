@@ -224,7 +224,8 @@ int main(void)
 		new offscreen(&oled,&rtc),
 		new menue(&oled,&rtc)
 	};
-
+	
+	
 
 	while (1) 
     {
@@ -233,11 +234,11 @@ int main(void)
     }
 }
 
-void initialisierung(){
+void initialisierung(){	
 	//nullen der Flagregister
 	anzeige=0;
 	statusreg=0;
-	position=2;
+	position=0;
 	FPS=0;
 	
 	//initialisieren des Zaehler fuer die Winkelgeschw sowie den Timer
@@ -412,6 +413,7 @@ void maininterupthandler(monitor *mon, uint8_t taste){
 			}
 			strecke+=geschw/3.6;
 		}
+		
 		anzeige |= (1<<refreshdisplay);
 		rtc.interupts &= ~(1<<sekundeninterupt);
 	}
