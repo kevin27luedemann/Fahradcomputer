@@ -7,3 +7,5 @@ Programm und andere Sachen fuer den Fahradcomputer
 
 13.12.2015 Softwareversion 3.0 begonnen: mit neuer Oberflächensteuerung
 
+20.01.2016 GPS eingebunden und Aduino Library bereitgestellt
+
