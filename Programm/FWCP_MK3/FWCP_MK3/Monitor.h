@@ -310,11 +310,11 @@ class wandern: public monitor
 			rtc->Stunden	= gpsstunde;
 			rtc->Minuten	= gpsminute;
 			rtc->Sekunden	= gpssekunde;
-			/*
+			
 			rtc->Tag		= gpsTag;
 			rtc->Monat		= gpsMonat;
 			rtc->Jahr		= gpsJahr;
-			*/
+			
 			//speichern der neuen Zeit im EEPROM
 			EEPROM_Write(EEMINUTEN,rtc->Minuten);
 			EEPROM_Write(EESTUNDEN,rtc->Stunden);
@@ -344,9 +344,9 @@ class wandern: public monitor
 		//Longitude
 		buffersize=sprintf(buffer,"Lon: %.5f",lon);
 		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,3*charhighte);}
-		
-		for(uint8_t i=45;i<60;i++){oled->draw_ASCI(gpsdata[i],(i-45)*charsize,4*charhighte);}
-			
+		/*
+		for(uint8_t i=18;i<35;i++){oled->draw_ASCI(gpsdata[i],(i-18)*charsize,4*charhighte);}
+			*/
 		//gpstime
 		buffersize=sprintf(buffer,"%02i:%02i:%02i %02i.%02i.%02i",gpsstunde,gpsminute,gpssekunde,gpsTag,gpsMonat,gpsJahr);
 		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,5*charhighte);}
