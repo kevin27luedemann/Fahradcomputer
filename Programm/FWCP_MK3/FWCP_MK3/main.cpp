@@ -17,24 +17,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <avr/interrupt.h>
-#include <avr/wdt.h>
-
-//sofreset erlauben und ruecksetzten des Whatchdogs
-void wdt_init(void) __attribute__((naked)) __attribute__((section(".init3")));
-void wdt_init(void)
-{
-	MCUSR = 0;
-	wdt_disable();
-	return;
-}
-#define soft_reset()        \
-do                          \
-{                           \
-	wdt_enable(WDTO_15MS);  \
-	for(;;)                 \
-	{                       \
-	}                       \
-} while(0)
 
 //define new and delete operator
 void * operator new(size_t size)
@@ -77,7 +59,8 @@ Output Sound('B',PORTB3);
 
 uint8_t anzeige;	//Flagregister fuer die Anziegenschaltung
 
-#define updaterate 0
+#define updaterate		0
+#define powersavemode	1
 
 uint8_t statusreg;
 uint8_t position;		//Numer der Aktuellen Seite fuer Array und sonstieges
@@ -94,6 +77,10 @@ ISR(TIMER2_OVF_vect){	//Vektor fuer die RTC
 	//TCNT2=TIMER2RTCTIME;
 	rtc.Sekunden++;
 	rtc.interupts|= (1<<sekundeninterupt);
+	if (statusreg&(1<<powersavemode))
+	{
+		SMCR &= ~(1<<SE);
+	}
 }
 
 ISR(TIMER1_COMPA_vect){
@@ -239,6 +226,10 @@ int main(void)
     {
 		maininterupthandler(Folien[position],Tastatur.unified());
 		gpshandler();
+		if (statusreg&(1<<powersavemode))
+		{
+			SMCR |= (1<<SE);
+		}
     }
 }
 
@@ -303,6 +294,12 @@ void initialisierung(){
 	rtc.Jahr	= EEPROM_Read(EEJAHR);
 	rtc.ausgabedatumneu();
 	rtc.RTCstart();
+	
+	//Sleepmode Grundeinstelung
+	SMCR |= (1<<SM1) | (1<<SM0);
+	
+	//AD deaktivieren zum stromsparen
+	ACSR |= (1<<ACD);
 	
 	//USART aktivieren jetzt nur hier zum testen
 	UCSR0B |= (1<<RXEN0);
@@ -380,6 +377,13 @@ void maininterupthandler(monitor *mon, uint8_t taste){
 				//alle anderen Tasten werden an den jeweiligen Handler weiter gegeben
 				mon->tastendruck(&taste);
 				break;
+		}
+		if (position==0 || position==numberofpages)
+		{
+			statusreg |= (1<<powersavemode);
+		}
+		else{
+			statusreg &= ~(1<<powersavemode);
 		}
 	}
 	

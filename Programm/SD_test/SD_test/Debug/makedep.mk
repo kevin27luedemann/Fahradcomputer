@@ -2,11 +2,9 @@
 # Automatically-generated file. Do not edit or delete the file
 ################################################################################
 
-fat.c
+diskio.c
 
-file.c
+ff.c
 
 main.cpp
-
-mmc.c
 

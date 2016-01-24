@@ -314,7 +314,7 @@ class wandern: public monitor
 			rtc->Tag		= gpsTag;
 			rtc->Monat		= gpsMonat;
 			rtc->Jahr		= gpsJahr;
-			
+			rtc->ausgabedatumneu();
 			//speichern der neuen Zeit im EEPROM
 			EEPROM_Write(EEMINUTEN,rtc->Minuten);
 			EEPROM_Write(EESTUNDEN,rtc->Stunden);
@@ -373,7 +373,7 @@ class einstellungen: public monitor
 				name[i] = ' ';
 			}
 		}
-		maxentries = 4;
+		maxentries = 3;
 	}
 	
 	//Uhreinstellungs Funktion
@@ -398,8 +398,6 @@ class einstellungen: public monitor
 			for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,3*charhighte);}
 			buffersize=sprintf(buffer,"Versionsnummer");
 			for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,4*charhighte);}
-			buffersize=sprintf(buffer,"soft Reset");
-			for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,5*charhighte);}
 			oled->draw_ASCI('>',0*charsize,(posy+2)*charhighte);
 		}
 		else if (posy==0 && posx==1)
@@ -433,10 +431,6 @@ class einstellungen: public monitor
 				oled->draw_ASCI(buffer[i],(i+2)*charsize,3.5*charhighte);
 
 			}
-		}
-		else if (posy==3 && posx==1)
-		{
-			soft_reset();
 		}
 		send();	
 	}
