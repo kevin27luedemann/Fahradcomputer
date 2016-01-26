@@ -542,6 +542,10 @@ void gpshandler(){
 	}
 	else if ((gpsstatus&(1<<completenotvalid))  && (gpsstatus&(1<<fix)))
 	{
+		//Andere Daten vernichten
+		lat = 0;
+		lon = 0;
+		gpsspeed = 0;
 		//Zeit
 		gpsstunde =		(gpsdata[7] - '0')*10;
 		gpsstunde +=	(gpsdata[8] - '0');

@@ -146,7 +146,7 @@ class uhr:public monitor
 				name[i] = ' ';
 			}
 		}
-		Zeiger = 1;
+		Zeiger = 0;
 		maxentries = 3;
 	}
 	

@@ -1,28 +1,23 @@
 /*-----------------------------------------------------------------------*/
-/* MMCv3/SDv1/SDv2 (in SPI mode) control module                          */
+/* Low level disk I/O module skeleton for FatFs     (C)ChaN, 2014        */
 /*-----------------------------------------------------------------------*/
-/*
-/  Copyright (C) 2014, ChaN, all right reserved.
-/
-/ * This software is a free software and there is NO WARRANTY.
-/ * No restriction on use. You can use, modify and redistribute it for
-/   personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
-/ * Redistributions of source code must retain the above copyright notice.
-/
-/-------------------------------------------------------------------------*/
+/* If a working storage control module is available, it should be        */
+/* attached to the FatFs via a glue function rather than modifying it.   */
+/* This is an example of glue functions to attach various exsisting      */
+/* storage control modules to the FatFs module with a defined API.       */
+/*-----------------------------------------------------------------------*/
 
 #include <avr/io.h>
-#include "diskio.h"
+#include "diskio.h"		/* FatFs lower layer API */
 
 
 /* Port controls  (Platform dependent) */
-#define CS_LOW()	PORTB &= ~(1<<PINB6)			/* CS=low */
-#define	CS_HIGH()	PORTB |= (1<<PINB6)			/* CS=high */
-#define MMC_CD		(!(PINA & (1<<PINA4)))	/* Card detected.   yes:true, no:false, default:true */
-#define MMC_WP		(PINA & (1<<PINA1))		/* Write protected. yes:true, no:false, default:false */
+#define CS_LOW()	PORTB &= ~(1<<PINB4)			/* CS=low */
+#define	CS_HIGH()	PORTB |= (1<<PINB4)			/* CS=high */
+#define MMC_CD		(!(PINB & (1<<PINA4)))	/* Card detected.   yes:true, no:false, default:true */
+//#define MMC_WP		(PINB & 0x20)		/* Write protected. yes:true, no:false, default:false */
 #define	FCLK_SLOW()	SPCR = 0x52		/* Set slow clock (F_CPU / 64) */
 #define	FCLK_FAST()	SPCR = 0x50		/* Set fast clock (F_CPU / 2) */
-
 
 /*--------------------------------------------------------------------------
 
@@ -52,7 +47,6 @@
 #define CMD55	(55)		/* APP_CMD */
 #define CMD58	(58)		/* READ_OCR */
 
-
 static volatile
 DSTATUS Stat = STA_NOINIT;	/* Disk status */
 
@@ -61,7 +55,6 @@ BYTE Timer1, Timer2;	/* 100Hz decrement timer */
 
 static
 BYTE CardType;			/* Card type flags */
-
 
 /*-----------------------------------------------------------------------*/
 /* Power Control  (Platform dependent)                                   */
@@ -72,8 +65,8 @@ BYTE CardType;			/* Card type flags */
 static
 void power_on (void)
 {
-	PORTB |= (1<<PINB7) | (1<<PINB6) | (1<<PINB5) | (1<<PINB4);	/* Configure SCK/MOSI/CS as output */
-	DDRB  |= (1<<PINB7) | (1<<PINB6) | (1<<PINB5) | (1<<PINB4);
+	PORTB |= (1<<PORTB7) | (1<<PORTB6) | (1<<PORTB5) | (1<<PORTB4);	/* Configure SCK/MOSI/CS as output */
+	DDRB  |= (1<<PORTB7) | (1<<PORTB6) | (1<<PORTB5) | (1<<PORTB4);
 
 	SPCR = 0x52;			/* Enable SPI function in mode 0 */
 	SPSR = 0x01;			/* SPI 2x mode */
@@ -84,11 +77,10 @@ void power_off (void)
 {
 	SPCR = 0;				/* Disable SPI function */
 
-	DDRB  &= ~((1<<PINB7) | (1<<PINB6) | (1<<PINB5) | (1<<PINB4));	/* Set SCK/MOSI/CS as hi-z, INS#/WP as pull-up */
-	PORTB &= ~((1<<PINB7) | (1<<PINB6) | (1<<PINB5) | (1<<PINB4));
+	DDRB  &= ~((1<<PORTB7) | (1<<PORTB6) | (1<<PORTB5) | (1<<PORTB4));	/* Set SCK/MOSI/CS as hi-z, INS#/WP as pull-up */
+	PORTB &= ~((1<<PORTB7) | (1<<PORTB6) | (1<<PORTB5) | (1<<PORTB4));
+	PORTB |=  (1<<PORTB7) | (1<<PORTB6) | (1<<PORTB5) | (1<<PORTB4);
 }
-
-
 
 /*-----------------------------------------------------------------------*/
 /* Transmit/Receive data from/to MMC via SPI  (Platform dependent)       */
@@ -97,7 +89,7 @@ void power_off (void)
 /* Exchange a byte */
 static
 BYTE xchg_spi (		/* Returns received data */
-	BYTE dat		/* Data to be sent */
+BYTE dat		/* Data to be sent */
 )
 {
 	SPDR = dat;
@@ -108,8 +100,8 @@ BYTE xchg_spi (		/* Returns received data */
 /* Send a data block fast */
 static
 void xmit_spi_multi (
-	const BYTE *p,	/* Data block to be sent */
-	UINT cnt		/* Size of data block (must be multiple of 2) */
+const BYTE *p,	/* Data block to be sent */
+UINT cnt		/* Size of data block (must be multiple of 2) */
 )
 {
 	do {
@@ -121,8 +113,8 @@ void xmit_spi_multi (
 /* Receive a data block fast */
 static
 void rcvr_spi_multi (
-	BYTE *p,	/* Data buffer */
-	UINT cnt	/* Size of data block (must be multiple of 2) */
+BYTE *p,	/* Data buffer */
+UINT cnt	/* Size of data block (must be multiple of 2) */
 )
 {
 	do {
@@ -131,15 +123,13 @@ void rcvr_spi_multi (
 	} while (cnt -= 2);
 }
 
-
-
 /*-----------------------------------------------------------------------*/
 /* Wait for card ready                                                   */
 /*-----------------------------------------------------------------------*/
 
 static
 int wait_ready (	/* 1:Ready, 0:Timeout */
-	UINT wt			/* Timeout [ms] */
+UINT wt			/* Timeout [ms] */
 )
 {
 	BYTE d;
@@ -147,7 +137,7 @@ int wait_ready (	/* 1:Ready, 0:Timeout */
 
 	Timer2 = wt / 10;
 	do
-		d = xchg_spi(0xFF);
+	d = xchg_spi(0xFF);
 	while (d != 0xFF && Timer2);
 
 	return (d == 0xFF) ? 1 : 0;
@@ -184,15 +174,14 @@ int select (void)	/* 1:Successful, 0:Timeout */
 }
 
 
-
 /*-----------------------------------------------------------------------*/
 /* Receive a data packet from MMC                                        */
 /*-----------------------------------------------------------------------*/
 
 static
 int rcvr_datablock (
-	BYTE *buff,			/* Data buffer to store received data */
-	UINT btr			/* Byte count (must be multiple of 4) */
+BYTE *buff,			/* Data buffer to store received data */
+UINT btr			/* Byte count (must be multiple of 4) */
 )
 {
 	BYTE token;
@@ -220,8 +209,8 @@ int rcvr_datablock (
 #if	_USE_WRITE
 static
 int xmit_datablock (
-	const BYTE *buff,	/* 512 byte data block to be transmitted */
-	BYTE token			/* Data/Stop token */
+const BYTE *buff,	/* 512 byte data block to be transmitted */
+BYTE token			/* Data/Stop token */
 )
 {
 	BYTE resp;
@@ -236,7 +225,7 @@ int xmit_datablock (
 		xchg_spi(0xFF);
 		resp = xchg_spi(0xFF);			/* Reveive data response */
 		if ((resp & 0x1F) != 0x05)		/* If not accepted, return with error */
-			return 0;
+		return 0;
 	}
 
 	return 1;
@@ -453,7 +442,7 @@ DRESULT disk_write (
 DRESULT disk_ioctl (
 	BYTE pdrv,		/* Physical drive nmuber (0) */
 	BYTE cmd,		/* Control code */
-	BYTE *buff		/* Buffer to send/receive control data */
+	void *buff		/* Buffer to send/receive control data */
 )
 {
 	DRESULT res;
@@ -575,12 +564,7 @@ void disk_timerproc (void)
 	if (n) Timer2 = --n;
 
 	s = Stat;
-
-	if (MMC_WP)				/* Write protected */
-		s |= STA_PROTECT;
-	else					/* Write enabled */
-		s &= ~STA_PROTECT;
-
+	
 	if (MMC_CD)				/* Card inserted */
 		s &= ~STA_NODISK;
 	else					/* Socket empty */
