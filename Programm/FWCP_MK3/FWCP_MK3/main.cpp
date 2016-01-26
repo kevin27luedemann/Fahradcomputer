@@ -99,7 +99,7 @@ uint8_t gpsdata[72];
 uint8_t gpscounter;
 double lat;
 double lon;
-float gpsspeed;
+double gpsspeed;
 uint8_t gpsstunde;
 uint8_t gpsminute;
 uint8_t gpssekunde;
@@ -496,7 +496,29 @@ void gpshandler(){
 			lon *= -1;
 		}
 		//Speed and direktion ar discarted for now
-		volatile uint8_t counter = 19;
+		volatile uint8_t counter = 44;
+		uint8_t weiter = true;
+		while (weiter)
+		{
+			if (gpsdata[counter]=='.')
+			{
+				weiter=false;
+				counter--;
+			}
+			counter++;
+		}
+		
+		gpsspeed = 0;
+		for(uint8_t i=44;i<counter;i++){
+			gpsspeed += (gpsdata[i]-'0')*pow(10,(counter-i-1));
+		}
+		gpsspeed += (gpsdata[counter+1]-'0')*0.1;
+		gpsspeed += (gpsdata[counter+2]-'0')*0.01;
+		//umrechnen knoten in kmh
+		gpsspeed *= 1.852;
+		
+		//date
+		counter =19;
 		volatile uint8_t nichterreicht = 0;
 		
 		while (nichterreicht < 7)

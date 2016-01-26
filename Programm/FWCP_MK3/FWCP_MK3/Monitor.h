@@ -338,12 +338,16 @@ class wandern: public monitor
 		*/
 		
 		//Latitude
-		buffersize=sprintf(buffer,"Lat: %.5f",lat);
+		buffersize=sprintf(buffer,"Lat: %.7f",lat);
 		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,2*charhighte);}
 			
 		//Longitude
-		buffersize=sprintf(buffer,"Lon: %.5f",lon);
+		buffersize=sprintf(buffer,"Lon: %.7f",lon);
 		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,3*charhighte);}
+			
+		//Speed
+		buffersize=sprintf(buffer,"Spe: %.4f",gpsspeed);
+		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,4*charhighte);}
 		/*
 		for(uint8_t i=18;i<35;i++){oled->draw_ASCI(gpsdata[i],(i-18)*charsize,4*charhighte);}
 			*/
