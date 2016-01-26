@@ -6334,9 +6334,9 @@ void gpshandler(){
     2b14:	a0 93 e2 02 	sts	0x02E2, r26
     2b18:	b0 93 e3 02 	sts	0x02E3, r27
 		}
-		//Speed and direktion ar discarted for now
-		volatile uint8_t counter = 44;
-    2b1c:	8c e2       	ldi	r24, 0x2C	; 44
+		//Speed 
+		volatile uint8_t counter = 45;
+    2b1c:	8d e2       	ldi	r24, 0x2D	; 45
     2b1e:	8c 83       	std	Y+4, r24	; 0x04
 		uint8_t weiter = true;
 		while (weiter)
@@ -6367,9 +6367,9 @@ void gpshandler(){
     2b3e:	10 92 dd 02 	sts	0x02DD, r1
     2b42:	10 92 de 02 	sts	0x02DE, r1
     2b46:	10 92 df 02 	sts	0x02DF, r1
-		for(uint8_t i=44;i<counter;i++){
+		for(uint8_t i=45;i<counter;i++){
     2b4a:	8c 81       	ldd	r24, Y+4	; 0x04
-    2b4c:	8d 32       	cpi	r24, 0x2D	; 45
+    2b4c:	8e 32       	cpi	r24, 0x2E	; 46
     2b4e:	28 f4       	brcc	.+10     	; 0x2b5a <_Z10gpshandlerv+0x41e>
     2b50:	47 c0       	rjmp	.+142    	; 0x2be0 <_Z10gpshandlerv+0x4a4>
 			if (gpsdata[counter]=='.')
@@ -6385,12 +6385,12 @@ void gpshandler(){
 		}
 		
 		gpsspeed = 0;
-		for(uint8_t i=44;i<counter;i++){
+		for(uint8_t i=45;i<counter;i++){
     2b5a:	81 2c       	mov	r8, r1
     2b5c:	91 2c       	mov	r9, r1
     2b5e:	54 01       	movw	r10, r8
     2b60:	0f 2e       	mov	r0, r31
-    2b62:	fc e2       	ldi	r31, 0x2C	; 44
+    2b62:	fd e2       	ldi	r31, 0x2D	; 45
     2b64:	ff 2e       	mov	r15, r31
     2b66:	f0 2d       	mov	r31, r0
 			gpsspeed += (gpsdata[i]-'0')*pow(10,(counter-i-1));
@@ -6442,7 +6442,7 @@ void gpshandler(){
 		}
 		
 		gpsspeed = 0;
-		for(uint8_t i=44;i<counter;i++){
+		for(uint8_t i=45;i<counter;i++){
     2bc8:	f3 94       	inc	r15
     2bca:	8c 81       	ldd	r24, Y+4	; 0x04
     2bcc:	f8 16       	cp	r15, r24
@@ -6459,7 +6459,7 @@ void gpshandler(){
     2be2:	1c 81       	ldd	r17, Y+4	; 0x04
 		
 		gpsspeed = 0;
-		for(uint8_t i=44;i<counter;i++){
+		for(uint8_t i=45;i<counter;i++){
 			gpsspeed += (gpsdata[i]-'0')*pow(10,(counter-i-1));
 		}
 		gpsspeed += (gpsdata[counter+1]-'0')*0.1;

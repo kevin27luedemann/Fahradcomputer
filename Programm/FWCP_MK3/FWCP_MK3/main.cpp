@@ -495,8 +495,8 @@ void gpshandler(){
 		{
 			lon *= -1;
 		}
-		//Speed and direktion ar discarted for now
-		volatile uint8_t counter = 44;
+		//Speed 
+		volatile uint8_t counter = 45;
 		uint8_t weiter = true;
 		while (weiter)
 		{
@@ -509,7 +509,7 @@ void gpshandler(){
 		}
 		
 		gpsspeed = 0;
-		for(uint8_t i=44;i<counter;i++){
+		for(uint8_t i=45;i<counter;i++){
 			gpsspeed += (gpsdata[i]-'0')*pow(10,(counter-i-1));
 		}
 		gpsspeed += (gpsdata[counter+1]-'0')*0.1;
