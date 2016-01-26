@@ -4698,8 +4698,8 @@ ISR(USART0_RX_vect){
     2044:	0d c0       	rjmp	.+26     	; 0x2060 <__vector_20+0xb4>
 		{
 			gpsstatus |= (1<<completenotvalid);
-			gpsstatus &= ~(1<<message);
-    2046:	9e 7f       	andi	r25, 0xFE	; 254
+			gpsstatus &= ~((1<<message) | (1<<notvalidgetdate));
+    2046:	9e 7e       	andi	r25, 0xEE	; 238
     2048:	98 60       	ori	r25, 0x08	; 8
     204a:	90 93 31 03 	sts	0x0331, r25
     204e:	08 c0       	rjmp	.+16     	; 0x2060 <__vector_20+0xb4>

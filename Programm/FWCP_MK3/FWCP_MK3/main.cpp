@@ -143,7 +143,7 @@ ISR(USART0_RX_vect){
 		else if (gpscounter == 42 && (gpsstatus&(1<<notvalidgetdate)))
 		{
 			gpsstatus |= (1<<completenotvalid);
-			gpsstatus &= ~(1<<message);
+			gpsstatus &= ~((1<<message) | (1<<notvalidgetdate));
 		}
 		else if (gpscounter == 70 && (gpsstatus&(1<<valid)))
 		{
