@@ -32,7 +32,7 @@ int main(void)
 	
 	f_close(&fil_obj);
     
-	
+	f_mount(0,"",0);
 	
 	
     while (1) 
