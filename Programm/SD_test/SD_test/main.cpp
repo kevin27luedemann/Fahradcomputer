@@ -5,7 +5,9 @@
  * Author : Lüdemann
  */ 
 
-#define F_CPU 8000000
+#define F_CPU		8000000
+#define timerhertz	100
+#define CTCVALUE	F_CPU/(timerhertz*2*1024)-1
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -17,8 +19,23 @@ extern "C" {
 #include "ff.h"
 };
 
+volatile uint8_t Timerstat;
+ISR(TIMER0_COMPA_vect){
+	Timerstat++;
+	disk_timerproc();	//Timer der SD Karte
+}
+
+
 int main(void)
 {
+	Timerstat = 0;
+	//init Timer
+	TCCR0A	|= (1<<WGM01);		//Timer im ctc Mide
+	OCR0A	 = CTCVALUE;		//ctc counter ende
+	TIMSK0	|= (1<<OCIE0A);
+	TCCR0B	|= (1<<CS02) | (1<<CS00);	//presc=1024
+
+
 	static FATFS FATFS_Obj;
 	
 	disk_initialize(0);
