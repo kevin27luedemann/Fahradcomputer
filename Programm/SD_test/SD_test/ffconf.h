@@ -15,7 +15,7 @@
 /  and optional writing functions as well. */
 
 
-#define _FS_MINIMIZE	2
+#define _FS_MINIMIZE	0
 /* This option defines minimization level to remove some basic API functions.
 /
 /   0: All basic functions are enabled.
@@ -39,7 +39,7 @@
 /  f_findfirst() and f_findnext(). (0:Disable or 1:Enable) */
 
 
-#define	_USE_MKFS		0
+#define	_USE_MKFS		1
 /* This option switches f_mkfs() function. (0:Disable or 1:Enable) */
 
 
@@ -47,7 +47,7 @@
 /* This option switches fast seek feature. (0:Disable or 1:Enable) */
 
 
-#define _USE_LABEL		0
+#define _USE_LABEL		1
 /* This option switches volume label functions, f_getlabel() and f_setlabel().
 /  (0:Disable or 1:Enable) */
 
@@ -159,8 +159,8 @@
 /  listed in the VolToPart[]. Also f_fdisk() funciton will be available. */
 
 
-#define	_MIN_SS		4096
-#define	_MAX_SS		4096
+#define	_MIN_SS		1024
+#define	_MAX_SS		1024
 /* These options configure the range of sector size to be supported. (512, 1024,
 /  2048 or 4096) Always set both 512 for most systems, all type of memory cards and
 /  harddisk. But a larger value may be required for on-board flash memory and some

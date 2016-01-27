@@ -37,11 +37,10 @@ SUBDIRS :=
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
-../diskio.c \
-../Display.cpp \
-../ff.c \
-../I2C.cpp \
-../main.cpp
+../fat.c \
+../file.c \
+../main.cpp \
+../mmc.c
 
 
 PREPROCESSING_SRCS += 
@@ -51,36 +50,32 @@ ASM_SRCS +=
 
 
 OBJS +=  \
-diskio.o \
-Display.o \
-ff.o \
-I2C.o \
-main.o
+fat.o \
+file.o \
+main.o \
+mmc.o
 
 OBJS_AS_ARGS +=  \
-diskio.o \
-Display.o \
-ff.o \
-I2C.o \
-main.o
+fat.o \
+file.o \
+main.o \
+mmc.o
 
 C_DEPS +=  \
-diskio.d \
-Display.d \
-ff.d \
-I2C.d \
-main.d
+fat.d \
+file.d \
+main.d \
+mmc.d
 
 C_DEPS_AS_ARGS +=  \
-diskio.d \
-Display.d \
-ff.d \
-I2C.d \
-main.d
+fat.d \
+file.d \
+main.d \
+mmc.d
 
-OUTPUT_FILE_PATH +=SD_test.elf
+OUTPUT_FILE_PATH +=net_sd.elf
 
-OUTPUT_FILE_PATH_AS_ARGS +=SD_test.elf
+OUTPUT_FILE_PATH_AS_ARGS +=net_sd.elf
 
 ADDITIONAL_DEPENDENCIES:=
 
@@ -92,8 +87,6 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
-
-
 
 
 
@@ -142,13 +135,13 @@ all: $(OUTPUT_FILE_PATH) $(ADDITIONAL_DEPENDENCIES)
 $(OUTPUT_FILE_PATH): $(OBJS) $(USER_OBJS) $(OUTPUT_FILE_DEP) $(LIB_DEP) $(LINKER_SCRIPT_DEP)
 	@echo Building target: $@
 	@echo Invoking: AVR8/GNU Linker : 4.9.2
-	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-g++.exe$(QUOTE) -o$(OUTPUT_FILE_PATH_AS_ARGS) $(OBJS_AS_ARGS) $(USER_OBJS) $(LIBS) -Wl,-Map="SD_test.map" -Wl,--start-group -Wl,-lm  -Wl,--end-group -Wl,--gc-sections -mrelax -mmcu=atmega1284p -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.0.90\gcc\dev\atmega1284p"  
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-g++.exe$(QUOTE) -o$(OUTPUT_FILE_PATH_AS_ARGS) $(OBJS_AS_ARGS) $(USER_OBJS) $(LIBS) -Wl,-Map="net_sd.map" -Wl,--start-group -Wl,-lm  -Wl,--end-group -Wl,--gc-sections -mrelax -mmcu=atmega1284p -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.0.90\gcc\dev\atmega1284p"  
 	@echo Finished building target: $@
-	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-objcopy.exe" -O ihex -R .eeprom -R .fuse -R .lock -R .signature -R .user_signatures  "SD_test.elf" "SD_test.hex"
-	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-objcopy.exe" -j .eeprom  --set-section-flags=.eeprom=alloc,load --change-section-lma .eeprom=0  --no-change-warnings -O ihex "SD_test.elf" "SD_test.eep" || exit 0
-	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-objdump.exe" -h -S "SD_test.elf" > "SD_test.lss"
-	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-objcopy.exe" -O srec -R .eeprom -R .fuse -R .lock -R .signature -R .user_signatures "SD_test.elf" "SD_test.srec"
-	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-size.exe" "SD_test.elf"
+	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-objcopy.exe" -O ihex -R .eeprom -R .fuse -R .lock -R .signature -R .user_signatures  "net_sd.elf" "net_sd.hex"
+	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-objcopy.exe" -j .eeprom  --set-section-flags=.eeprom=alloc,load --change-section-lma .eeprom=0  --no-change-warnings -O ihex "net_sd.elf" "net_sd.eep" || exit 0
+	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-objdump.exe" -h -S "net_sd.elf" > "net_sd.lss"
+	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-objcopy.exe" -O srec -R .eeprom -R .fuse -R .lock -R .signature -R .user_signatures "net_sd.elf" "net_sd.srec"
+	"C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-size.exe" "net_sd.elf"
 	
 	
 
@@ -160,5 +153,5 @@ $(OUTPUT_FILE_PATH): $(OBJS) $(USER_OBJS) $(OUTPUT_FILE_DEP) $(LIB_DEP) $(LINKER
 clean:
 	-$(RM) $(OBJS_AS_ARGS) $(EXECUTABLES)  
 	-$(RM) $(C_DEPS_AS_ARGS)   
-	rm -rf "SD_test.elf" "SD_test.a" "SD_test.hex" "SD_test.lss" "SD_test.eep" "SD_test.map" "SD_test.srec" "SD_test.usersignatures"
+	rm -rf "net_sd.elf" "net_sd.a" "net_sd.hex" "net_sd.lss" "net_sd.eep" "net_sd.map" "net_sd.srec" "net_sd.usersignatures"
 	

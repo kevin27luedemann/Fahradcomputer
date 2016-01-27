@@ -78,8 +78,8 @@ void power_off (void)
 	SPCR = 0;				/* Disable SPI function */
 
 	DDRB  &= ~((1<<PORTB7) | (1<<PORTB5) | (1<<PORTB4));	/* Set SCK/MOSI/CS as hi-z, INS#/WP as pull-up */
-	PORTB &= ~((1<<PORTB7) | (1<<PORTB5) | (1<<PORTB4));
-	PORTB |=  (1<<PORTB7) | (1<<PORTB5) | (1<<PORTB4);
+	//PORTB &= ~((1<<PORTB7) | (1<<PORTB5) | (1<<PORTB4));
+	//PORTB |=  (1<<PORTB7) | (1<<PORTB5) | (1<<PORTB4);
 }
 
 /*-----------------------------------------------------------------------*/
@@ -302,7 +302,7 @@ DSTATUS disk_initialize (
 
 	if (pdrv) return STA_NOINIT;		/* Supports only single drive */
 	power_off();						/* Turn off the socket power to reset the card */
-	if (Stat & STA_NODISK) return Stat;	/* No card in the socket */
+	if (Stat & (1<<STA_NODISK)) return 5;// Stat;	/* No card in the socket */
 	power_on();							/* Turn on the socket power */
 	FCLK_SLOW();
 	for (n = 10; n; n--) xchg_spi(0xFF);	/* 80 dummy clocks */
@@ -562,7 +562,7 @@ void disk_timerproc (void)
 	if (n) Timer1 = --n;
 	n = Timer2;
 	if (n) Timer2 = --n;
-
+	
 	s = Stat;
 	
 	if (MMC_CD)				/* Card inserted */
@@ -571,4 +571,5 @@ void disk_timerproc (void)
 		s |= (STA_NODISK | STA_NOINIT);
 
 	Stat = s;				/* Update MMC status */
+	
 }

@@ -9,7 +9,8 @@
 	#define _MMC_H
 
 	// timer variable ( 10 ms intervall)
-	extern volatile uint8_t TimingDelay;
+	//extern 
+	volatile uint8_t TimingDelay;
 
 	#define MMC_Write 		PORTB	//Port an der die MMC/SD-Karte angeschlossen ist also des SPI
 	#define MMC_Read 		PINB
@@ -26,7 +27,14 @@
 		#define SPI_Clock 			1  //Port Pin an dem die Clock der MMC/SD-Karte angeschlossen ist (clk)
 		#define SPI_SS    			0  //Port Pin an dem Chip Select der MMC/SD-Karte angeschlossen ist (CS)
 	#endif
-
+	
+	#if defined (__AVR_ATmega1284P__)
+		#define SPI_MISO    		6  //Port Pin an dem Data Output der MMC/SD-Karte angeschlossen ist (DO)
+		#define SPI_MOSI    		5  //Port Pin an dem Data Input der MMC/SD-Karte angeschlossen ist (DI)
+		#define SPI_Clock 			7  //Port Pin an dem die Clock der MMC/SD-Karte angeschlossen ist (clk)
+		#define SPI_SS    			4  //Port Pin an dem Chip Select der MMC/SD-Karte angeschlossen ist (CS)
+	#endif
+	
 	#if defined (__AVR_ATmega32__)
 		#define SPI_MISO 			6  //Port Pin an dem Data Output der MMC/SD-Karte angeschlossen ist
 		#define SPI_MOSI    		5  //Port Pin an dem Data Input der MMC/SD-Karte angeschlossen ist

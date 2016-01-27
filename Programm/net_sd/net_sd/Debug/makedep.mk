@@ -2,13 +2,11 @@
 # Automatically-generated file. Do not edit or delete the file
 ################################################################################
 
-diskio.c
+fat.c
 
-Display.cpp
-
-ff.c
-
-I2C.cpp
+file.c
 
 main.cpp
+
+mmc.c
 
