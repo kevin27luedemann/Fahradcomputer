@@ -68,8 +68,8 @@ void power_on (void)
 	PORTB |= (1<<PORTB7) | (1<<PORTB5) | (1<<PORTB4);	/* Configure SCK/MOSI/CS as output */
 	DDRB  |= (1<<PORTB7) | (1<<PORTB5) | (1<<PORTB4);
 
-	SPCR = 0x52;			/* Enable SPI function in mode 0 */
 	SPSR = 0x01;			/* SPI 2x mode */
+	SPCR = 0x52;			/* Enable SPI function in mode 0 */
 }
 
 static
@@ -78,8 +78,8 @@ void power_off (void)
 	SPCR = 0;				/* Disable SPI function */
 
 	DDRB  &= ~((1<<PORTB7) | (1<<PORTB5) | (1<<PORTB4));	/* Set SCK/MOSI/CS as hi-z, INS#/WP as pull-up */
-	//PORTB &= ~((1<<PORTB7) | (1<<PORTB5) | (1<<PORTB4));
-	//PORTB |=  (1<<PORTB7) | (1<<PORTB5) | (1<<PORTB4);
+	PORTB &= ~((1<<PORTB7) | (1<<PORTB5) | (1<<PORTB4));
+	PORTB |=  (1<<PORTB7) | (1<<PORTB5) | (1<<PORTB4);
 }
 
 /*-----------------------------------------------------------------------*/
