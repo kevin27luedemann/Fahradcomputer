@@ -34,7 +34,7 @@
 /  2: Enable with LF-CRLF conversion. */
 
 
-#define _USE_FIND		0
+#define _USE_FIND		1
 /* This option switches filtered directory read feature and related functions,
 /  f_findfirst() and f_findnext(). (0:Disable or 1:Enable) */
 
@@ -43,7 +43,7 @@
 /* This option switches f_mkfs() function. (0:Disable or 1:Enable) */
 
 
-#define	_USE_FASTSEEK	0
+#define	_USE_FASTSEEK	1
 /* This option switches fast seek feature. (0:Disable or 1:Enable) */
 
 
@@ -52,7 +52,7 @@
 /  (0:Disable or 1:Enable) */
 
 
-#define	_USE_FORWARD	0
+#define	_USE_FORWARD	1
 /* This option switches f_forward() function. (0:Disable or 1:Enable)
 /  To enable it, also _FS_TINY need to be set to 1. */
 
@@ -61,7 +61,7 @@
 / Locale and Namespace Configurations
 /---------------------------------------------------------------------------*/
 
-#define _CODE_PAGE	1
+#define _CODE_PAGE	437
 /* This option specifies the OEM code page to be used on the target system.
 /  Incorrect setting of the code page can cause a file open failure.
 /
@@ -124,7 +124,7 @@
 /  When _LFN_UNICODE is 0, this option has no effect. */
 
 
-#define _FS_RPATH	0
+#define _FS_RPATH	2
 /* This option configures relative path feature.
 /
 /   0: Disable relative path feature and remove related functions.

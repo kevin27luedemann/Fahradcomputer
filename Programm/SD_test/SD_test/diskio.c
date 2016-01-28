@@ -8,8 +8,10 @@
 /*-----------------------------------------------------------------------*/
 
 #include <avr/io.h>
+#include <avr/interrupt.h>
 #include "diskio.h"		/* FatFs lower layer API */
 
+#define CLUSTERSIZE 1024
 
 /* Port controls  (Platform dependent) */
 #define CS_LOW()	PORTB &= ~(1<<PINB4)			/* CS=low */
@@ -65,8 +67,9 @@ BYTE CardType;			/* Card type flags */
 static
 void power_on (void)
 {
-	PORTB |= (1<<PORTB7) | (1<<PORTB5) | (1<<PORTB4);	/* Configure SCK/MOSI/CS as output */
-	DDRB  |= (1<<PORTB7) | (1<<PORTB5) | (1<<PORTB4);
+	//PORTB |= (1<<PORTB7) | (1<<PORTB5) | (1<<PORTB4);	/* Configure SCK/MOSI/CS as output */
+	DDRB |= (1<<PORTB7) | (1<<PORTB5) | (1<<PORTB4);
+	DDRB &= ~(1<<PORTB6);
 
 	SPSR = 0x01;			/* SPI 2x mode */
 	SPCR = 0x52;			/* Enable SPI function in mode 0 */
@@ -78,8 +81,8 @@ void power_off (void)
 	SPCR = 0;				/* Disable SPI function */
 
 	DDRB  &= ~((1<<PORTB7) | (1<<PORTB5) | (1<<PORTB4));	/* Set SCK/MOSI/CS as hi-z, INS#/WP as pull-up */
-	PORTB &= ~((1<<PORTB7) | (1<<PORTB5) | (1<<PORTB4));
-	PORTB |=  (1<<PORTB7) | (1<<PORTB5) | (1<<PORTB4);
+	//PORTB &= ~((1<<PORTB7) | (1<<PORTB5) | (1<<PORTB4));
+	//PORTB |=  (1<<PORTB7) | (1<<PORTB5) | (1<<PORTB4);
 }
 
 /*-----------------------------------------------------------------------*/
@@ -104,10 +107,12 @@ const BYTE *p,	/* Data block to be sent */
 UINT cnt		/* Size of data block (must be multiple of 2) */
 )
 {
+	cli();
 	do {
 		SPDR = *p++; loop_until_bit_is_set(SPSR,SPIF);
 		SPDR = *p++; loop_until_bit_is_set(SPSR,SPIF);
 	} while (cnt -= 2);
+	sei();
 }
 
 /* Receive a data block fast */
@@ -117,10 +122,12 @@ BYTE *p,	/* Data buffer */
 UINT cnt	/* Size of data block (must be multiple of 2) */
 )
 {
+	cli();
 	do {
 		SPDR = 0xFF; loop_until_bit_is_set(SPSR,SPIF); *p++ = SPDR;
 		SPDR = 0xFF; loop_until_bit_is_set(SPSR,SPIF); *p++ = SPDR;
 	} while (cnt -= 2);
+	sei();
 }
 
 /*-----------------------------------------------------------------------*/
@@ -136,9 +143,9 @@ UINT wt			/* Timeout [ms] */
 
 
 	Timer2 = wt / 10;
-	do
-	d = xchg_spi(0xFF);
-	while (d != 0xFF && Timer2);
+	do{
+		d = xchg_spi(0xFF);
+	}while (d != 0xFF && Timer2);
 
 	return (d == 0xFF) ? 1 : 0;
 }
@@ -191,7 +198,7 @@ UINT btr			/* Byte count (must be multiple of 4) */
 	do {							/* Wait for data packet in timeout of 200ms */
 		token = xchg_spi(0xFF);
 	} while ((token == 0xFF) && Timer1);
-	if (token != 0xFE) return 0;	/* If not valid data token, retutn with error */
+	if (token != 0xFE) return 0;	/* If not valid data token, return with error */
 
 	rcvr_spi_multi(buff, btr);		/* Receive the data block into buffer */
 	xchg_spi(0xFF);					/* Discard CRC */
@@ -220,7 +227,7 @@ BYTE token			/* Data/Stop token */
 
 	xchg_spi(token);					/* Xmit data token */
 	if (token != 0xFD) {	/* Is data token */
-		xmit_spi_multi(buff, 512);		/* Xmit the data block to the MMC */
+		xmit_spi_multi(buff, CLUSTERSIZE);		/* Xmit the data block to the MMC */
 		xchg_spi(0xFF);					/* CRC (Dummy) */
 		xchg_spi(0xFF);
 		resp = xchg_spi(0xFF);			/* Reveive data response */
@@ -294,7 +301,7 @@ BYTE send_cmd (		/* Returns R1 resp (bit7==1:Send failed) */
 /*-----------------------------------------------------------------------*/
 
 DSTATUS disk_initialize (
-	BYTE pdrv		/* Physical drive nmuber (0) */
+	BYTE pdrv		/* Physical drive number (0) */
 )
 {
 	BYTE n, cmd, ty, ocr[4];
@@ -302,9 +309,9 @@ DSTATUS disk_initialize (
 
 	if (pdrv) return STA_NOINIT;		/* Supports only single drive */
 	power_off();						/* Turn off the socket power to reset the card */
-	if (Stat & (1<<STA_NODISK)) return 5;// Stat;	/* No card in the socket */
+	if (Stat & (1<<STA_NODISK)) return Stat;	/* No card in the socket */
 	power_on();							/* Turn on the socket power */
-	FCLK_SLOW();
+//	FCLK_SLOW();
 	for (n = 10; n; n--) xchg_spi(0xFF);	/* 80 dummy clocks */
 
 	ty = 0;
@@ -326,7 +333,7 @@ DSTATUS disk_initialize (
 				ty = CT_MMC; cmd = CMD1;	/* MMCv3 */
 			}
 			while (Timer1 && send_cmd(cmd, 0));			/* Wait for leaving idle state */
-			if (!Timer1 || send_cmd(CMD16, 512) != 0)	/* Set R/W block length to 512 */
+			if (!Timer1 || send_cmd(CMD16, CLUSTERSIZE) != 0)	/* Set R/W block length to 512 */
 				ty = 0;
 		}
 	}
@@ -335,7 +342,7 @@ DSTATUS disk_initialize (
 
 	if (ty) {			/* Initialization succeded */
 		Stat &= ~STA_NOINIT;		/* Clear STA_NOINIT */
-		FCLK_FAST();
+//		FCLK_FAST();
 	} else {			/* Initialization failed */
 		power_off();
 	}
@@ -376,13 +383,13 @@ DRESULT disk_read (
 	if (pdrv || !count) return RES_PARERR;
 	if (Stat & STA_NOINIT) return RES_NOTRDY;
 
-	if (!(CardType & CT_BLOCK)) sector *= 512;	/* Convert to byte address if needed */
+	if (!(CardType & CT_BLOCK)) sector *= CLUSTERSIZE;	/* Convert to byte address if needed */
 
 	cmd = count > 1 ? CMD18 : CMD17;			/*  READ_MULTIPLE_BLOCK : READ_SINGLE_BLOCK */
 	if (send_cmd(cmd, sector) == 0) {
 		do {
-			if (!rcvr_datablock(buff, 512)) break;
-			buff += 512;
+			if (!rcvr_datablock(buff, CLUSTERSIZE)) break;
+			buff += CLUSTERSIZE;
 		} while (--count);
 		if (cmd == CMD18) send_cmd(CMD12, 0);	/* STOP_TRANSMISSION */
 	}
@@ -409,7 +416,7 @@ DRESULT disk_write (
 	if (Stat & STA_NOINIT) return RES_NOTRDY;
 	if (Stat & STA_PROTECT) return RES_WRPRT;
 
-	if (!(CardType & CT_BLOCK)) sector *= 512;	/* Convert to byte address if needed */
+	if (!(CardType & CT_BLOCK)) sector *= CLUSTERSIZE;	/* Convert to byte address if needed */
 
 	if (count == 1) {	/* Single block write */
 		if ((send_cmd(CMD24, sector) == 0)	/* WRITE_BLOCK */
@@ -421,7 +428,7 @@ DRESULT disk_write (
 		if (send_cmd(CMD25, sector) == 0) {	/* WRITE_MULTIPLE_BLOCK */
 			do {
 				if (!xmit_datablock(buff, 0xFC)) break;
-				buff += 512;
+				buff += CLUSTERSIZE;
 			} while (--count);
 			if (!xmit_datablock(0, 0xFD))	/* STOP_TRAN token */
 				count = 1;
@@ -565,10 +572,10 @@ void disk_timerproc (void)
 	
 	s = Stat;
 	
-	if (MMC_CD)				/* Card inserted */
-		s &= ~STA_NODISK;
-	else					/* Socket empty */
-		s |= (STA_NODISK | STA_NOINIT);
+//	if (MMC_CD)				/* Card inserted */
+//		s &= ~STA_NODISK;
+//	else					/* Socket empty */
+//		s |= (STA_NODISK | STA_NOINIT);
 
 	Stat = s;				/* Update MMC status */
 	

@@ -62,32 +62,33 @@ int main(void)
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize+70,1*charhighte);}
 	oled.draw_ASCI('3',3*charsize,0*charhighte);
 	oled.sendFrame();
-	
-	char str[12];
 
-	/* Get volume label of the default drive */
-	status = f_getlabel("/", str, 0);
-	for(uint8_t i=0;i<12;i++){oled.draw_ASCI(str[i],i*charsize+50,4*charhighte);}
-	buffersize=sprintf(buffer,"%i",status);
-	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize+70,5*charhighte);}
-	
+	/*
 	status = f_mkfs("0/", 0, 0);
 	oled.draw_ASCI('0',0*charsize,0*charhighte);
 	buffersize=sprintf(buffer,"%i",status);
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,5*charhighte);}
 	oled.sendFrame();
-	
+	*/
 	status = f_mount(&FATFS_Obj,"",0) != 0;
 	buffersize=sprintf(buffer,"%i",status);
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize+70,2*charhighte);}
 	oled.draw_ASCI('4',4*charsize,0*charhighte);
 	oled.sendFrame();
 	
+	/* Get volume label of the default drive */
+	char str[12];
+	status = f_getlabel("", str, 0);
+	for(uint8_t i=0;i<12;i++){oled.draw_ASCI(str[i],i*charsize+50,4*charhighte);}
+	buffersize=sprintf(buffer,"%i",status);
+	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize+70,5*charhighte);}
+	
+	
 	FIL fil_obj;
 	oled.draw_ASCI('5',5*charsize,0*charhighte);
 	oled.sendFrame();
 	
-	status = f_open(&fil_obj, "foo.txt", FA_CREATE_NEW | FA_WRITE);
+	status = f_open(&fil_obj, "FOO.TXT", FA_CREATE_NEW | FA_WRITE);
 	buffersize=sprintf(buffer,"%i",status);
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,1*charhighte);}
 	oled.draw_ASCI('6',6*charsize,0*charhighte);
