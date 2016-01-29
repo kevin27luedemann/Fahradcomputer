@@ -65,30 +65,32 @@ void print_file_info(Fat16Entry *entry) {
         printf("File: [%.8s.%.3s]\n", entry->filename, entry->ext);
     }
     
-    printf("\tModified: %04d-%02d-%02d %02d:%02d.%02d    Start: [%04X]    Size: %d\n", 
+    printf("\tModified: %04u-%02u-%02u %02u:%02u.%02u    Start: [%04X]    Size: %u\n", 
         1980 + (entry->modify_date >> 9), (entry->modify_date >> 5) & 0xF, entry->modify_date & 0x1F,
         (entry->modify_time >> 11), (entry->modify_time >> 5) & 0x3F, entry->modify_time & 0x1F,
         entry->starting_cluster, entry->file_size);
 }
 
 
+#define numerofpartition 4
+
 int main(){
 	FILE * in = fopen("test.img", "rb");
 	unsigned int i;//, start_sector, length_sector;
-	PartitionTable pt[4];
+	PartitionTable pt[numerofpartition];
 	Fat16BootSector bs;
 	Fat16Entry entry;
 
 	fseek(in, 0x1BE, SEEK_SET);	//goto partition Table
-	fread(pt, sizeof(PartitionTable), 4, in); //alle 4 eintraege lesen
+	fread(pt, sizeof(PartitionTable), numerofpartition, in); //alle 4 eintraege lesen
 
-	for(i=0; i<4; i++){ //lese alle 4 eintraege
+	for(i=0; i<numerofpartition; i++){ //lese alle 4 eintraege
 		if(pt[i].partition_type == 4 || pt[i].partition_type == 6 || pt[i].partition_type == 16){
 			printf("FAT16 Dateisystem gefunden in Partition %u\n", i);
 			break;
 		}
 	}
-	if(i == 4){
+	if(i == numerofpartition){
 		printf("Kein FAT16 Dateisystem gefunden\n");
 		return 0;
 	}
@@ -96,8 +98,8 @@ int main(){
 	fseek(in, 512 * pt[i].start_sector, SEEK_SET);
 	fread(&bs, sizeof(Fat16BootSector), 1, in);
 	
-	printf("Now at 0x%X, sector size %d, FAT size %d sectors, %d FATs\n\n", 
-		ftell(in), bs.sector_size, bs.fat_size_sectors, bs.number_of_fats);
+	printf("Now at 0x%X, sector size %u, FAT size %u sectors, %u FATs\n\n", 
+		(unsigned int)ftell(in), bs.sector_size, bs.fat_size_sectors, bs.number_of_fats);
 	
 	fseek(in, (bs.reserved_sectors-1+bs.fat_size_sectors*bs.number_of_fats)*bs.sector_size, SEEK_CUR);
 
