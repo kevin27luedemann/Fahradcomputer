@@ -37,8 +37,9 @@ Display oled;
 #include "Interface.h"
 Interface Tastatur;
 
-#include "SOUND.h"
-SOUND Lautsprecher;
+//nicht mehr verwendet
+//#include "SOUND.h"
+//SOUND Lautsprecher;
 
 #include "LSM303D.h"
 LSM303D Accelerometer;
