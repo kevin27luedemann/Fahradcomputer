@@ -37,9 +37,10 @@ typedef struct {
     unsigned short boot_sector_signature;
 } __attribute((packed)) Fat16BootSector;
 
+#define clustersize	512
 
 int main(){
-	FILE * in = fopen("test.img", "rb");
+	FILE * in = fopen("test_eig.img", "rb");
 	unsigned int i;//, start_sector, length_sector;
 	PartitionTable pt[4];
 	Fat16BootSector bs;
@@ -57,12 +58,10 @@ int main(){
 		fread(&length_sector, 4, 1, in);
 		printf("\trealtive LBA Adresse %08X, %u sectoren lang\n", start_sector, length_sector);*/
 		//Alles mit strucktur eingelesen
-		/*
 		printf("Partition %u, Art %02X\n", i, pt[i].partition_type);
 		printf("\t Start Sector %08X, %u Sector Laenge\n", pt[i].start_sector, pt[i].length_sectors);
-		*/
 		
-		if(pt[i].partition_type == 4 || pt[i].partition_type == 6 || pt[i].partition_type == 16){
+		if(pt[i].partition_type == 4 || pt[i].partition_type == 6 || pt[i].partition_type == 11 || pt[i].partition_type == 16){
 			printf("FAT16 Dateisystem gefunden in Partition %u\n", i);
 			break;
 		}
@@ -72,7 +71,7 @@ int main(){
 		return 0;
 	}
 	
-	fseek(in, 512 * pt[i].start_sector, SEEK_SET);
+	fseek(in, clustersize * pt[i].start_sector, SEEK_SET);
 	fread(&bs, sizeof(Fat16BootSector), 1, in);
 	
 	printf("  Jump code: %02X:%02X:%02X\n", bs.jmp[0], bs.jmp[1], bs.jmp[2]);

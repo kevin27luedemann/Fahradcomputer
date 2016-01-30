@@ -72,7 +72,8 @@ void print_file_info(Fat16Entry *entry) {
 }
 
 
-#define numerofpartition 4
+#define numerofpartition 	4
+#define clustersize		512
 
 int main(){
 	FILE * in = fopen("test.img", "rb");
@@ -85,7 +86,7 @@ int main(){
 	fread(pt, sizeof(PartitionTable), numerofpartition, in); //alle 4 eintraege lesen
 
 	for(i=0; i<numerofpartition; i++){ //lese alle 4 eintraege
-		if(pt[i].partition_type == 4 || pt[i].partition_type == 6 || pt[i].partition_type == 16){
+		if(pt[i].partition_type == 4 || pt[i].partition_type == 6 || pt[i].partition_type == 11 || pt[i].partition_type == 16){
 			printf("FAT16 Dateisystem gefunden in Partition %u\n", i);
 			break;
 		}
@@ -95,7 +96,7 @@ int main(){
 		return 0;
 	}
 	
-	fseek(in, 512 * pt[i].start_sector, SEEK_SET);
+	fseek(in, clustersize * pt[i].start_sector, SEEK_SET);
 	fread(&bs, sizeof(Fat16BootSector), 1, in);
 	
 	printf("Now at 0x%X, sector size %u, FAT size %u sectors, %u FATs\n\n", 
