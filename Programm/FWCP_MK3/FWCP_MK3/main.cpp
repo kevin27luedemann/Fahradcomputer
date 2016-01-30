@@ -4,7 +4,7 @@
  * Created: 28.11.2015 18:12:54
  * Author : Lüdemann
  */ 
-#define VERSIONSNUMMER 3.02
+#define VERSIONSNUMMER 3.03
 #define SPANNUNGSTEILER 2.0069
 #define F_CPU 8000000
 #define BATMIN 3.6
@@ -53,7 +53,13 @@ LSM303D Accelerometer;
 Output LED('B',PORTB1);
 Output Vibrationsmotor('B',PORTB2);
 Output IRLED('D',PORTD7);
-Output Sound('B',PORTB3);
+//Output Sound('B',PORTB3);
+
+extern "C" {
+	#include "ffconf.h"
+	#include "diskio.h"
+	#include "ff.h"
+	};
 
 //Anzeigebits
 #define refreshdisplay 0
@@ -61,7 +67,8 @@ Output Sound('B',PORTB3);
 uint8_t anzeige;	//Flagregister fuer die Anziegenschaltung
 
 #define updaterate		0
-#define powersavemode	1
+#define mounttingstat	1
+#define loggingstat		2
 
 uint8_t statusreg;
 uint8_t position;		//Numer der Aktuellen Seite fuer Array und sonstieges
@@ -74,14 +81,15 @@ uint8_t FPS;
 //schlechte variante der Uhreinstellung
 void uhreinstellen();
 
+//SD karten Timer
+ISR(TIMER0_COMPA_vect){
+	disk_timerproc();	//Timer der SD Karte
+}
+
 ISR(TIMER2_OVF_vect){	//Vektor fuer die RTC
 	//TCNT2=TIMER2RTCTIME;
 	rtc.Sekunden++;
 	rtc.interupts|= (1<<sekundeninterupt);
-	if (statusreg&(1<<powersavemode))
-	{
-		SMCR &= ~(1<<SE);
-	}
 }
 
 ISR(TIMER1_COMPA_vect){
@@ -208,6 +216,20 @@ void initialisierung();
 void maininterupthandler(monitor *mon, uint8_t taste);
 void gpshandler();
 
+FATFS FATFS_Obj;
+FIL logger;
+
+DWORD get_fattime (void)
+{
+	/* Pack date and time into a DWORD variable */
+	return	  ((DWORD)((2000+rtc.Jahr) - 1980) << 25)
+	| ((DWORD)rtc.Monat << 21)
+	| ((DWORD)rtc.Tag << 16)
+	| ((DWORD)rtc.Stunden << 11)
+	| ((DWORD)rtc.Minuten << 5)
+	| ((DWORD)rtc.Sekunden >> 1);
+}
+
 int main(void)
 {
     initialisierung();
@@ -221,16 +243,10 @@ int main(void)
 		new menue(&oled,&rtc)
 	};
 	
-	
-
 	while (1) 
     {
 		maininterupthandler(Folien[position],Tastatur.unified());
 		gpshandler();
-		if (statusreg&(1<<powersavemode))
-		{
-			SMCR |= (1<<SE);
-		}
     }
 }
 
@@ -296,15 +312,17 @@ void initialisierung(){
 	rtc.ausgabedatumneu();
 	rtc.RTCstart();
 	
-	//Sleepmode Grundeinstelung
-	SMCR |= (1<<SM1) | (1<<SM0);
-	
 	//AD deaktivieren zum stromsparen
 	ACSR |= (1<<ACD);
 	
 	//USART aktivieren jetzt nur hier zum testen
 	UCSR0B |= (1<<RXEN0);
 	
+	//SD Karten timer init
+	TCCR0A	 = (1<<WGM01);		//Timer im ctc Mode
+	OCR0A	 = 38;		//ctc counter ende
+	TIMSK0	|= (1<<OCIE0A);
+	TCCR0B	|= (1<<CS02) | (1<<CS00);	//presc=1024
 	sei();
 }
 
@@ -379,13 +397,6 @@ void maininterupthandler(monitor *mon, uint8_t taste){
 				mon->tastendruck(&taste);
 				break;
 		}
-		if (position==0 || position==numberofpages)
-		{
-			statusreg |= (1<<powersavemode);
-		}
-		else{
-			statusreg &= ~(1<<powersavemode);
-		}
 	}
 	
 	if (position==1)							//Berechnung der Geschwindigkeit fuer Tacho
@@ -403,6 +414,49 @@ void maininterupthandler(monitor *mon, uint8_t taste){
 		{
 			TCNT1=0;
 			geschw=0;
+		}
+	}
+	else if (position==3)
+	{
+		if (mon->posy==3 && mon->posx==1)
+		{
+			if (!(statusreg&(1<<mounttingstat)))
+			{
+				//mounting sd Karte
+				if (disk_initialize(0) == 0)
+				{
+					if (f_mount(&FATFS_Obj,"",0) == 0)
+					{
+						statusreg |= (1<<mounttingstat);
+					}
+				}
+			}
+			else if (!(statusreg&(1<<loggingstat)))
+			{
+				f_mount(0,"",0);
+				statusreg &= ~(1<<mounttingstat);
+			}
+			mon->posx--;
+		}
+		else if (mon->posy==4 && mon->posx==1)
+		{
+			if (!(statusreg&(1<<loggingstat)) && (statusreg&(1<<mounttingstat)) )
+			{
+				if (disk_status(0) == 0)
+				{
+					char name[12];
+					sprintf(name,"%02u%02u%02u%02u.txt",rtc.Monat,rtc.Tag,rtc.Stunden,rtc.Minuten);
+					f_open(&logger, name, FA_OPEN_ALWAYS | FA_WRITE);
+				}
+				
+				statusreg |= (1<<loggingstat);
+			}
+			else{
+				f_sync(&logger);
+				f_close(&logger);
+				statusreg &= ~(1<<loggingstat);
+			}
+			mon->posx--;
 		}
 	}
 	
@@ -427,11 +481,23 @@ void maininterupthandler(monitor *mon, uint8_t taste){
 			strecke+=geschw/3.6;
 		}
 		
+		if ((statusreg&(1<<mounttingstat)) && (statusreg&(1<<loggingstat)))
+		{
+			uint16_t Sekundenges = rtc.Stunden*3600;
+			Sekundenges += rtc.Minuten*60;
+			Sekundenges += rtc.Sekunden;
+			f_printf(&logger,"%u\t%ld\t%ld\t%ld\t%ld\n",(uint16_t)Sekundenges,(int32_t)(lon*100000),(int32_t)(lat*100000),(int32_t)(gpsspeed*100),(int32_t)(geschw*100));
+		}
+		
 		anzeige |= (1<<refreshdisplay);
 		rtc.interupts &= ~(1<<sekundeninterupt);
 	}
 	if ((rtc.interupts&(1<<minuteninterupt)))		//Minuten
 	{
+		if ((statusreg&(1<<mounttingstat)) && (statusreg&(1<<loggingstat)))
+		{
+			f_sync(&logger);
+		}
 		anzeige |= (1<<refreshdisplay);
 		rtc.interupts &= ~(1<<minuteninterupt);
 	}

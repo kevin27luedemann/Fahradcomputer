@@ -377,12 +377,8 @@ class einstellungen: public monitor
 				name[i] = ' ';
 			}
 		}
-		maxentries = 3;
+		maxentries = 5;
 	}
-	
-	//Uhreinstellungs Funktion
-	
-	
 	
 	//Tastenhandler
 	uint8_t tastendruck(uint8_t *tast){
@@ -402,6 +398,10 @@ class einstellungen: public monitor
 			for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,3*charhighte);}
 			buffersize=sprintf(buffer,"Versionsnummer");
 			for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,4*charhighte);}
+			buffersize=sprintf(buffer,"Mount SD: %u", (bool)(statusreg&(1<<mounttingstat)));
+			for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,5*charhighte);}
+			buffersize=sprintf(buffer,"Logging:  %u", (bool)(statusreg&(1<<loggingstat)));
+			for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,6*charhighte);}
 			oled->draw_ASCI('>',0*charsize,(posy+2)*charhighte);
 		}
 		else if (posy==0 && posx==1)

@@ -37,7 +37,7 @@ int main(void)
 	Timerstat = 0;
 	int status;
 	//init Timer
-	TCCR0A	 = (1<<WGM01);		//Timer im ctc Mide
+	TCCR0A	 = (1<<WGM01);		//Timer im ctc Mode
 	OCR0A	 = 38;		//ctc counter ende
 	TIMSK0	|= (1<<OCIE0A);
 	TCCR0B	|= (1<<CS02) | (1<<CS00);	//presc=1024

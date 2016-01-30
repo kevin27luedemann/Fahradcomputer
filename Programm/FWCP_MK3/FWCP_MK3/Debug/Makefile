@@ -37,7 +37,9 @@ SUBDIRS :=
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
+../diskio.c \
 ../Display.cpp \
+../ff.c \
 ../I2C.cpp \
 ../Interface.cpp \
 ../Kompass.cpp \
@@ -55,7 +57,9 @@ ASM_SRCS +=
 
 
 OBJS +=  \
+diskio.o \
 Display.o \
+ff.o \
 I2C.o \
 Interface.o \
 Kompass.o \
@@ -66,7 +70,9 @@ RTC.o \
 SOUND.o
 
 OBJS_AS_ARGS +=  \
+diskio.o \
 Display.o \
+ff.o \
 I2C.o \
 Interface.o \
 Kompass.o \
@@ -77,7 +83,9 @@ RTC.o \
 SOUND.o
 
 C_DEPS +=  \
+diskio.d \
 Display.d \
+ff.d \
 I2C.d \
 Interface.d \
 Kompass.d \
@@ -88,7 +96,9 @@ RTC.d \
 SOUND.d
 
 C_DEPS_AS_ARGS +=  \
+diskio.d \
 Display.d \
+ff.d \
 I2C.d \
 Interface.d \
 Kompass.d \
@@ -130,6 +140,17 @@ LINKER_SCRIPT_DEP+=
 
 
 
+
+
+
+
+
+./%.o: .././%.c
+	@echo Building file: $<
+	@echo Invoking: AVR8/GNU C Compiler : 4.9.2
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.0.90\include"  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -mrelax -g2 -Wall -mmcu=atmega1284p -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.0.90\gcc\dev\atmega1284p" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
 
 ./%.o: .././%.cpp
 	@echo Building file: $<
