@@ -77,28 +77,30 @@ int main(void)
 	oled.sendFrame();
 	
 	/* Get volume label of the default drive */
+	/*
 	char str[12];
 	status = f_getlabel("", str, 0);
 	for(uint8_t i=0;i<12;i++){oled.draw_ASCI(str[i],i*charsize+50,4*charhighte);}
 	buffersize=sprintf(buffer,"%i",status);
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize+70,5*charhighte);}
-	
+	*/
 	
 	FIL fil_obj;
 	oled.draw_ASCI('5',5*charsize,0*charhighte);
 	oled.sendFrame();
 	
-	status = f_open(&fil_obj, "FOO.TXT", FA_CREATE_NEW | FA_WRITE);
+	status = f_open(&fil_obj, "foo.txt", FA_OPEN_ALWAYS | FA_WRITE);
 	buffersize=sprintf(buffer,"%i",status);
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,1*charhighte);}
 	oled.draw_ASCI('6',6*charsize,0*charhighte);
 	oled.sendFrame();
 	
-	//status = f_printf(&fil_obj, "test text %u", 1);
-	UINT number = 0;
-	status = f_write(&fil_obj,"Hallo",5,&number);
+	
+//	UINT number = 0;
+//	status = f_write(&fil_obj,"Hallo ist die Datei ueberschrieben?",5,&number);
+	status = f_printf(&fil_obj, "test text %u", 1);
 	oled.draw_ASCI('7',7*charsize,0*charhighte);
-	buffersize=sprintf(buffer,"%i:%i",status,number);
+	buffersize=sprintf(buffer,"%i",status);
 	for(uint8_t i=0;i<buffersize;i++){oled.draw_ASCI(buffer[i],i*charsize,2*charhighte);}
 	oled.sendFrame();
 	

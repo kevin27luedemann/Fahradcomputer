@@ -11,7 +11,7 @@
 #include <avr/interrupt.h>
 #include "diskio.h"		/* FatFs lower layer API */
 
-#define CLUSTERSIZE 1024
+#define CLUSTERSIZE 512
 
 /* Port controls  (Platform dependent) */
 #define CS_LOW()	PORTB &= ~(1<<PINB4)			/* CS=low */
