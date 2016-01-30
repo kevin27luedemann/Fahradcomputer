@@ -50,17 +50,18 @@ int main(){
 
 	for(i=0; i<4; i++){ //lese alle 4 eintraege
 		//lese alles von Hand
-/* 		printf("Partition eintrag %u: Erstes Byte %02X\n", i, fgetc(in));
+ 		/*printf("Partition eintrag %u: Erstes Byte %02X\n", i, fgetc(in));
 		printf("\tPartition start in CHS: %02X:%02X:%02X\n", fgetc(in), fgetc(in), fgetc(in));
 		printf("\tPartition Art %02X\n", fgetc(in));
 		printf("\tPartition end in CHS: %02X:%02X:%02X\n", fgetc(in), fgetc(in), fgetc(in));
 		fread(&start_sector, 4, 1, in);
 		fread(&length_sector, 4, 1, in);
 		printf("\trealtive LBA Adresse %08X, %u sectoren lang\n", start_sector, length_sector);*/
+		
 		//Alles mit strucktur eingelesen
 		printf("Partition %u, Art %02X\n", i, pt[i].partition_type);
 		printf("\t Start Sector %08X, %u Sector Laenge\n", pt[i].start_sector, pt[i].length_sectors);
-		
+	
 		if(pt[i].partition_type == 4 || pt[i].partition_type == 6 || pt[i].partition_type == 11 || pt[i].partition_type == 16){
 			printf("FAT16 Dateisystem gefunden in Partition %u\n", i);
 			break;

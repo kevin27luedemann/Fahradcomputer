@@ -76,7 +76,7 @@ void print_file_info(Fat16Entry *entry) {
 #define clustersize		512
 
 int main(){
-	FILE * in = fopen("test.img", "rb");
+	FILE * in = fopen("test_eig.img", "rb");
 	unsigned int i;//, start_sector, length_sector;
 	PartitionTable pt[numerofpartition];
 	Fat16BootSector bs;
