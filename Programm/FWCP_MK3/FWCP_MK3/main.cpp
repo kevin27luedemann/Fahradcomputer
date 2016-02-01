@@ -447,6 +447,7 @@ void maininterupthandler(monitor *mon, uint8_t taste){
 					char name[12];
 					sprintf(name,"%02u%02u%02u%02u.txt",rtc.Monat,rtc.Tag,rtc.Stunden,rtc.Minuten);
 					f_open(&logger, name, FA_OPEN_ALWAYS | FA_WRITE);
+					f_printf(&logger,"#Zeit [s]\tlongitude [1e6]\tLatitude [1e5]\tGPSSpeed [1e2 km/h] \t Tacho [1e2 km/h]\n");
 				}
 				
 				statusreg |= (1<<loggingstat);
@@ -486,7 +487,7 @@ void maininterupthandler(monitor *mon, uint8_t taste){
 			uint16_t Sekundenges = rtc.Stunden*3600;
 			Sekundenges += rtc.Minuten*60;
 			Sekundenges += rtc.Sekunden;
-			f_printf(&logger,"%u\t%ld\t%ld\t%ld\t%ld\n",(uint16_t)Sekundenges,(int32_t)(lon*100000),(int32_t)(lat*100000),(int32_t)(gpsspeed*100),(int32_t)(geschw*100));
+			f_printf(&logger,"%u\t%ld\t%ld\t%ld\t%ld\n",(uint16_t)Sekundenges,(int32_t)(lon*1000000),(int32_t)(lat*100000),(int32_t)(gpsspeed*100),(int32_t)(geschw*100));
 		}
 		
 		anzeige |= (1<<refreshdisplay);
