@@ -44,6 +44,9 @@ Interface Tastatur;
 #include "LSM303D.h"
 LSM303D Accelerometer;
 
+#include "BMP180.h"
+BMP180 druck;
+
 //#include "Kompass.h"
 //Kompass kompass;
 
@@ -242,6 +245,8 @@ int main(void)
 		new offscreen(&oled,&rtc),
 		new menue(&oled,&rtc)
 	};
+	
+	druck.bmp180_getcalibration();
 	
 	while (1) 
     {
@@ -447,7 +452,7 @@ void maininterupthandler(monitor *mon, uint8_t taste){
 					char name[12];
 					sprintf(name,"%02u%02u%02u%02u.txt",rtc.Monat,rtc.Tag,rtc.Stunden,rtc.Minuten);
 					f_open(&logger, name, FA_OPEN_ALWAYS | FA_WRITE);
-					f_printf(&logger,"#Zeit [s]\tlongitude [1e6]\tLatitude [1e5]\tGPSSpeed [1e2 km/h] \t Tacho [1e2 km/h]\n");
+					f_printf(&logger,"#Zeit [s]\tlongitude [1e6]\tLatitude [1e5]\tGPSSpeed [1e2 km/h] \tTacho [1e2 km/h] \tTemperatur [10 C] \tDruck [Pa] \tHoeheSee [10 m]\n");
 				}
 				
 				statusreg |= (1<<loggingstat);
@@ -469,6 +474,7 @@ void maininterupthandler(monitor *mon, uint8_t taste){
 	if ((rtc.interupts&(1<<sekundeninterupt)))	//Sekunden
 	{
 		rtc.zeit();
+		druck.bmp180_getaltitude();
 		if (position==1)
 		{
 			if (geschw>maxgeschw)
@@ -487,7 +493,7 @@ void maininterupthandler(monitor *mon, uint8_t taste){
 			uint16_t Sekundenges = rtc.Stunden*3600;
 			Sekundenges += rtc.Minuten*60;
 			Sekundenges += rtc.Sekunden;
-			f_printf(&logger,"%u\t%ld\t%ld\t%ld\t%ld\n",(uint16_t)Sekundenges,(int32_t)(lon*1000000),(int32_t)(lat*100000),(int32_t)(gpsspeed*100),(int32_t)(geschw*100));
+			f_printf(&logger,"%u\t%ld\t%ld\t%ld\t%ld\t%d\t%u\t%d\n",(uint16_t)Sekundenges,(int32_t)(lon*1000000),(int32_t)(lat*100000),(int32_t)(gpsspeed*100),(int32_t)(geschw*100),(int16_t)(druck.temperature*10),(uint16_t)(druck.pressure*100),(int16_t)(druck.altitude*10));
 		}
 		
 		anzeige |= (1<<refreshdisplay);

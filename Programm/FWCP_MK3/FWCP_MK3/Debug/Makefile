@@ -37,6 +37,7 @@ SUBDIRS :=
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
+../BMP180.cpp \
 ../diskio.c \
 ../Display.cpp \
 ../ff.c \
@@ -57,6 +58,7 @@ ASM_SRCS +=
 
 
 OBJS +=  \
+BMP180.o \
 diskio.o \
 Display.o \
 ff.o \
@@ -70,6 +72,7 @@ RTC.o \
 SOUND.o
 
 OBJS_AS_ARGS +=  \
+BMP180.o \
 diskio.o \
 Display.o \
 ff.o \
@@ -83,6 +86,7 @@ RTC.o \
 SOUND.o
 
 C_DEPS +=  \
+BMP180.d \
 diskio.d \
 Display.d \
 ff.d \
@@ -96,6 +100,7 @@ RTC.d \
 SOUND.d
 
 C_DEPS_AS_ARGS +=  \
+BMP180.d \
 diskio.d \
 Display.d \
 ff.d \
@@ -122,6 +127,8 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
 
 
 

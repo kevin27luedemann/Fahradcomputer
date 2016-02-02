@@ -169,6 +169,12 @@
     <Compile Include="ADC.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="BMP180.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="BMP180.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="diskio.c">
       <SubType>compile</SubType>
     </Compile>
