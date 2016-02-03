@@ -9,6 +9,9 @@
 #ifndef __I2C_H__
 #define __I2C_H__
 
+#define I2C_WRITE	0
+#define I2C_READ	1
+
 #include <avr/io.h>
 #include <stdlib.h>
 

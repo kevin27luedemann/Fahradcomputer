@@ -146,7 +146,7 @@ class uhr:public monitor
 				name[i] = ' ';
 			}
 		}
-		Zeiger = 1;
+		Zeiger = 0;
 		maxentries = 3;
 	}
 	
@@ -289,6 +289,87 @@ class wandern: public monitor
 	private:
 	
 	public:	
+	wandern(Display *ol,RTC *rtc):monitor(ol,rtc)
+	{
+		char na[] = "Wandern";
+		for(uint8_t i =0; i< namesize;i++){
+			if (i<sizeof(na))
+			{
+				name[i] = na[i];
+			}
+			else
+			{
+				name[i] = ' ';
+			}
+		}
+	}
+	
+	uint8_t tastendruck(uint8_t *tast){
+		if (*tast=='e')
+		{
+			rtc->Stunden	= gpsstunde;
+			rtc->Minuten	= gpsminute;
+			rtc->Sekunden	= gpssekunde;
+			
+			rtc->Tag		= gpsTag;
+			rtc->Monat		= gpsMonat;
+			rtc->Jahr		= gpsJahr;
+			rtc->ausgabedatumneu();
+			//speichern der neuen Zeit im EEPROM
+			EEPROM_Write(EEMINUTEN,rtc->Minuten);
+			EEPROM_Write(EESTUNDEN,rtc->Stunden);
+			EEPROM_Write(EETAGE,rtc->Tag);
+			EEPROM_Write(EEMONAT,rtc->Monat);
+			EEPROM_Write(EEJAHR,rtc->Jahr);
+		}
+		return 0;
+	}
+	
+	void draw(){
+		monitor::draw();
+		header();
+		bottom();
+		/*
+		//Debug data
+		buffersize=sprintf(buffer,"Status: %i",gpsstatus);
+		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,1*charhighte);}
+		buffersize=sprintf(buffer,"Data: %c%c%c%c%c",gpsdata[0],gpsdata[1],gpsdata[2],gpsdata[3],gpsdata[4]);
+		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,3*charhighte);}
+		*/
+		/*
+		buffersize=sprintf(buffer,"%i",druck.bmp180_regac1);
+		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,1*charhighte);}
+		buffersize=sprintf(buffer,"%i",druck.bmp180_regac2);
+		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+50,1*charhighte);}
+		
+		buffersize=sprintf(buffer,"%.02f",druck.temperature);
+		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,2*charhighte);}
+		
+		buffersize=sprintf(buffer,"%.02f",druck.pressure);
+		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,3*charhighte);}
+			
+		buffersize=sprintf(buffer,"%.02f",druck.altitude);
+		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,4*charhighte);}
+		*/
+		
+		//Latitude
+		buffersize=sprintf(buffer,"Lat: %.7f",lat);
+		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,2*charhighte);}
+			
+		//Longitude
+		buffersize=sprintf(buffer,"Lon: %.7f",lon);
+		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,3*charhighte);}
+			
+		//Speed
+		buffersize=sprintf(buffer,"Spe: %.4f",gpsspeed);
+		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,4*charhighte);}
+			
+		//gpstime
+		buffersize=sprintf(buffer,"%02i:%02i:%02i %02i.%02i.%02i",gpsstunde,gpsminute,gpssekunde,gpsTag,gpsMonat,gpsJahr);
+		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,5*charhighte);}
+		
+		send();	
+	}
 	
 };
 
@@ -309,12 +390,8 @@ class einstellungen: public monitor
 				name[i] = ' ';
 			}
 		}
-		maxentries = 4;
+		maxentries = 5;
 	}
-	
-	//Uhreinstellungs Funktion
-	
-	
 	
 	//Tastenhandler
 	uint8_t tastendruck(uint8_t *tast){
@@ -334,8 +411,10 @@ class einstellungen: public monitor
 			for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,3*charhighte);}
 			buffersize=sprintf(buffer,"Versionsnummer");
 			for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,4*charhighte);}
-			buffersize=sprintf(buffer,"soft Reset");
+			buffersize=sprintf(buffer,"Mount SD: %u", (bool)(statusreg&(1<<mounttingstat)));
 			for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,5*charhighte);}
+			buffersize=sprintf(buffer,"Logging:  %u", (bool)(statusreg&(1<<loggingstat)));
+			for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,6*charhighte);}
 			oled->draw_ASCI('>',0*charsize,(posy+2)*charhighte);
 		}
 		else if (posy==0 && posx==1)
@@ -369,10 +448,6 @@ class einstellungen: public monitor
 				oled->draw_ASCI(buffer[i],(i+2)*charsize,3.5*charhighte);
 
 			}
-		}
-		else if (posy==3 && posx==1)
-		{
-			soft_reset();
 		}
 		send();	
 	}
@@ -443,10 +518,12 @@ class menue: public monitor
 		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,2*charhighte);}
 		buffersize=sprintf(buffer,"Tacho");
 		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,3*charhighte);}
-		buffersize=sprintf(buffer,"Einstellungen");
+		buffersize=sprintf(buffer,"Wandern");
 		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,4*charhighte);}
-		buffersize=sprintf(buffer,"Display aus");
+		buffersize=sprintf(buffer,"Einstellungen");
 		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,5*charhighte);}
+		buffersize=sprintf(buffer,"Display aus");
+		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,6*charhighte);}
 		oled->draw_ASCI('>',0*charsize,(posy+2)*charhighte);
 		send();
 	}

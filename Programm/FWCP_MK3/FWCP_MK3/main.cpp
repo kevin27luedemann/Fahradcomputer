@@ -4,36 +4,19 @@
  * Created: 28.11.2015 18:12:54
  * Author : Lüdemann
  */ 
-#define VERSIONSNUMMER 3.01
+#define VERSIONSNUMMER 3.03
 #define SPANNUNGSTEILER 2.0069
 #define F_CPU 8000000
 #define BATMIN 3.6
 #define zeitproachtzaehlungen 0.001024
 #define zaehlungenprozeiteinheit 8.0
 #define REEDMS 5
+#define GMT 1
 
 #include <avr/io.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <avr/interrupt.h>
-#include <avr/wdt.h>
-
-//sofreset erlauben und ruecksetzten des Whatchdogs
-void wdt_init(void) __attribute__((naked)) __attribute__((section(".init3")));
-void wdt_init(void)
-{
-	MCUSR = 0;
-	wdt_disable();
-	return;
-}
-#define soft_reset()        \
-do                          \
-{                           \
-	wdt_enable(WDTO_15MS);  \
-	for(;;)                 \
-	{                       \
-	}                       \
-} while(0)
 
 //define new and delete operator
 void * operator new(size_t size)
@@ -54,14 +37,18 @@ Display oled;
 #include "Interface.h"
 Interface Tastatur;
 
-#include "SOUND.h"
-SOUND Lautsprecher;
+//nicht mehr verwendet
+//#include "SOUND.h"
+//SOUND Lautsprecher;
 
 #include "LSM303D.h"
 LSM303D Accelerometer;
 
-#include "Kompass.h"
-Kompass kompass;
+#include "BMP180.h"
+BMP180 druck;
+
+//#include "Kompass.h"
+//Kompass kompass;
 
 #include "ADC.h"
 
@@ -69,14 +56,22 @@ Kompass kompass;
 Output LED('B',PORTB1);
 Output Vibrationsmotor('B',PORTB2);
 Output IRLED('D',PORTD7);
-Output Sound('B',PORTB3);
+//Output Sound('B',PORTB3);
+
+extern "C" {
+	#include "ffconf.h"
+	#include "diskio.h"
+	#include "ff.h"
+	};
 
 //Anzeigebits
 #define refreshdisplay 0
 
 uint8_t anzeige;	//Flagregister fuer die Anziegenschaltung
 
-#define updaterate 0
+#define updaterate		0
+#define mounttingstat	1
+#define loggingstat		2
 
 uint8_t statusreg;
 uint8_t position;		//Numer der Aktuellen Seite fuer Array und sonstieges
@@ -89,6 +84,11 @@ uint8_t FPS;
 //schlechte variante der Uhreinstellung
 void uhreinstellen();
 
+//SD karten Timer
+ISR(TIMER0_COMPA_vect){
+	disk_timerproc();	//Timer der SD Karte
+}
+
 ISR(TIMER2_OVF_vect){	//Vektor fuer die RTC
 	//TCNT2=TIMER2RTCTIME;
 	rtc.Sekunden++;
@@ -99,6 +99,74 @@ ISR(TIMER1_COMPA_vect){
 	statusreg |= (1<<updaterate);
 }
 
+#define message				0
+#define valid				1
+#define complete			2
+#define completenotvalid	3
+#define notvalidgetdate		4
+#define fix					7
+//GPS sachen
+uint8_t gpsstatus;
+uint8_t gpsdata[72];
+uint8_t gpscounter;
+double lat;
+double lon;
+double gpsspeed;
+uint8_t gpsstunde;
+uint8_t gpsminute;
+uint8_t gpssekunde;
+uint8_t gpsTag;
+uint8_t gpsMonat;
+uint8_t gpsJahr;
+
+ISR(USART0_RX_vect){
+	uint8_t temp = UDR0;
+	if (temp == '$' && !(gpsstatus&(1<<complete)) && !(gpsstatus&(1<<completenotvalid)))
+	{
+		gpscounter = 0;
+		gpsstatus |= (1<<message);
+	}
+	if ((gpsstatus&(1<<message)))
+	{
+		gpsdata[gpscounter] = temp;
+		gpscounter++;
+		if (gpscounter>72)
+		{
+			gpsstatus &= ~(1<<message);
+		}
+		else if (gpscounter==19)
+		{
+			if (gpsdata[4]=='M' && gpsdata[5]=='C')
+			{
+				if (gpsdata[18]!='A')
+				{
+					gpsstatus &= ~((1<<valid));
+					gpsstatus |= (1<<notvalidgetdate);
+				}
+				else{
+					gpsstatus |= (1<<valid);
+				}
+			}
+			else{
+				gpsstatus &= ~(1<<valid);
+				gpsstatus &= ~(1<<message);
+			}
+		}
+		else if (gpscounter == 42 && (gpsstatus&(1<<notvalidgetdate)))
+		{
+			gpsstatus |= (1<<completenotvalid);
+			gpsstatus &= ~((1<<message) | (1<<notvalidgetdate));
+		}
+		else if (gpscounter == 70 && (gpsstatus&(1<<valid)))
+		{
+			gpsstatus |= (1<<complete);
+			gpsstatus &= ~((1<<message) | (1<<valid));
+		}
+	}
+}
+
+
+//Tacho funktionen
 double geschw;
 double strecke;
 double maxgeschw;
@@ -144,11 +212,26 @@ void geschwindigkeit(float durch){
 }
 
 //hier wird der neue Displayhandler verwendet
-#define numberofpages 4
+#define numberofpages 5
 #include "Monitor.h"
 
 void initialisierung();
 void maininterupthandler(monitor *mon, uint8_t taste);
+void gpshandler();
+
+FATFS FATFS_Obj;
+FIL logger;
+
+DWORD get_fattime (void)
+{
+	/* Pack date and time into a DWORD variable */
+	return	  ((DWORD)((2000+rtc.Jahr) - 1980) << 25)
+	| ((DWORD)rtc.Monat << 21)
+	| ((DWORD)rtc.Tag << 16)
+	| ((DWORD)rtc.Stunden << 11)
+	| ((DWORD)rtc.Minuten << 5)
+	| ((DWORD)rtc.Sekunden >> 1);
+}
 
 int main(void)
 {
@@ -157,19 +240,22 @@ int main(void)
 	{
 		new uhr(&oled,&rtc),
 		new tacho(&oled,&rtc),
+		new wandern(&oled,&rtc),
 		new einstellungen(&oled,&rtc),
 		new offscreen(&oled,&rtc),
 		new menue(&oled,&rtc)
 	};
-
-
+	
+	druck.bmp180_getcalibration();
+	
 	while (1) 
     {
 		maininterupthandler(Folien[position],Tastatur.unified());
+		gpshandler();
     }
 }
 
-void initialisierung(){
+void initialisierung(){	
 	//nullen der Flagregister
 	anzeige=0;
 	statusreg=0;
@@ -193,6 +279,25 @@ void initialisierung(){
 	while (ADCSRA & (1<<ADSC) ) {}
 	(void) ADCW;
 	
+	//USART initalisieren, aktivieren erst spaeter
+	PIND &= ~((1<<PIND1) | (1<<PIND2));
+	DDRD &= ~((1<<PIND1) | (1<<PIND2));
+	UBRR0H = 0;
+	UBRR0L = 51;							//9600 Baud
+	UCSR0C = (1<<UCSZ00) | (1<<UCSZ01);	// 8Bit Frame
+	UCSR0B = (1<<RXCIE0);
+	gpscounter = 0;
+	gpsstatus = (1<<fix);
+	lat = 0;
+	lon = 0;
+	gpsspeed = 0;
+	gpsstunde = 0;
+	gpsminute = 0;
+	gpssekunde = 0;
+	gpsTag = 0;
+	gpsMonat = 0;
+	gpsJahr = 0;
+	
 	//Wilkommensanzeige
 	wilkommen wil(&oled,&rtc);
 	wil.draw();
@@ -211,6 +316,18 @@ void initialisierung(){
 	rtc.Jahr	= EEPROM_Read(EEJAHR);
 	rtc.ausgabedatumneu();
 	rtc.RTCstart();
+	
+	//AD deaktivieren zum stromsparen
+	ACSR |= (1<<ACD);
+	
+	//USART aktivieren jetzt nur hier zum testen
+	UCSR0B |= (1<<RXEN0);
+	
+	//SD Karten timer init
+	TCCR0A	 = (1<<WGM01);		//Timer im ctc Mode
+	OCR0A	 = 38;		//ctc counter ende
+	TIMSK0	|= (1<<OCIE0A);
+	TCCR0B	|= (1<<CS02) | (1<<CS00);	//presc=1024
 	sei();
 }
 
@@ -304,6 +421,50 @@ void maininterupthandler(monitor *mon, uint8_t taste){
 			geschw=0;
 		}
 	}
+	else if (position==3)
+	{
+		if (mon->posy==3 && mon->posx==1)
+		{
+			if (!(statusreg&(1<<mounttingstat)))
+			{
+				//mounting sd Karte
+				if (disk_initialize(0) == 0)
+				{
+					if (f_mount(&FATFS_Obj,"",0) == 0)
+					{
+						statusreg |= (1<<mounttingstat);
+					}
+				}
+			}
+			else if (!(statusreg&(1<<loggingstat)))
+			{
+				f_mount(0,"",0);
+				statusreg &= ~(1<<mounttingstat);
+			}
+			mon->posx--;
+		}
+		else if (mon->posy==4 && mon->posx==1)
+		{
+			if (!(statusreg&(1<<loggingstat)) && (statusreg&(1<<mounttingstat)) )
+			{
+				if (disk_status(0) == 0)
+				{
+					char name[12];
+					sprintf(name,"%02u%02u%02u%02u.txt",rtc.Monat,rtc.Tag,rtc.Stunden,rtc.Minuten);
+					f_open(&logger, name, FA_OPEN_ALWAYS | FA_WRITE);
+					f_printf(&logger,"#Zeit [s]\tlongitude [1e6]\tLatitude [1e5]\tGPSSpeed [1e2 km/h] \tTacho [1e2 km/h] \tTemperatur [10 C] \tDruck [Pa] \tHoeheSee [10 m]\n");
+				}
+				
+				statusreg |= (1<<loggingstat);
+			}
+			else{
+				f_sync(&logger);
+				f_close(&logger);
+				statusreg &= ~(1<<loggingstat);
+			}
+			mon->posx--;
+		}
+	}
 	
 	if (statusreg&(1<<updaterate))				//24 FPS fuer schnelle anzeigen
 	{
@@ -313,6 +474,7 @@ void maininterupthandler(monitor *mon, uint8_t taste){
 	if ((rtc.interupts&(1<<sekundeninterupt)))	//Sekunden
 	{
 		rtc.zeit();
+		druck.bmp180_getaltitude();
 		if (position==1)
 		{
 			if (geschw>maxgeschw)
@@ -325,11 +487,24 @@ void maininterupthandler(monitor *mon, uint8_t taste){
 			}
 			strecke+=geschw/3.6;
 		}
+		
+		if ((statusreg&(1<<mounttingstat)) && (statusreg&(1<<loggingstat)))
+		{
+			uint16_t Sekundenges = rtc.Stunden*3600;
+			Sekundenges += rtc.Minuten*60;
+			Sekundenges += rtc.Sekunden;
+			f_printf(&logger,"%u\t%ld\t%ld\t%ld\t%ld\t%d\t%u\t%d\n",(uint16_t)Sekundenges,(int32_t)(lon*1000000),(int32_t)(lat*100000),(int32_t)(gpsspeed*100),(int32_t)(geschw*100),(int16_t)(druck.temperature*10),(uint16_t)(druck.pressure*100),(int16_t)(druck.altitude*10));
+		}
+		
 		anzeige |= (1<<refreshdisplay);
 		rtc.interupts &= ~(1<<sekundeninterupt);
 	}
 	if ((rtc.interupts&(1<<minuteninterupt)))		//Minuten
 	{
+		if ((statusreg&(1<<mounttingstat)) && (statusreg&(1<<loggingstat)))
+		{
+			f_sync(&logger);
+		}
 		anzeige |= (1<<refreshdisplay);
 		rtc.interupts &= ~(1<<minuteninterupt);
 	}
@@ -349,6 +524,134 @@ void maininterupthandler(monitor *mon, uint8_t taste){
 			rtc.interupts &= ~(1<<Weckerein);
 		}
 	}*/
+}
+
+void gpshandler(){
+	if ((gpsstatus&(1<<complete)) && (gpsstatus&(1<<fix)))
+	{
+		//brechnung von Latitutde, Longitude, Zeit und Datum
+		//Zeit
+		gpsstunde =		(gpsdata[7] - '0')*10;
+		gpsstunde +=	(gpsdata[8] - '0');
+		gpsstunde += GMT;
+		gpsminute =		(gpsdata[9] - '0')*10;
+		gpsminute +=	(gpsdata[10] - '0');
+		gpssekunde =	(gpsdata[11] - '0')*10;
+		gpssekunde +=	(gpsdata[12] - '0');
+		
+		//Latitude
+		lat =	(gpsdata[20] - '0')*10;
+		lat +=	(gpsdata[21] - '0');
+		float latmin =	(gpsdata[22] - '0')*10;
+		latmin +=		(gpsdata[23] - '0');
+		latmin +=		(gpsdata[25] - '0')/10.0;
+		latmin +=		(gpsdata[26] - '0')/100.0;
+		latmin +=		(gpsdata[27] - '0')/1000.0;
+		latmin +=		(gpsdata[28] - '0')/10000.0;
+		lat +=	latmin/60.0;
+		if (gpsdata[30] != 'N')
+		{
+			lat *= -1;
+		}
+		
+		//Longitude
+		lon =	(gpsdata[32] - '0')*100;
+		lon +=	(gpsdata[33] - '0')*10;
+		lon +=	(gpsdata[34] - '0');
+		float lonmin =	(gpsdata[35] - '0')*10;
+		lonmin +=		(gpsdata[36] - '0');
+		lonmin +=		(gpsdata[38] - '0')/10.0;
+		lonmin +=		(gpsdata[39] - '0')/100.0;
+		lonmin +=		(gpsdata[40] - '0')/1000.0;
+		lonmin +=		(gpsdata[41] - '0')/10000.0;
+		lon +=			lonmin/60.0;
+		if (gpsdata[43] != 'E')
+		{
+			lon *= -1;
+		}
+		//Speed 
+		volatile uint8_t counter = 45;
+		uint8_t weiter = true;
+		while (weiter)
+		{
+			if (gpsdata[counter]=='.')
+			{
+				weiter=false;
+				counter--;
+			}
+			counter++;
+		}
+		
+		gpsspeed = 0;
+		for(uint8_t i=45;i<counter;i++){
+			gpsspeed += (gpsdata[i]-'0')*pow(10,(counter-i-1));
+		}
+		gpsspeed += (gpsdata[counter+1]-'0')*0.1;
+		gpsspeed += (gpsdata[counter+2]-'0')*0.01;
+		//umrechnen knoten in kmh
+		gpsspeed *= 1.852;
+		
+		//date
+		counter =19;
+		volatile uint8_t nichterreicht = 0;
+		
+		while (nichterreicht < 7)
+		{
+			if (gpsdata[counter] == ',')
+			{
+				nichterreicht++;
+			}
+			counter++;
+		}
+		
+		//Datum
+		gpsTag =	(gpsdata[counter+0] - '0')*10;
+		gpsTag +=	(gpsdata[counter+1] - '0');
+		gpsMonat =	(gpsdata[counter+2] - '0')*10;
+		gpsMonat +=	(gpsdata[counter+3] - '0');
+		gpsJahr =	(gpsdata[counter+4] - '0')*10;
+		gpsJahr +=	(gpsdata[counter+5] - '0');
+		
+		gpsstatus &= ~(1<<complete);
+	}
+	else if ((gpsstatus&(1<<completenotvalid))  && (gpsstatus&(1<<fix)))
+	{
+		//Andere Daten vernichten
+		lat = 0;
+		lon = 0;
+		gpsspeed = 0;
+		//Zeit
+		gpsstunde =		(gpsdata[7] - '0')*10;
+		gpsstunde +=	(gpsdata[8] - '0');
+		gpsstunde += GMT;
+		gpsminute =		(gpsdata[9] - '0')*10;
+		gpsminute +=	(gpsdata[10] - '0');
+		gpssekunde =	(gpsdata[11] - '0')*10;
+		gpssekunde +=	(gpsdata[12] - '0');
+		
+		volatile uint8_t counter = 19;
+		volatile uint8_t nichterreicht = 0;
+		
+		while (nichterreicht < 7)
+		{
+			if (gpsdata[counter] == ',')
+			{
+				nichterreicht++;
+			}
+			counter++;
+		}
+		
+		//Datum
+		gpsTag =	(gpsdata[counter+0] - '0')*10;
+		gpsTag +=	(gpsdata[counter+1] - '0');
+		gpsMonat =	(gpsdata[counter+2] - '0')*10;
+		gpsMonat +=	(gpsdata[counter+3] - '0');
+		gpsJahr =	(gpsdata[counter+4] - '0')*10;
+		gpsJahr +=	(gpsdata[counter+5] - '0');
+		
+		gpsstatus &= ~(1<<completenotvalid);
+	}
+	//fix status pruefen, wenn implementiert
 }
 
 void uhreinstellen(){
