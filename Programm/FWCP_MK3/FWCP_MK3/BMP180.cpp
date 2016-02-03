@@ -52,10 +52,6 @@ void BMP180::bmp180_readmem(uint8_t reg, uint8_t buff[], uint8_t bytes){
 }
 
 void BMP180::bmp180_getcalibration() {
-	//uint8_t buff[2] = {0,0};
-
-	//bmp180_readmem(BMP180_REGAC1, buff, 2);
-	
 	i2c.twi_start();
 	i2c.twi_write((BMP180_ADDR | I2C_WRITE));
 	i2c.twi_write(BMP180_REGAC1);
@@ -64,54 +60,33 @@ void BMP180::bmp180_getcalibration() {
 	bmp180_regac1 = (i2c.twi_read(1) << 8);
 	bmp180_regac1 += (i2c.twi_read(1));
 	
-	//bmp180_regac1 = (((int16_t)buff[0] <<8) | ((int16_t)buff[1]));
-	//bmp180_readmem(BMP180_REGAC2, buff, 2);
-	//bmp180_regac2 = ((int16_t)buff[0] <<8 | ((int16_t)buff[1]));
 	bmp180_regac2 = (i2c.twi_read(1) << 8);
 	bmp180_regac2 += (i2c.twi_read(1));
 	
-	//bmp180_readmem(BMP180_REGAC3, buff, 2);
-	//bmp180_regac3 = ((int16_t)buff[0] <<8 | ((int16_t)buff[1]));
 	bmp180_regac3 = (i2c.twi_read(1) << 8);
 	bmp180_regac3 += (i2c.twi_read(1));
 	
-	//bmp180_readmem(BMP180_REGAC4, buff, 2);
-	//bmp180_regac4 = ((uint16_t)buff[0] <<8 | ((uint16_t)buff[1]));
 	bmp180_regac4 = (i2c.twi_read(1) << 8);
 	bmp180_regac4 += (i2c.twi_read(1));
 	
-	//bmp180_readmem(BMP180_REGAC5, buff, 2);
-	//bmp180_regac5 = ((uint16_t)buff[0] <<8 | ((uint16_t)buff[1]));
 	bmp180_regac5 = (i2c.twi_read(1) << 8);
 	bmp180_regac5 += (i2c.twi_read(1));
 	
-	//bmp180_readmem(BMP180_REGAC6, buff, 2);
-	//bmp180_regac6 = ((uint16_t)buff[0] <<8 | ((uint16_t)buff[1]));
 	bmp180_regac6 = (i2c.twi_read(1) << 8);
 	bmp180_regac6 += (i2c.twi_read(1));
 	
-	//bmp180_readmem(BMP180_REGB1, buff, 2);
-	//bmp180_regb1 = ((int16_t)buff[0] <<8 | ((int16_t)buff[1]));
 	bmp180_regb1 = (i2c.twi_read(1) << 8);
 	bmp180_regb1 += (i2c.twi_read(1));
 	
-	//bmp180_readmem(BMP180_REGB2, buff, 2);
-	//bmp180_regb2 = ((int16_t)buff[0] <<8 | ((int16_t)buff[1]));
 	bmp180_regb2 = (i2c.twi_read(1) << 8);
 	bmp180_regb2 += (i2c.twi_read(1));
 	
-	//bmp180_readmem(BMP180_REGMB, buff, 2);
-	//bmp180_regmb = ((int16_t)buff[0] <<8 | ((int16_t)buff[1]));
 	bmp180_regmb = (i2c.twi_read(1) << 8);
 	bmp180_regmb += (i2c.twi_read(1));
 	
-	//bmp180_readmem(BMP180_REGMC, buff, 2);
-	//bmp180_regmc = ((int16_t)buff[0] <<8 | ((int16_t)buff[1]));
 	bmp180_regmc = (i2c.twi_read(1) << 8);
 	bmp180_regmc += (i2c.twi_read(1));
 	
-	//bmp180_readmem(BMP180_REGMD, buff, 2);
-	//bmp180_regmd = ((int16_t)buff[0] <<8 | ((int16_t)buff[1]));
 	bmp180_regmd = (i2c.twi_read(1) << 8);
 	bmp180_regmd += (i2c.twi_read(0));
 	
@@ -119,24 +94,30 @@ void BMP180::bmp180_getcalibration() {
 }
 
 void BMP180::bmp180_getpressure(){
-	uint8_t buff[3] = {0,0,0};
 	int32_t up,x1,x2,x3,b3,b6,p;
 	uint32_t b4,b7;
 
-	#if BMP180_AUTOUPDATETEMP == 1
 	bmp180_gettemperature();
-	#endif
 
 	//read raw pressure
 	bmp180_writemem(BMP180_REGCONTROL, BMP180_REGREADPRESSURE+(BMP180_MODE << 6));
 	_delay_ms(2 + (3<<BMP180_MODE));
 	
-	bmp180_readmem(BMP180_REGCONTROLOUTPUT, buff, 3);
-	up = ((((int32_t)buff[0] <<16) | ((int32_t)buff[1] <<8) | ((int32_t)buff[2])) >> (8-BMP180_MODE)); // uncompensated pressure value
+	//bmp180_readmem(BMP180_REGCONTROLOUTPUT, buff, 3);
+	//up = ((((int32_t)buff[0] <<16) | ((int32_t)buff[1] <<8) | ((int32_t)buff[2])) >> (8-BMP180_MODE)); // uncompensated pressure value
+	i2c.twi_start();
+	i2c.twi_write((BMP180_ADDR | I2C_WRITE));
+	i2c.twi_write(BMP180_REGCONTROLOUTPUT);
+	i2c.twi_start();
+	i2c.twi_write((BMP180_ADDR | I2C_READ));
+	up  = i2c.twi_read(1) << 16;
+	up += i2c.twi_read(1) << 8;
+	up += i2c.twi_read(0);
+	i2c.twi_stop();
 
 	//calculate raw pressure
-	b6 = bmp180_rawtemperature - 4000;
-	x1 = (bmp180_regb2* (b6 * b6) >> 12) >> 11;
+	b6   = bmp180_rawtemperature - 4000;
+	x1   = (bmp180_regb2* (b6 * b6) >> 12) >> 11;
 	x2 = (bmp180_regac2 * b6) >> 11;
 	x3 = x1 + x2;
 	b3 = (((((int32_t)bmp180_regac1) * 4 + x3) << BMP180_MODE) + 2) >> 2;
@@ -173,17 +154,18 @@ void BMP180::bmp180_gettemperature(){
 	i2c.twi_write(BMP180_REGCONTROLOUTPUT);
 	i2c.twi_start();
 	i2c.twi_write((BMP180_ADDR | I2C_READ));
-	ut = i2c.twi_read(1)<<8;
+	ut = (i2c.twi_read(1)<<8);
 	ut += i2c.twi_read(0);
 	i2c.twi_stop();
-	
-	//ut = ((buff[0] << 8) | (buff[1])); //uncompensated temperature value
 
 	//calculate raw temperature
-	x1 = ((ut - bmp180_regac6) * bmp180_regac5) >> 15;
-	x2 = (bmp180_regmc << 11) / (x1 + bmp180_regmd);
+	x1	  = ((ut - bmp180_regac6) * bmp180_regac5);
+	x1	>>= 15;
+	x2	  = (bmp180_regmc << 11);
+	x2	 /= (x1 + bmp180_regmd);
 	bmp180_rawtemperature = x1 + x2;
 	
-	temperature = ((bmp180_rawtemperature+8)>>4)/10.0;
+	temperature	 = ((bmp180_rawtemperature+8)>>4);
+	temperature	/= 10.0;
 }
 

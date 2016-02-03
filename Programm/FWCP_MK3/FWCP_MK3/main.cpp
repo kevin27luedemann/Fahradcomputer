@@ -216,7 +216,8 @@ void geschwindigkeit(float durch){
 #include "Monitor.h"
 
 void initialisierung();
-void maininterupthandler(monitor *mon, uint8_t taste);
+void maininterupthandler(monitor *mon);
+void tastaturhandler(monitor *mon, uint8_t taste);
 void gpshandler();
 
 FATFS FATFS_Obj;
@@ -250,7 +251,8 @@ int main(void)
 	
 	while (1) 
     {
-		maininterupthandler(Folien[position],Tastatur.unified());
+		tastaturhandler(Folien[position],Tastatur.unified());
+		maininterupthandler(Folien[position]);
 		gpshandler();
     }
 }
@@ -331,79 +333,81 @@ void initialisierung(){
 	sei();
 }
 
-void maininterupthandler(monitor *mon, uint8_t taste){
+void tastaturhandler(monitor *mon, uint8_t taste){
 	if (taste!=' ')
 	{
 		anzeige |= (1<<refreshdisplay);
 		switch (taste)							//Tastendruck ueberpruefen
 		{
 			case 'm':
-				position = numberofpages;
-				break;
+			position = numberofpages;
+			break;
 			case 'l':
-				if (mon->posx==0)
-				{
-					position = numberofpages;
-				}
-				else{
-					mon->posx--;
-				}
-				break;
+			if (mon->posx==0)
+			{
+				position = numberofpages;
+			}
+			else{
+				mon->posx--;
+			}
+			break;
 			case 'r':
-				if (position==numberofpages)
-				{
-					position=mon->posy;
-				}
-				else if (!(mon->posx >= mon->maxentriesx))
-				{
-					mon->posx++;
-				}
-				break;
-				case 'o':
-					if (position==numberofpages)
-					{
-						position=mon->posy;
-					}
-					else if (!(mon->posx >= mon->maxentriesx))
-					{
-						mon->posx++;
-					}
-					break;
+			if (position==numberofpages)
+			{
+				position=mon->posy;
+			}
+			else if (!(mon->posx >= mon->maxentriesx))
+			{
+				mon->posx++;
+			}
+			break;
+			case 'o':
+			if (position==numberofpages)
+			{
+				position=mon->posy;
+			}
+			else if (!(mon->posx >= mon->maxentriesx))
+			{
+				mon->posx++;
+			}
+			break;
 			case 'd':
-				if (!(mon->posy >= mon->maxentries-1))
-				{
-					mon->posy++;
-				}
-				else{
-					mon->posy = 0;
-				}
-				break;
+			if (!(mon->posy >= mon->maxentries-1))
+			{
+				mon->posy++;
+			}
+			else{
+				mon->posy = 0;
+			}
+			break;
 			case 'u':
-				if (!(mon->posy == 0))
-				{
-					mon->posy--;
-				}
-				else{
-					mon->posy=mon->maxentries-1;
-				}
-				break;
+			if (!(mon->posy == 0))
+			{
+				mon->posy--;
+			}
+			else{
+				mon->posy=mon->maxentries-1;
+			}
+			break;
 			case '0':
-				//Licht an/aus
-				if (LED.ison())
-				{
-					LED.off();
-				}
-				else{
-					LED.on();
-				}
-				break;
+			//Licht an/aus
+			if (LED.ison())
+			{
+				LED.off();
+			}
+			else{
+				LED.on();
+			}
+			break;
 			default:
-				//alle anderen Tasten werden an den jeweiligen Handler weiter gegeben
-				mon->tastendruck(&taste);
-				break;
+			//alle anderen Tasten werden an den jeweiligen Handler weiter gegeben
+			mon->tastendruck(&taste);
+			break;
 		}
 	}
-	
+}
+
+void maininterupthandler(monitor *mon){
 	if (position==1)							//Berechnung der Geschwindigkeit fuer Tacho
 	{
 		//debounce Funktion fuer den Reedswitch
@@ -421,6 +425,7 @@ void maininterupthandler(monitor *mon, uint8_t taste){
 			geschw=0;
 		}
 	}
+	//SD Karte mounten bzw. aufnahme starten
 	else if (position==3)
 	{
 		if (mon->posy==3 && mon->posx==1)

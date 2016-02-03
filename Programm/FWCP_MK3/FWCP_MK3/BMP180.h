@@ -34,9 +34,6 @@
 #define BMP180_MODEHIGHRES 2 //oversampling=2, internalsamples=4, maxconvtimepressure=13.5ms, avgcurrent=7uA, RMSnoise_hPA=0.04, RMSnoise_m=0.3
 #define BMP180_MODEULTRAHIGHRES 3 //oversampling=3, internalsamples=8, maxconvtimepressure=25.5ms, avgcurrent=12uA, RMSnoise_hPA=0.03, RMSnoise_m=0.25
 
-//autoupdate temperature enabled
-#define BMP180_AUTOUPDATETEMP 1 //autoupdate temperature every read
-
 //setup parameters
 #define BMP180_MODE BMP180_MODEULTRAHIGHRES //define a mode
 #define BMP180_UNITPAOFFSET 0 //define a unit offset (pa)
