@@ -110,27 +110,56 @@ void BMP180::bmp180_getpressure(){
 	i2c.twi_write(BMP180_REGCONTROLOUTPUT);
 	i2c.twi_start();
 	i2c.twi_write((BMP180_ADDR | I2C_READ));
-	up  = i2c.twi_read(1) << 16;
-	up += i2c.twi_read(1) << 8;
-	up += i2c.twi_read(0);
+	up   = i2c.twi_read(1) << 16;
+	up  += i2c.twi_read(1) << 8;
+	up  += i2c.twi_read(0);
+	up >>= (8-BMP180_MODE);
 	i2c.twi_stop();
 
 	//calculate raw pressure
 	b6   = bmp180_rawtemperature - 4000;
-	x1   = (bmp180_regb2* (b6 * b6) >> 12) >> 11;
-	x2 = (bmp180_regac2 * b6) >> 11;
-	x3 = x1 + x2;
-	b3 = (((((int32_t)bmp180_regac1) * 4 + x3) << BMP180_MODE) + 2) >> 2;
-	x1 = (bmp180_regac3 * b6) >> 13;
-	x2 = (bmp180_regb1 * ((b6 * b6) >> 12)) >> 16;
-	x3 = ((x1 + x2) + 2) >> 2;
-	b4 = (bmp180_regac4 * (uint32_t)(x3 + 32768)) >> 15;
-	b7 = ((uint32_t)up - b3) * (50000 >> BMP180_MODE);
-	p = b7 < 0x80000000 ? (b7 << 1) / b4 : (b7 / b4) << 1;
-	x1 = (p >> 8) * (p >> 8);
-	x1 = (x1 * 3038) >> 16;
-	x2 = (-7357 * p) >> 16;
-	bmp180_rawpressure = p + ((x1 + x2 + 3791) >> 4);
+	x1   = b6*b6;
+	x1 >>= 12;
+	x1  *= bmp180_regb2;
+	x1 >>= 11;
+	x2   = bmp180_regac2 * b6;
+	x2 >>= 11;
+	x3   = x1 + x2;
+	b3   = bmp180_regac1 * 4 +x3;
+	b3 <<= BMP180_MODE;
+	b3  += 2;
+	b3  /= 4;
+	x1   = bmp180_regac3 * b6;
+	x1 >>= 13;
+	x2   = b6*b6;
+	x2 >>= 12;
+	x2  *= bmp_regb1;
+	x2 >>= 10;
+	x3   = x1 + x2;
+	x3  += 2;
+	x3 >>= 2;
+	b4   = (uint32_t)(x3+32768);
+	b4  *= bmp180_regac4;
+	b4 >>= 15;
+	b7   = ((uint32_t)up - b3);
+	b7  *= (50000 >> BMP180_MODE);
+	if (b7 < 0x80000000){
+		p  = b7*2;
+		p /= b4;
+	}
+	else {
+		p  = b7/b4;
+		p *= 2;
+	}
+	x1   = (p >> 8);
+	x1  *= (p >> 8);
+	x1   = (x1 * 3038);
+	x1 >>= 10;
+	x2   = (-7357 * p);
+	x2 >>= 16;
+	bmp180_rawpressure   = (x1 + x2 + 3791);
+	bmp180_rawpressure >>= 4;
+	bmp180_rawpressure  += p;
 	
 	pressure = (bmp180_rawpressure+BMP180_UNITPAOFFSET)/100.0;
 	
@@ -154,18 +183,20 @@ void BMP180::bmp180_gettemperature(){
 	i2c.twi_write(BMP180_REGCONTROLOUTPUT);
 	i2c.twi_start();
 	i2c.twi_write((BMP180_ADDR | I2C_READ));
-	ut = (i2c.twi_read(1)<<8);
+	ut  = (i2c.twi_read(1)<<8);
 	ut += i2c.twi_read(0);
 	i2c.twi_stop();
 
 	//calculate raw temperature
-	x1	  = ((ut - bmp180_regac6) * bmp180_regac5);
+	x1	  = (ut - bmp180_regac6);
+	x1	 *= bmp180_regac5;
 	x1	>>= 15;
 	x2	  = (bmp180_regmc << 11);
 	x2	 /= (x1 + bmp180_regmd);
 	bmp180_rawtemperature = x1 + x2;
 	
-	temperature	 = ((bmp180_rawtemperature+8)>>4);
-	temperature	/= 10.0;
+	temperature	  = (bmp180_rawtemperature+8);
+	temperature	>>= 4;
+	temperature	 /= 10.0;
 }
 
