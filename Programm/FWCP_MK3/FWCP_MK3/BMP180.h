@@ -43,7 +43,7 @@
 	#define F_CPU 8000000
 #endif
 
-#define PRESSURE0 1013.25
+#define PRESSURE00 1013.25
 
 #include <avr/io.h>
 #include <math.h>
@@ -56,6 +56,7 @@ class BMP180
 //variables
 public:
 	double pressure;
+	double pressure0;
 	double temperature;
 	double altitude;
 	int16_t bmp180_regac1, bmp180_regac2, bmp180_regac3, bmp180_regb1, bmp180_regb2, bmp180_regmb, bmp180_regmc, bmp180_regmd;
@@ -79,7 +80,6 @@ private:
 	BMP180( const BMP180 &c );
 	BMP180& operator=( const BMP180 &c );
 	void bmp180_writemem(uint8_t reg, uint8_t value);
-	void bmp180_readmem(uint8_t reg, uint8_t buff[], uint8_t bytes);
 
 }; //BMP180
 

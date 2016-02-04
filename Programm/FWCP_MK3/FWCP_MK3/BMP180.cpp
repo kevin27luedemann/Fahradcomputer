@@ -13,6 +13,7 @@ BMP180::BMP180()
 {
 	bmp180_rawtemperature = 0;
 	bmp180_rawpressure = 0;
+	pressure0 = PRESSURE00;
 	
 	bmp180_getcalibration();
 	
@@ -28,26 +29,6 @@ void BMP180::bmp180_writemem(uint8_t reg, uint8_t value){
 	i2c.twi_write(BMP180_ADDR | I2C_WRITE);
 	i2c.twi_write(reg);
 	i2c.twi_write(value);
-	i2c.twi_stop();
-}
-
-void BMP180::bmp180_readmem(uint8_t reg, uint8_t buff[], uint8_t bytes){
-	i2c.twi_start();
-	i2c.twi_write((BMP180_ADDR | I2C_WRITE));
-	i2c.twi_write(reg);
-	i2c.twi_start();
-	i2c.twi_write((BMP180_ADDR | I2C_READ));
-	
-	for(uint8_t i=0; i<bytes;i++){
-		if (i<(bytes-1))
-		{
-			buff[i]=i2c.twi_read(1);
-		}
-		else
-		{
-			buff[i]=i2c.twi_read(0);
-		}
-	}
 	i2c.twi_stop();
 }
 
@@ -94,7 +75,8 @@ void BMP180::bmp180_getcalibration() {
 }
 
 void BMP180::bmp180_getpressure(){
-	int32_t up,x1,x2,x3,b3,b6,p;
+	long up;
+	int32_t x1,x2,x3,b3,b6,p;
 	uint32_t b4,b7;
 
 	bmp180_gettemperature();
@@ -110,7 +92,7 @@ void BMP180::bmp180_getpressure(){
 	i2c.twi_write(BMP180_REGCONTROLOUTPUT);
 	i2c.twi_start();
 	i2c.twi_write((BMP180_ADDR | I2C_READ));
-	up   = i2c.twi_read(1) << 16;
+	up   = i2c.twi_read(1) * 65536;
 	up  += i2c.twi_read(1) << 8;
 	up  += i2c.twi_read(0);
 	up >>= (8-BMP180_MODE);
@@ -133,7 +115,7 @@ void BMP180::bmp180_getpressure(){
 	x1 >>= 13;
 	x2   = b6*b6;
 	x2 >>= 12;
-	x2  *= bmp_regb1;
+	x2  *= bmp180_regb1;
 	x2 >>= 10;
 	x3   = x1 + x2;
 	x3  += 2;
@@ -160,6 +142,8 @@ void BMP180::bmp180_getpressure(){
 	bmp180_rawpressure   = (x1 + x2 + 3791);
 	bmp180_rawpressure >>= 4;
 	bmp180_rawpressure  += p;
+	//Korrektur heuristisch 
+	bmp180_rawpressure  -= 23700;
 	
 	pressure = (bmp180_rawpressure+BMP180_UNITPAOFFSET)/100.0;
 	
@@ -167,7 +151,10 @@ void BMP180::bmp180_getpressure(){
 
 void BMP180::bmp180_getaltitude(){
 	bmp180_getpressure();
-	
+	altitude  = pressure/pressure0;
+	altitude  = pow(altitude,1/5.255);
+	altitude  = 1-altitude;
+	altitude *= 44330;
 }
 
 void BMP180::bmp180_gettemperature(){
@@ -194,9 +181,11 @@ void BMP180::bmp180_gettemperature(){
 	x2	  = (bmp180_regmc << 11);
 	x2	 /= (x1 + bmp180_regmd);
 	bmp180_rawtemperature = x1 + x2;
+	//Korrektur heuristisch 
+	bmp180_rawtemperature -= 3077;
 	
 	temperature	  = (bmp180_rawtemperature+8);
-	temperature	>>= 4;
+	temperature	/= 16.0;
 	temperature	 /= 10.0;
 }
 

@@ -4,7 +4,7 @@
  * Created: 28.11.2015 18:12:54
  * Author : Lüdemann
  */ 
-#define VERSIONSNUMMER 3.03
+#define VERSIONSNUMMER 3.04
 #define SPANNUNGSTEILER 2.0069
 #define F_CPU 8000000
 #define BATMIN 3.6
@@ -248,6 +248,8 @@ int main(void)
 	};
 	
 	druck.bmp180_getcalibration();
+	//speichern der Werte und per hand rechnen
+	
 	
 	while (1) 
     {
