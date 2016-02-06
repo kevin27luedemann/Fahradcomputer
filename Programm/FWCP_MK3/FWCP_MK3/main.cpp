@@ -456,10 +456,15 @@ void maininterupthandler(monitor *mon){
 			{
 				if (disk_status(0) == 0)
 				{
-					char name[12];
+					char name[13];
 					sprintf(name,"%02u%02u%02u%02u.txt",rtc.Monat,rtc.Tag,rtc.Stunden,rtc.Minuten);
 					f_open(&logger, name, FA_OPEN_ALWAYS | FA_WRITE);
-					f_printf(&logger,"#Zeit [s]\tlongitude [1e6]\tLatitude [1e5]\tGPSSpeed [1e2 km/h] \tTacho [1e2 km/h] \tTemperatur [10 C] \tDruck [Pa] \tHoeheSee [10 m]\n");
+					//Zeit und GPS
+					f_printf(&logger,"#Zeit [s]\tlongitude [1e6]\tLatitude [1e5]\tGPSSpeed [1e2 km/h] ");
+					//Tacho
+					f_printf(&logger,"\tTacho [1e2 km/h] ");
+					//Barometer
+					f_printf(&logger,"\tTemperatur [10 C] \tDruck [Pa] \tHoeheSee [10 m]\n");
 				}
 				
 				statusreg |= (1<<loggingstat);
@@ -500,7 +505,12 @@ void maininterupthandler(monitor *mon){
 			uint16_t Sekundenges = rtc.Stunden*3600;
 			Sekundenges += rtc.Minuten*60;
 			Sekundenges += rtc.Sekunden;
-			f_printf(&logger,"%u\t%ld\t%ld\t%ld\t%ld\t%d\t%u\t%d\n",(uint16_t)Sekundenges,(int32_t)(lon*1000000),(int32_t)(lat*100000),(int32_t)(gpsspeed*100),(int32_t)(geschw*100),(int16_t)(druck.temperature*10),(uint16_t)(druck.pressure*100),(int16_t)(druck.altitude*10));
+			//GPS Daten und Zeit
+			f_printf(&logger,"%u\t%ld\t%ld\t%ld\t",(uint16_t)Sekundenges,(int32_t)(lon*1000000),(int32_t)(lat*100000),(int32_t)(gpsspeed*100));
+			//Tacho
+			f_printf(&logger,"%ld\n",(int32_t)(geschw*100));
+			//Barometer
+			f_printf(&logger,"%d\t%u\t%d\n",(int16_t)(druck.temperature*10),(uint16_t)(druck.pressure*100),(int16_t)(druck.altitude*10));
 		}
 		
 		anzeige |= (1<<refreshdisplay);
