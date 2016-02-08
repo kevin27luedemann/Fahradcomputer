@@ -508,7 +508,7 @@ void maininterupthandler(monitor *mon){
 			//GPS Daten und Zeit
 			f_printf(&logger,"%u\t%ld\t%ld\t%ld\t",(uint16_t)Sekundenges,(int32_t)(lon*1000000),(int32_t)(lat*100000),(int32_t)(gpsspeed*100));
 			//Tacho
-			f_printf(&logger,"%ld\n",(int32_t)(geschw*100));
+			f_printf(&logger,"%ld\t",(int32_t)(geschw*100));
 			//Barometer
 			f_printf(&logger,"%d\t%u\t%d\n",(int16_t)(druck.temperature*10),(uint16_t)(druck.pressure*100),(int16_t)(druck.altitude*10));
 		}

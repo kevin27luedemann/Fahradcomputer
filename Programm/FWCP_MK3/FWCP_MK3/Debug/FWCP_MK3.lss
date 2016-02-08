@@ -3,31 +3,31 @@ FWCP_MK3.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000326  00800100  0000931c  000093b0  2**0
+  0 .data         00000322  00800100  0000931c  000093b0  2**0
                   CONTENTS, ALLOC, LOAD, DATA
   1 .text         0000931c  00000000  00000000  00000094  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .bss          00000a17  00800426  00800426  000096d6  2**0
+  2 .bss          00000a17  00800422  00800422  000096d2  2**0
                   ALLOC
-  3 .comment      0000005c  00000000  00000000  000096d6  2**0
+  3 .comment      0000005c  00000000  00000000  000096d2  2**0
                   CONTENTS, READONLY
-  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00009734  2**2
+  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00009730  2**2
                   CONTENTS, READONLY
-  5 .debug_aranges 00000580  00000000  00000000  00009774  2**0
+  5 .debug_aranges 00000580  00000000  00000000  00009770  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   0000dbff  00000000  00000000  00009cf4  2**0
+  6 .debug_info   0000dbff  00000000  00000000  00009cf0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 00002054  00000000  00000000  000178f3  2**0
+  7 .debug_abbrev 00002054  00000000  00000000  000178ef  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   00005a65  00000000  00000000  00019947  2**0
+  8 .debug_line   00005ab9  00000000  00000000  00019943  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  000019ec  00000000  00000000  0001f3ac  2**2
+  9 .debug_frame  000019ec  00000000  00000000  0001f3fc  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    00001b49  00000000  00000000  00020d98  2**0
+ 10 .debug_str    00001b51  00000000  00000000  00020de8  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    0000d2b6  00000000  00000000  000228e1  2**0
+ 11 .debug_loc    0000d2b6  00000000  00000000  00022939  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 000006b0  00000000  00000000  0002fb97  2**0
+ 12 .debug_ranges 000006b0  00000000  00000000  0002fbef  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -593,13 +593,13 @@ Disassembly of section .text:
      6cc:	02 c0       	rjmp	.+4      	; 0x6d2 <__do_copy_data+0x14>
      6ce:	07 90       	elpm	r0, Z+
      6d0:	0d 92       	st	X+, r0
-     6d2:	a6 32       	cpi	r26, 0x26	; 38
+     6d2:	a2 32       	cpi	r26, 0x22	; 34
      6d4:	b1 07       	cpc	r27, r17
      6d6:	d9 f7       	brne	.-10     	; 0x6ce <__do_copy_data+0x10>
 
 000006d8 <__do_clear_bss>:
      6d8:	2e e0       	ldi	r18, 0x0E	; 14
-     6da:	a6 e2       	ldi	r26, 0x26	; 38
+     6da:	a2 e2       	ldi	r26, 0x22	; 34
      6dc:	b4 e0       	ldi	r27, 0x04	; 4
      6de:	01 c0       	rjmp	.+2      	; 0x6e2 <.do_clear_bss_start>
 
@@ -607,7 +607,7 @@ Disassembly of section .text:
      6e0:	1d 92       	st	X+, r1
 
 000006e2 <.do_clear_bss_start>:
-     6e2:	ad 33       	cpi	r26, 0x3D	; 61
+     6e2:	a9 33       	cpi	r26, 0x39	; 57
      6e4:	b2 07       	cpc	r27, r18
      6e6:	e1 f7       	brne	.-8      	; 0x6e0 <.do_clear_bss_loop>
 
@@ -1792,7 +1792,7 @@ int select (void)	/* 1:Successful, 0:Timeout */
 
 	Timer2 = wt / 10;
      e56:	82 e3       	ldi	r24, 0x32	; 50
-     e58:	80 93 27 04 	sts	0x0427, r24
+     e58:	80 93 23 04 	sts	0x0423, r24
 	do{
 		d = xchg_spi(0xFF);
      e5c:	8f ef       	ldi	r24, 0xFF	; 255
@@ -1800,7 +1800,7 @@ int select (void)	/* 1:Successful, 0:Timeout */
 	}while (d != 0xFF && Timer2);
      e60:	8f 3f       	cpi	r24, 0xFF	; 255
      e62:	41 f0       	breq	.+16     	; 0xe74 <select+0x24>
-     e64:	80 91 27 04 	lds	r24, 0x0427
+     e64:	80 91 23 04 	lds	r24, 0x0423
      e68:	81 11       	cpse	r24, r1
      e6a:	f8 cf       	rjmp	.-16     	; 0xe5c <select+0xc>
 {
@@ -1846,7 +1846,7 @@ UINT btr			/* Byte count (must be multiple of 4) */
 
 	Timer1 = 20;
      e86:	84 e1       	ldi	r24, 0x14	; 20
-     e88:	80 93 28 04 	sts	0x0428, r24
+     e88:	80 93 24 04 	sts	0x0424, r24
 	do {							/* Wait for data packet in timeout of 200ms */
 		token = xchg_spi(0xFF);
      e8c:	8f ef       	ldi	r24, 0xFF	; 255
@@ -1854,7 +1854,7 @@ UINT btr			/* Byte count (must be multiple of 4) */
 	} while ((token == 0xFF) && Timer1);
      e90:	8f 3f       	cpi	r24, 0xFF	; 255
      e92:	39 f4       	brne	.+14     	; 0xea2 <rcvr_datablock+0x28>
-     e94:	90 91 28 04 	lds	r25, 0x0428
+     e94:	90 91 24 04 	lds	r25, 0x0424
      e98:	91 11       	cpse	r25, r1
      e9a:	f8 cf       	rjmp	.-16     	; 0xe8c <rcvr_datablock+0x12>
 	if (token != 0xFE) return 0;	/* If not valid data token, return with error */
@@ -2133,7 +2133,7 @@ BYTE token			/* Data/Stop token */
 
 	Timer2 = wt / 10;
      fa2:	92 e3       	ldi	r25, 0x32	; 50
-     fa4:	90 93 27 04 	sts	0x0427, r25
+     fa4:	90 93 23 04 	sts	0x0423, r25
 	do{
 		d = xchg_spi(0xFF);
      fa8:	8f ef       	ldi	r24, 0xFF	; 255
@@ -2141,7 +2141,7 @@ BYTE token			/* Data/Stop token */
 	}while (d != 0xFF && Timer2);
      fac:	8f 3f       	cpi	r24, 0xFF	; 255
      fae:	31 f0       	breq	.+12     	; 0xfbc <xmit_datablock+0x24>
-     fb0:	90 91 27 04 	lds	r25, 0x0427
+     fb0:	90 91 23 04 	lds	r25, 0x0423
      fb4:	91 11       	cpse	r25, r1
      fb6:	f8 cf       	rjmp	.-16     	; 0xfa8 <xmit_datablock+0x10>
 )
@@ -2302,7 +2302,7 @@ void power_on (void)
     106a:	84 c0       	rjmp	.+264    	; 0x1174 <disk_initialize+0x160>
 		Timer1 = 100;						/* Initialization timeout of 1000 msec */
     106c:	84 e6       	ldi	r24, 0x64	; 100
-    106e:	80 93 28 04 	sts	0x0428, r24
+    106e:	80 93 24 04 	sts	0x0424, r24
 		if (send_cmd(CMD8, 0x1AA) == 1) {	/* SDv2? */
     1072:	4a ea       	ldi	r20, 0xAA	; 170
     1074:	51 e0       	ldi	r21, 0x01	; 1
@@ -2340,7 +2340,7 @@ void power_on (void)
     10b0:	09 f0       	breq	.+2      	; 0x10b4 <disk_initialize+0xa0>
     10b2:	60 c0       	rjmp	.+192    	; 0x1174 <disk_initialize+0x160>
 				while (Timer1 && send_cmd(ACMD41, 1UL << 30));	/* Wait for leaving idle state (ACMD41 with HCS bit) */
-    10b4:	80 91 28 04 	lds	r24, 0x0428
+    10b4:	80 91 24 04 	lds	r24, 0x0424
     10b8:	88 23       	and	r24, r24
     10ba:	41 f0       	breq	.+16     	; 0x10cc <disk_initialize+0xb8>
     10bc:	40 e0       	ldi	r20, 0x00	; 0
@@ -2352,7 +2352,7 @@ void power_on (void)
     10c8:	81 11       	cpse	r24, r1
     10ca:	f4 cf       	rjmp	.-24     	; 0x10b4 <disk_initialize+0xa0>
 				if (Timer1 && send_cmd(CMD58, 0) == 0) {		/* Check CCS bit in the OCR */
-    10cc:	80 91 28 04 	lds	r24, 0x0428
+    10cc:	80 91 24 04 	lds	r24, 0x0424
     10d0:	88 23       	and	r24, r24
     10d2:	09 f4       	brne	.+2      	; 0x10d6 <disk_initialize+0xc2>
     10d4:	4f c0       	rjmp	.+158    	; 0x1174 <disk_initialize+0x160>
@@ -2409,7 +2409,7 @@ void power_on (void)
 				ty = CT_MMC; cmd = CMD1;	/* MMCv3 */
 			}
 			while (Timer1 && send_cmd(cmd, 0));			/* Wait for leaving idle state */
-    111a:	90 91 28 04 	lds	r25, 0x0428
+    111a:	90 91 24 04 	lds	r25, 0x0424
     111e:	99 23       	and	r25, r25
     1120:	39 f0       	breq	.+14     	; 0x1130 <disk_initialize+0x11c>
     1122:	40 e0       	ldi	r20, 0x00	; 0
@@ -2420,7 +2420,7 @@ void power_on (void)
     112c:	81 11       	cpse	r24, r1
     112e:	f5 cf       	rjmp	.-22     	; 0x111a <disk_initialize+0x106>
 			if (!Timer1 || send_cmd(CMD16, CLUSTERSIZE) != 0)	/* Set R/W block length to 512 */
-    1130:	80 91 28 04 	lds	r24, 0x0428
+    1130:	80 91 24 04 	lds	r24, 0x0424
     1134:	88 23       	and	r24, r24
     1136:	f1 f0       	breq	.+60     	; 0x1174 <disk_initialize+0x160>
     1138:	40 e0       	ldi	r20, 0x00	; 0
@@ -2435,7 +2435,7 @@ void power_on (void)
 		}
 	}
 	CardType = ty;
-    1148:	00 93 26 04 	sts	0x0426, r16
+    1148:	00 93 22 04 	sts	0x0422, r16
 	deselect();
     114c:	7d de       	rcall	.-774    	; 0xe48 <deselect>
 
@@ -2477,7 +2477,7 @@ void power_on (void)
 		}
 	}
 	CardType = ty;
-    116c:	80 93 26 04 	sts	0x0426, r24
+    116c:	80 93 22 04 	sts	0x0422, r24
 	deselect();
     1170:	6b de       	rcall	.-810    	; 0xe48 <deselect>
     1172:	ef cf       	rjmp	.-34     	; 0x1152 <disk_initialize+0x13e>
@@ -2487,7 +2487,7 @@ void power_on (void)
 		}
 	}
 	CardType = ty;
-    1174:	10 92 26 04 	sts	0x0426, r1
+    1174:	10 92 22 04 	sts	0x0422, r1
 	deselect();
     1178:	67 de       	rcall	.-818    	; 0xe48 <deselect>
     117a:	f1 cf       	rjmp	.-30     	; 0x115e <disk_initialize+0x14a>
@@ -2563,7 +2563,7 @@ DSTATUS disk_status (
     11c2:	3b c0       	rjmp	.+118    	; 0x123a <disk_read+0x96>
 
 	if (!(CardType & CT_BLOCK)) sector *= CLUSTERSIZE;	/* Convert to byte address if needed */
-    11c4:	80 91 26 04 	lds	r24, 0x0426
+    11c4:	80 91 22 04 	lds	r24, 0x0422
     11c8:	83 fd       	sbrc	r24, 3
     11ca:	09 c0       	rjmp	.+18     	; 0x11de <disk_read+0x3a>
     11cc:	01 2e       	mov	r0, r17
@@ -2689,7 +2689,7 @@ DSTATUS disk_status (
     1278:	4b c0       	rjmp	.+150    	; 0x1310 <disk_write+0xc8>
 
 	if (!(CardType & CT_BLOCK)) sector *= CLUSTERSIZE;	/* Convert to byte address if needed */
-    127a:	80 91 26 04 	lds	r24, 0x0426
+    127a:	80 91 22 04 	lds	r24, 0x0422
     127e:	83 fd       	sbrc	r24, 3
     1280:	09 c0       	rjmp	.+18     	; 0x1294 <disk_write+0x4c>
     1282:	0b 2e       	mov	r0, r27
@@ -3012,7 +3012,7 @@ DRESULT disk_ioctl (
 
 	case GET_BLOCK_SIZE :	/* Get erase block size in unit of sector (DWORD) */
 		if (CardType & CT_SD2) {	/* SDv2? */
-    1452:	10 91 26 04 	lds	r17, 0x0426
+    1452:	10 91 22 04 	lds	r17, 0x0422
     1456:	12 ff       	sbrs	r17, 2
     1458:	2a c0       	rjmp	.+84     	; 0x14ae <disk_ioctl+0x18a>
 			if (send_cmd(ACMD13, 0) == 0) {	/* Read SD status */
@@ -3175,7 +3175,7 @@ DRESULT disk_ioctl (
 
 	case MMC_GET_TYPE :		/* Get card type flags (1 byte) */
 		*ptr = CardType;
-    155e:	80 91 26 04 	lds	r24, 0x0426
+    155e:	80 91 22 04 	lds	r24, 0x0422
     1562:	fa 01       	movw	r30, r20
     1564:	80 83       	st	Z, r24
 		res = RES_OK;
@@ -3375,19 +3375,19 @@ void disk_timerproc (void)
 
 
 	n = Timer1;				/* 100Hz decrement timer */
-    165c:	80 91 28 04 	lds	r24, 0x0428
+    165c:	80 91 24 04 	lds	r24, 0x0424
 	if (n) Timer1 = --n;
     1660:	88 23       	and	r24, r24
     1662:	19 f0       	breq	.+6      	; 0x166a <disk_timerproc+0xe>
     1664:	81 50       	subi	r24, 0x01	; 1
-    1666:	80 93 28 04 	sts	0x0428, r24
+    1666:	80 93 24 04 	sts	0x0424, r24
 	n = Timer2;
-    166a:	80 91 27 04 	lds	r24, 0x0427
+    166a:	80 91 23 04 	lds	r24, 0x0423
 	if (n) Timer2 = --n;
     166e:	88 23       	and	r24, r24
     1670:	19 f0       	breq	.+6      	; 0x1678 <disk_timerproc+0x1c>
     1672:	81 50       	subi	r24, 0x01	; 1
-    1674:	80 93 27 04 	sts	0x0427, r24
+    1674:	80 93 23 04 	sts	0x0423, r24
 	
 	s = Stat;
     1678:	80 91 06 01 	lds	r24, 0x0106
@@ -5122,7 +5122,7 @@ void Display::analog(uint8_t stunde, uint8_t minute, uint8_t sekunde, uint8_t se
     22c6:	fc 01       	movw	r30, r24
     22c8:	ee 0f       	add	r30, r30
     22ca:	ff 1f       	adc	r31, r31
-    22cc:	e5 5d       	subi	r30, 0xD5	; 213
+    22cc:	e9 5d       	subi	r30, 0xD9	; 217
     22ce:	fb 4f       	sbci	r31, 0xFB	; 251
     22d0:	00 81       	ld	r16, Z
     22d2:	11 81       	ldd	r17, Z+1	; 0x01
@@ -5826,11 +5826,11 @@ void Display::analog(uint8_t stunde, uint8_t minute, uint8_t sekunde, uint8_t se
     2850:	e9 89       	ldd	r30, Y+17	; 0x11
     2852:	d8 01       	movw	r26, r16
     2854:	ec 93       	st	X, r30
-    2856:	80 91 29 04 	lds	r24, 0x0429
-    285a:	90 91 2a 04 	lds	r25, 0x042A
+    2856:	80 91 25 04 	lds	r24, 0x0425
+    285a:	90 91 26 04 	lds	r25, 0x0426
     285e:	01 96       	adiw	r24, 0x01	; 1
-    2860:	90 93 2a 04 	sts	0x042A, r25
-    2864:	80 93 29 04 	sts	0x0429, r24
+    2860:	90 93 26 04 	sts	0x0426, r25
+    2864:	80 93 25 04 	sts	0x0425, r24
     2868:	17 96       	adiw	r26, 0x07	; 7
     286a:	9c 93       	st	X, r25
     286c:	8e 93       	st	-X, r24
@@ -7438,7 +7438,7 @@ void Display::analog(uint8_t stunde, uint8_t minute, uint8_t sekunde, uint8_t se
     34dc:	fc 01       	movw	r30, r24
     34de:	ee 0f       	add	r30, r30
     34e0:	ff 1f       	adc	r31, r31
-    34e2:	e5 5d       	subi	r30, 0xD5	; 213
+    34e2:	e9 5d       	subi	r30, 0xD9	; 217
     34e4:	fb 4f       	sbci	r31, 0xFB	; 251
     34e6:	01 90       	ld	r0, Z+
     34e8:	f0 81       	ld	r31, Z
@@ -7456,7 +7456,7 @@ void Display::analog(uint8_t stunde, uint8_t minute, uint8_t sekunde, uint8_t se
     3500:	88 0f       	add	r24, r24
     3502:	99 1f       	adc	r25, r25
     3504:	fc 01       	movw	r30, r24
-    3506:	e5 5d       	subi	r30, 0xD5	; 213
+    3506:	e9 5d       	subi	r30, 0xD9	; 217
     3508:	fb 4f       	sbci	r31, 0xFB	; 251
     350a:	31 83       	std	Z+1, r19	; 0x01
     350c:	20 83       	st	Z, r18
@@ -7481,7 +7481,7 @@ void Display::analog(uint8_t stunde, uint8_t minute, uint8_t sekunde, uint8_t se
     3534:	88 0f       	add	r24, r24
     3536:	99 1f       	adc	r25, r25
     3538:	fc 01       	movw	r30, r24
-    353a:	e5 5d       	subi	r30, 0xD5	; 213
+    353a:	e9 5d       	subi	r30, 0xD9	; 217
     353c:	fb 4f       	sbci	r31, 0xFB	; 251
     353e:	11 82       	std	Z+1, r1	; 0x01
     3540:	10 82       	st	Z, r1
@@ -10957,10 +10957,10 @@ int8_t Batteriestatus(){
     4bba:	40 e0       	ldi	r20, 0x00	; 0
     4bbc:	50 e4       	ldi	r21, 0x40	; 64
     4bbe:	0e 94 f2 40 	call	0x81e4	; 0x81e4 <__mulsf3>
-    4bc2:	60 93 f1 08 	sts	0x08F1, r22
-    4bc6:	70 93 f2 08 	sts	0x08F2, r23
-    4bca:	80 93 f3 08 	sts	0x08F3, r24
-    4bce:	90 93 f4 08 	sts	0x08F4, r25
+    4bc2:	60 93 ed 08 	sts	0x08ED, r22
+    4bc6:	70 93 ee 08 	sts	0x08EE, r23
+    4bca:	80 93 ef 08 	sts	0x08EF, r24
+    4bce:	90 93 f0 08 	sts	0x08F0, r25
 	float stat = ((batterie-BATMIN)/(4.2-BATMIN)*100);
     4bd2:	26 e6       	ldi	r18, 0x66	; 102
     4bd4:	36 e6       	ldi	r19, 0x66	; 102
@@ -11600,13 +11600,13 @@ int8_t Batteriestatus(){
 
 		//Ausgabe der Geschwidigkeit
 		buffersize=sprintf(buffer,"%3.1f",geschw);
-    4fe2:	80 91 8a 08 	lds	r24, 0x088A
+    4fe2:	80 91 86 08 	lds	r24, 0x0886
     4fe6:	8f 93       	push	r24
-    4fe8:	80 91 89 08 	lds	r24, 0x0889
+    4fe8:	80 91 85 08 	lds	r24, 0x0885
     4fec:	8f 93       	push	r24
-    4fee:	80 91 88 08 	lds	r24, 0x0888
+    4fee:	80 91 84 08 	lds	r24, 0x0884
     4ff2:	8f 93       	push	r24
-    4ff4:	80 91 87 08 	lds	r24, 0x0887
+    4ff4:	80 91 83 08 	lds	r24, 0x0883
     4ff8:	8f 93       	push	r24
     4ffa:	8f ef       	ldi	r24, 0xFF	; 255
     4ffc:	91 e0       	ldi	r25, 0x01	; 1
@@ -11680,10 +11680,10 @@ int8_t Batteriestatus(){
     5066:	30 e0       	ldi	r19, 0x00	; 0
     5068:	4a e7       	ldi	r20, 0x7A	; 122
     506a:	54 e4       	ldi	r21, 0x44	; 68
-    506c:	60 91 83 08 	lds	r22, 0x0883
-    5070:	70 91 84 08 	lds	r23, 0x0884
-    5074:	80 91 85 08 	lds	r24, 0x0885
-    5078:	90 91 86 08 	lds	r25, 0x0886
+    506c:	60 91 7f 08 	lds	r22, 0x087F
+    5070:	70 91 80 08 	lds	r23, 0x0880
+    5074:	80 91 81 08 	lds	r24, 0x0881
+    5078:	90 91 82 08 	lds	r25, 0x0882
     507c:	0e 94 3e 3f 	call	0x7e7c	; 0x7e7c <__divsf3>
     5080:	9f 93       	push	r25
     5082:	8f 93       	push	r24
@@ -11728,13 +11728,13 @@ int8_t Batteriestatus(){
 
 		//anzeige der max geschwindigkeit
 		buffersize=sprintf(buffer,"%.1fkm/h",maxgeschw);
-    50d2:	80 91 82 08 	lds	r24, 0x0882
+    50d2:	80 91 7e 08 	lds	r24, 0x087E
     50d6:	8f 93       	push	r24
-    50d8:	80 91 81 08 	lds	r24, 0x0881
+    50d8:	80 91 7d 08 	lds	r24, 0x087D
     50dc:	8f 93       	push	r24
-    50de:	80 91 80 08 	lds	r24, 0x0880
+    50de:	80 91 7c 08 	lds	r24, 0x087C
     50e2:	8f 93       	push	r24
-    50e4:	80 91 7f 08 	lds	r24, 0x087F
+    50e4:	80 91 7b 08 	lds	r24, 0x087B
     50e8:	8f 93       	push	r24
     50ea:	8c e0       	ldi	r24, 0x0C	; 12
     50ec:	92 e0       	ldi	r25, 0x02	; 2
@@ -11775,10 +11775,10 @@ int8_t Batteriestatus(){
 
 		//anzeige der Fahrtzeit
 		buffersize=sprintf(buffer,"%02i:%02i:%02i",uint8_t(Fahrtzeit/3600),uint8_t(Fahrtzeit/60),uint8_t(Fahrtzeit%60));
-    5134:	c0 90 7b 08 	lds	r12, 0x087B
-    5138:	d0 90 7c 08 	lds	r13, 0x087C
-    513c:	e0 90 7d 08 	lds	r14, 0x087D
-    5140:	f0 90 7e 08 	lds	r15, 0x087E
+    5134:	c0 90 77 08 	lds	r12, 0x0877
+    5138:	d0 90 78 08 	lds	r13, 0x0878
+    513c:	e0 90 79 08 	lds	r14, 0x0879
+    5140:	f0 90 7a 08 	lds	r15, 0x087A
     5144:	c7 01       	movw	r24, r14
     5146:	b6 01       	movw	r22, r12
     5148:	2c e3       	ldi	r18, 0x3C	; 60
@@ -11838,10 +11838,10 @@ int8_t Batteriestatus(){
 		
 		//anzeige der durschschnittsgeschw
 		if (Fahrtzeit==0)
-    51ba:	60 91 7b 08 	lds	r22, 0x087B
-    51be:	70 91 7c 08 	lds	r23, 0x087C
-    51c2:	80 91 7d 08 	lds	r24, 0x087D
-    51c6:	90 91 7e 08 	lds	r25, 0x087E
+    51ba:	60 91 77 08 	lds	r22, 0x0877
+    51be:	70 91 78 08 	lds	r23, 0x0878
+    51c2:	80 91 79 08 	lds	r24, 0x0879
+    51c6:	90 91 7a 08 	lds	r25, 0x087A
     51ca:	61 15       	cp	r22, r1
     51cc:	71 05       	cpc	r23, r1
     51ce:	81 05       	cpc	r24, r1
@@ -11876,10 +11876,10 @@ int8_t Batteriestatus(){
     5200:	0e 94 d7 3f 	call	0x7fae	; 0x7fae <__floatunsisf>
     5204:	9b 01       	movw	r18, r22
     5206:	ac 01       	movw	r20, r24
-    5208:	60 91 83 08 	lds	r22, 0x0883
-    520c:	70 91 84 08 	lds	r23, 0x0884
-    5210:	80 91 85 08 	lds	r24, 0x0885
-    5214:	90 91 86 08 	lds	r25, 0x0886
+    5208:	60 91 7f 08 	lds	r22, 0x087F
+    520c:	70 91 80 08 	lds	r23, 0x0880
+    5210:	80 91 81 08 	lds	r24, 0x0881
+    5214:	90 91 82 08 	lds	r25, 0x0882
     5218:	0e 94 3e 3f 	call	0x7e7c	; 0x7e7c <__divsf3>
     521c:	26 e6       	ldi	r18, 0x66	; 102
     521e:	36 e6       	ldi	r19, 0x66	; 102
@@ -12338,13 +12338,13 @@ int8_t Batteriestatus(){
 
 		//Latitude
 		buffersize=sprintf(buffer,"Lat: %.7f",lat);
-    54c0:	80 91 9c 08 	lds	r24, 0x089C
+    54c0:	80 91 98 08 	lds	r24, 0x0898
     54c4:	8f 93       	push	r24
-    54c6:	80 91 9b 08 	lds	r24, 0x089B
+    54c6:	80 91 97 08 	lds	r24, 0x0897
     54ca:	8f 93       	push	r24
-    54cc:	80 91 9a 08 	lds	r24, 0x089A
+    54cc:	80 91 96 08 	lds	r24, 0x0896
     54d0:	8f 93       	push	r24
-    54d2:	80 91 99 08 	lds	r24, 0x0899
+    54d2:	80 91 95 08 	lds	r24, 0x0895
     54d6:	8f 93       	push	r24
     54d8:	84 e2       	ldi	r24, 0x24	; 36
     54da:	92 e0       	ldi	r25, 0x02	; 2
@@ -12385,13 +12385,13 @@ int8_t Batteriestatus(){
 			
 		//Longitude
 		buffersize=sprintf(buffer,"Lon: %.7f",lon);
-    5522:	80 91 98 08 	lds	r24, 0x0898
+    5522:	80 91 94 08 	lds	r24, 0x0894
     5526:	8f 93       	push	r24
-    5528:	80 91 97 08 	lds	r24, 0x0897
+    5528:	80 91 93 08 	lds	r24, 0x0893
     552c:	8f 93       	push	r24
-    552e:	80 91 96 08 	lds	r24, 0x0896
+    552e:	80 91 92 08 	lds	r24, 0x0892
     5532:	8f 93       	push	r24
-    5534:	80 91 95 08 	lds	r24, 0x0895
+    5534:	80 91 91 08 	lds	r24, 0x0891
     5538:	8f 93       	push	r24
     553a:	8e e2       	ldi	r24, 0x2E	; 46
     553c:	92 e0       	ldi	r25, 0x02	; 2
@@ -12432,13 +12432,13 @@ int8_t Batteriestatus(){
 			
 		//Speed
 		buffersize=sprintf(buffer,"Spe: %.2f",gpsspeed);
-    5584:	80 91 94 08 	lds	r24, 0x0894
+    5584:	80 91 90 08 	lds	r24, 0x0890
     5588:	8f 93       	push	r24
-    558a:	80 91 93 08 	lds	r24, 0x0893
+    558a:	80 91 8f 08 	lds	r24, 0x088F
     558e:	8f 93       	push	r24
-    5590:	80 91 92 08 	lds	r24, 0x0892
+    5590:	80 91 8e 08 	lds	r24, 0x088E
     5594:	8f 93       	push	r24
-    5596:	80 91 91 08 	lds	r24, 0x0891
+    5596:	80 91 8d 08 	lds	r24, 0x088D
     559a:	8f 93       	push	r24
     559c:	88 e3       	ldi	r24, 0x38	; 56
     559e:	92 e0       	ldi	r25, 0x02	; 2
@@ -12479,22 +12479,22 @@ int8_t Batteriestatus(){
 			
 		//gpstime
 		buffersize=sprintf(buffer,"%02i:%02i:%02i %02i.%02i.%02i",gpsstunde,gpsminute,gpssekunde,gpsTag,gpsMonat,gpsJahr);
-    55e6:	80 91 8b 08 	lds	r24, 0x088B
+    55e6:	80 91 87 08 	lds	r24, 0x0887
     55ea:	1f 92       	push	r1
     55ec:	8f 93       	push	r24
-    55ee:	80 91 8c 08 	lds	r24, 0x088C
+    55ee:	80 91 88 08 	lds	r24, 0x0888
     55f2:	1f 92       	push	r1
     55f4:	8f 93       	push	r24
-    55f6:	80 91 8d 08 	lds	r24, 0x088D
+    55f6:	80 91 89 08 	lds	r24, 0x0889
     55fa:	1f 92       	push	r1
     55fc:	8f 93       	push	r24
-    55fe:	80 91 8e 08 	lds	r24, 0x088E
+    55fe:	80 91 8a 08 	lds	r24, 0x088A
     5602:	1f 92       	push	r1
     5604:	8f 93       	push	r24
-    5606:	80 91 8f 08 	lds	r24, 0x088F
+    5606:	80 91 8b 08 	lds	r24, 0x088B
     560a:	1f 92       	push	r1
     560c:	8f 93       	push	r24
-    560e:	80 91 90 08 	lds	r24, 0x0890
+    560e:	80 91 8c 08 	lds	r24, 0x088C
     5612:	1f 92       	push	r1
     5614:	8f 93       	push	r24
     5616:	82 e4       	ldi	r24, 0x42	; 66
@@ -12617,33 +12617,33 @@ void EEPROM_Write(uint16_t adresse, uint8_t data){
 			rtc->Stunden	= gpsstunde;
     56a8:	e9 8d       	ldd	r30, Y+25	; 0x19
     56aa:	fa 8d       	ldd	r31, Y+26	; 0x1a
-    56ac:	80 91 90 08 	lds	r24, 0x0890
+    56ac:	80 91 8c 08 	lds	r24, 0x088C
     56b0:	80 8b       	std	Z+16, r24	; 0x10
 			rtc->Minuten	= gpsminute;
     56b2:	e9 8d       	ldd	r30, Y+25	; 0x19
     56b4:	fa 8d       	ldd	r31, Y+26	; 0x1a
-    56b6:	80 91 8f 08 	lds	r24, 0x088F
+    56b6:	80 91 8b 08 	lds	r24, 0x088B
     56ba:	81 8b       	std	Z+17, r24	; 0x11
 			rtc->Sekunden	= gpssekunde;
     56bc:	e9 8d       	ldd	r30, Y+25	; 0x19
     56be:	fa 8d       	ldd	r31, Y+26	; 0x1a
-    56c0:	80 91 8e 08 	lds	r24, 0x088E
+    56c0:	80 91 8a 08 	lds	r24, 0x088A
     56c4:	82 8b       	std	Z+18, r24	; 0x12
 			
 			rtc->Tag		= gpsTag;
     56c6:	e9 8d       	ldd	r30, Y+25	; 0x19
     56c8:	fa 8d       	ldd	r31, Y+26	; 0x1a
-    56ca:	80 91 8d 08 	lds	r24, 0x088D
+    56ca:	80 91 89 08 	lds	r24, 0x0889
     56ce:	84 8b       	std	Z+20, r24	; 0x14
 			rtc->Monat		= gpsMonat;
     56d0:	e9 8d       	ldd	r30, Y+25	; 0x19
     56d2:	fa 8d       	ldd	r31, Y+26	; 0x1a
-    56d4:	80 91 8c 08 	lds	r24, 0x088C
+    56d4:	80 91 88 08 	lds	r24, 0x0888
     56d8:	86 8b       	std	Z+22, r24	; 0x16
 			rtc->Jahr		= gpsJahr;
     56da:	e9 8d       	ldd	r30, Y+25	; 0x19
     56dc:	fa 8d       	ldd	r31, Y+26	; 0x1a
-    56de:	80 91 8b 08 	lds	r24, 0x088B
+    56de:	80 91 87 08 	lds	r24, 0x0887
     56e2:	87 8b       	std	Z+23, r24	; 0x17
 			rtc->ausgabedatumneu();
     56e4:	89 8d       	ldd	r24, Y+25	; 0x19
@@ -12782,7 +12782,7 @@ ISR(TIMER2_OVF_vect){	//Vektor fuer die RTC
     57a4:	ff 93       	push	r31
 	//TCNT2=TIMER2RTCTIME;
 	rtc.Sekunden++;
-    57a6:	ea e1       	ldi	r30, 0x1A	; 26
+    57a6:	e6 e1       	ldi	r30, 0x16	; 22
     57a8:	fe e0       	ldi	r31, 0x0E	; 14
     57aa:	82 89       	ldd	r24, Z+18	; 0x12
     57ac:	8f 5f       	subi	r24, 0xFF	; 255
@@ -12813,9 +12813,9 @@ ISR(TIMER1_COMPA_vect){
     57d2:	11 24       	eor	r1, r1
     57d4:	8f 93       	push	r24
 	statusreg |= (1<<updaterate);
-    57d6:	80 91 e9 08 	lds	r24, 0x08E9
+    57d6:	80 91 e5 08 	lds	r24, 0x08E5
     57da:	81 60       	ori	r24, 0x01	; 1
-    57dc:	80 93 e9 08 	sts	0x08E9, r24
+    57dc:	80 93 e5 08 	sts	0x08E5, r24
 }
     57e0:	8f 91       	pop	r24
     57e2:	0f 90       	pop	r0
@@ -12848,39 +12848,39 @@ ISR(USART0_RX_vect){
 	if (temp == '$' && !(gpsstatus&(1<<complete)) && !(gpsstatus&(1<<completenotvalid)))
     5808:	24 32       	cpi	r18, 0x24	; 36
     580a:	51 f4       	brne	.+20     	; 0x5820 <__vector_20+0x34>
-    580c:	80 91 e6 08 	lds	r24, 0x08E6
+    580c:	80 91 e2 08 	lds	r24, 0x08E2
     5810:	98 2f       	mov	r25, r24
     5812:	9c 70       	andi	r25, 0x0C	; 12
     5814:	29 f4       	brne	.+10     	; 0x5820 <__vector_20+0x34>
 	{
 		gpscounter = 0;
-    5816:	10 92 9d 08 	sts	0x089D, r1
+    5816:	10 92 99 08 	sts	0x0899, r1
 		gpsstatus |= (1<<message);
     581a:	81 60       	ori	r24, 0x01	; 1
-    581c:	80 93 e6 08 	sts	0x08E6, r24
+    581c:	80 93 e2 08 	sts	0x08E2, r24
 	}
 	if ((gpsstatus&(1<<message)))
-    5820:	90 91 e6 08 	lds	r25, 0x08E6
+    5820:	90 91 e2 08 	lds	r25, 0x08E2
     5824:	90 ff       	sbrs	r25, 0
     5826:	3c c0       	rjmp	.+120    	; 0x58a0 <__vector_20+0xb4>
 	{
 		gpsdata[gpscounter] = temp;
-    5828:	80 91 9d 08 	lds	r24, 0x089D
+    5828:	80 91 99 08 	lds	r24, 0x0899
     582c:	e8 2f       	mov	r30, r24
     582e:	f0 e0       	ldi	r31, 0x00	; 0
-    5830:	e2 56       	subi	r30, 0x62	; 98
+    5830:	e6 56       	subi	r30, 0x66	; 102
     5832:	f7 4f       	sbci	r31, 0xF7	; 247
     5834:	20 83       	st	Z, r18
 		gpscounter++;
     5836:	8f 5f       	subi	r24, 0xFF	; 255
-    5838:	80 93 9d 08 	sts	0x089D, r24
+    5838:	80 93 99 08 	sts	0x0899, r24
 		if (gpscounter>72)
     583c:	89 34       	cpi	r24, 0x49	; 73
     583e:	20 f0       	brcs	.+8      	; 0x5848 <__vector_20+0x5c>
 		{
 			gpsstatus &= ~(1<<message);
     5840:	9e 7f       	andi	r25, 0xFE	; 254
-    5842:	90 93 e6 08 	sts	0x08E6, r25
+    5842:	90 93 e2 08 	sts	0x08E2, r25
     5846:	2c c0       	rjmp	.+88     	; 0x58a0 <__vector_20+0xb4>
 		}
 		else if (gpscounter==19)
@@ -12888,15 +12888,15 @@ ISR(USART0_RX_vect){
     584a:	c9 f4       	brne	.+50     	; 0x587e <__vector_20+0x92>
 		{
 			if (gpsdata[4]=='M' && gpsdata[5]=='C')
-    584c:	80 91 a2 08 	lds	r24, 0x08A2
+    584c:	80 91 9e 08 	lds	r24, 0x089E
     5850:	8d 34       	cpi	r24, 0x4D	; 77
     5852:	89 f4       	brne	.+34     	; 0x5876 <__vector_20+0x8a>
-    5854:	80 91 a3 08 	lds	r24, 0x08A3
+    5854:	80 91 9f 08 	lds	r24, 0x089F
     5858:	83 34       	cpi	r24, 0x43	; 67
     585a:	69 f4       	brne	.+26     	; 0x5876 <__vector_20+0x8a>
 			{
 				if (gpsdata[18]!='A')
-    585c:	80 91 b0 08 	lds	r24, 0x08B0
+    585c:	80 91 ac 08 	lds	r24, 0x08AC
     5860:	81 34       	cpi	r24, 0x41	; 65
     5862:	29 f0       	breq	.+10     	; 0x586e <__vector_20+0x82>
 				{
@@ -12904,13 +12904,13 @@ ISR(USART0_RX_vect){
     5864:	9d 7f       	andi	r25, 0xFD	; 253
 					gpsstatus |= (1<<notvalidgetdate);
     5866:	90 61       	ori	r25, 0x10	; 16
-    5868:	90 93 e6 08 	sts	0x08E6, r25
+    5868:	90 93 e2 08 	sts	0x08E2, r25
     586c:	19 c0       	rjmp	.+50     	; 0x58a0 <__vector_20+0xb4>
 				}
 				else{
 					gpsstatus |= (1<<valid);
     586e:	92 60       	ori	r25, 0x02	; 2
-    5870:	90 93 e6 08 	sts	0x08E6, r25
+    5870:	90 93 e2 08 	sts	0x08E2, r25
     5874:	15 c0       	rjmp	.+42     	; 0x58a0 <__vector_20+0xb4>
 				}
 			}
@@ -12918,7 +12918,7 @@ ISR(USART0_RX_vect){
 				gpsstatus &= ~(1<<valid);
 				gpsstatus &= ~(1<<message);
     5876:	9c 7f       	andi	r25, 0xFC	; 252
-    5878:	90 93 e6 08 	sts	0x08E6, r25
+    5878:	90 93 e2 08 	sts	0x08E2, r25
     587c:	11 c0       	rjmp	.+34     	; 0x58a0 <__vector_20+0xb4>
 			}
 		}
@@ -12932,7 +12932,7 @@ ISR(USART0_RX_vect){
 			gpsstatus &= ~((1<<message) | (1<<notvalidgetdate));
     5886:	9e 7e       	andi	r25, 0xEE	; 238
     5888:	98 60       	ori	r25, 0x08	; 8
-    588a:	90 93 e6 08 	sts	0x08E6, r25
+    588a:	90 93 e2 08 	sts	0x08E2, r25
     588e:	08 c0       	rjmp	.+16     	; 0x58a0 <__vector_20+0xb4>
 		}
 		else if (gpscounter == 70 && (gpsstatus&(1<<valid)))
@@ -12945,7 +12945,7 @@ ISR(USART0_RX_vect){
 			gpsstatus &= ~((1<<message) | (1<<valid));
     5898:	9c 7f       	andi	r25, 0xFC	; 252
     589a:	94 60       	ori	r25, 0x04	; 4
-    589c:	90 93 e6 08 	sts	0x08E6, r25
+    589c:	90 93 e2 08 	sts	0x08E2, r25
 		}
 	}
 }
@@ -12969,25 +12969,25 @@ double maxgeschw;
 uint32_t Fahrtzeit;
 void nullen(){
 	geschw = 0;
-    58b8:	10 92 87 08 	sts	0x0887, r1
-    58bc:	10 92 88 08 	sts	0x0888, r1
-    58c0:	10 92 89 08 	sts	0x0889, r1
-    58c4:	10 92 8a 08 	sts	0x088A, r1
+    58b8:	10 92 83 08 	sts	0x0883, r1
+    58bc:	10 92 84 08 	sts	0x0884, r1
+    58c0:	10 92 85 08 	sts	0x0885, r1
+    58c4:	10 92 86 08 	sts	0x0886, r1
 	strecke = 0;
-    58c8:	10 92 83 08 	sts	0x0883, r1
-    58cc:	10 92 84 08 	sts	0x0884, r1
-    58d0:	10 92 85 08 	sts	0x0885, r1
-    58d4:	10 92 86 08 	sts	0x0886, r1
+    58c8:	10 92 7f 08 	sts	0x087F, r1
+    58cc:	10 92 80 08 	sts	0x0880, r1
+    58d0:	10 92 81 08 	sts	0x0881, r1
+    58d4:	10 92 82 08 	sts	0x0882, r1
 	maxgeschw = 0;
-    58d8:	10 92 7f 08 	sts	0x087F, r1
-    58dc:	10 92 80 08 	sts	0x0880, r1
-    58e0:	10 92 81 08 	sts	0x0881, r1
-    58e4:	10 92 82 08 	sts	0x0882, r1
+    58d8:	10 92 7b 08 	sts	0x087B, r1
+    58dc:	10 92 7c 08 	sts	0x087C, r1
+    58e0:	10 92 7d 08 	sts	0x087D, r1
+    58e4:	10 92 7e 08 	sts	0x087E, r1
 	Fahrtzeit = 0;
-    58e8:	10 92 7b 08 	sts	0x087B, r1
-    58ec:	10 92 7c 08 	sts	0x087C, r1
-    58f0:	10 92 7d 08 	sts	0x087D, r1
-    58f4:	10 92 7e 08 	sts	0x087E, r1
+    58e8:	10 92 77 08 	sts	0x0877, r1
+    58ec:	10 92 78 08 	sts	0x0878, r1
+    58f0:	10 92 79 08 	sts	0x0879, r1
+    58f4:	10 92 7a 08 	sts	0x087A, r1
     58f8:	08 95       	ret
 
 000058fa <_ZN5tacho11tastendruckEPh>:
@@ -13145,10 +13145,10 @@ void geschwindigkeit(float durch){
     59bc:	0e 94 3e 3f 	call	0x7e7c	; 0x7e7c <__divsf3>
 	//Mittelwert aus der letzten Messung zum Fehler minimieren
 	geschw += temp;
-    59c0:	20 91 87 08 	lds	r18, 0x0887
-    59c4:	30 91 88 08 	lds	r19, 0x0888
-    59c8:	40 91 89 08 	lds	r20, 0x0889
-    59cc:	50 91 8a 08 	lds	r21, 0x088A
+    59c0:	20 91 83 08 	lds	r18, 0x0883
+    59c4:	30 91 84 08 	lds	r19, 0x0884
+    59c8:	40 91 85 08 	lds	r20, 0x0885
+    59cc:	50 91 86 08 	lds	r21, 0x0886
     59d0:	0e 94 d7 3e 	call	0x7dae	; 0x7dae <__addsf3>
 	geschw /= 2.0;
     59d4:	20 e0       	ldi	r18, 0x00	; 0
@@ -13172,18 +13172,18 @@ void geschwindigkeit(float durch){
 	//Mittelwert aus der letzten Messung zum Fehler minimieren
 	geschw += temp;
 	geschw /= 2.0;
-    59f4:	c0 92 87 08 	sts	0x0887, r12
-    59f8:	d0 92 88 08 	sts	0x0888, r13
-    59fc:	e0 92 89 08 	sts	0x0889, r14
-    5a00:	f0 92 8a 08 	sts	0x088A, r15
+    59f4:	c0 92 83 08 	sts	0x0883, r12
+    59f8:	d0 92 84 08 	sts	0x0884, r13
+    59fc:	e0 92 85 08 	sts	0x0885, r14
+    5a00:	f0 92 86 08 	sts	0x0886, r15
     5a04:	08 c0       	rjmp	.+16     	; 0x5a16 <_Z15geschwindigkeitf+0xc4>
 	if (geschw >=160)
 	{
 		geschw=0;
-    5a06:	10 92 87 08 	sts	0x0887, r1
-    5a0a:	10 92 88 08 	sts	0x0888, r1
-    5a0e:	10 92 89 08 	sts	0x0889, r1
-    5a12:	10 92 8a 08 	sts	0x088A, r1
+    5a06:	10 92 83 08 	sts	0x0883, r1
+    5a0a:	10 92 84 08 	sts	0x0884, r1
+    5a0e:	10 92 85 08 	sts	0x0885, r1
+    5a12:	10 92 86 08 	sts	0x0886, r1
 	}
 }
     5a16:	df 91       	pop	r29
@@ -13207,7 +13207,7 @@ DWORD get_fattime (void)
 	return	  ((DWORD)((2000+rtc.Jahr) - 1980) << 25)
 	| ((DWORD)rtc.Monat << 21)
 	| ((DWORD)rtc.Tag << 16)
-    5a28:	ea e1       	ldi	r30, 0x1A	; 26
+    5a28:	e6 e1       	ldi	r30, 0x16	; 22
     5a2a:	fe e0       	ldi	r31, 0x0E	; 14
     5a2c:	24 89       	ldd	r18, Z+20	; 0x14
 
@@ -13353,13 +13353,13 @@ void initialisierung(){
     5b0a:	cd bf       	out	0x3d, r28	; 61
 	//nullen der Flagregister
 	anzeige=0;
-    5b0c:	10 92 ea 08 	sts	0x08EA, r1
+    5b0c:	10 92 e6 08 	sts	0x08E6, r1
 	statusreg=0;
-    5b10:	10 92 e9 08 	sts	0x08E9, r1
+    5b10:	10 92 e5 08 	sts	0x08E5, r1
 	position=0;
-    5b14:	10 92 e8 08 	sts	0x08E8, r1
+    5b14:	10 92 e4 08 	sts	0x08E4, r1
 	FPS=0;
-    5b18:	10 92 e7 08 	sts	0x08E7, r1
+    5b18:	10 92 e3 08 	sts	0x08E3, r1
 	
 	//initialisieren des Zaehler fuer die Winkelgeschw sowie den Timer
 	TCNT1 = 0;
@@ -13425,36 +13425,36 @@ void initialisierung(){
     5b7a:	80 e8       	ldi	r24, 0x80	; 128
     5b7c:	80 93 c1 00 	sts	0x00C1, r24
 	gpscounter = 0;
-    5b80:	10 92 9d 08 	sts	0x089D, r1
+    5b80:	10 92 99 08 	sts	0x0899, r1
 	gpsstatus = (1<<fix);
-    5b84:	80 93 e6 08 	sts	0x08E6, r24
+    5b84:	80 93 e2 08 	sts	0x08E2, r24
 	lat = 0;
-    5b88:	10 92 99 08 	sts	0x0899, r1
-    5b8c:	10 92 9a 08 	sts	0x089A, r1
-    5b90:	10 92 9b 08 	sts	0x089B, r1
-    5b94:	10 92 9c 08 	sts	0x089C, r1
+    5b88:	10 92 95 08 	sts	0x0895, r1
+    5b8c:	10 92 96 08 	sts	0x0896, r1
+    5b90:	10 92 97 08 	sts	0x0897, r1
+    5b94:	10 92 98 08 	sts	0x0898, r1
 	lon = 0;
-    5b98:	10 92 95 08 	sts	0x0895, r1
-    5b9c:	10 92 96 08 	sts	0x0896, r1
-    5ba0:	10 92 97 08 	sts	0x0897, r1
-    5ba4:	10 92 98 08 	sts	0x0898, r1
+    5b98:	10 92 91 08 	sts	0x0891, r1
+    5b9c:	10 92 92 08 	sts	0x0892, r1
+    5ba0:	10 92 93 08 	sts	0x0893, r1
+    5ba4:	10 92 94 08 	sts	0x0894, r1
 	gpsspeed = 0;
-    5ba8:	10 92 91 08 	sts	0x0891, r1
-    5bac:	10 92 92 08 	sts	0x0892, r1
-    5bb0:	10 92 93 08 	sts	0x0893, r1
-    5bb4:	10 92 94 08 	sts	0x0894, r1
+    5ba8:	10 92 8d 08 	sts	0x088D, r1
+    5bac:	10 92 8e 08 	sts	0x088E, r1
+    5bb0:	10 92 8f 08 	sts	0x088F, r1
+    5bb4:	10 92 90 08 	sts	0x0890, r1
 	gpsstunde = 0;
-    5bb8:	10 92 90 08 	sts	0x0890, r1
+    5bb8:	10 92 8c 08 	sts	0x088C, r1
 	gpsminute = 0;
-    5bbc:	10 92 8f 08 	sts	0x088F, r1
+    5bbc:	10 92 8b 08 	sts	0x088B, r1
 	gpssekunde = 0;
-    5bc0:	10 92 8e 08 	sts	0x088E, r1
+    5bc0:	10 92 8a 08 	sts	0x088A, r1
 	gpsTag = 0;
-    5bc4:	10 92 8d 08 	sts	0x088D, r1
+    5bc4:	10 92 89 08 	sts	0x0889, r1
 	gpsMonat = 0;
-    5bc8:	10 92 8c 08 	sts	0x088C, r1
+    5bc8:	10 92 88 08 	sts	0x0888, r1
 	gpsJahr = 0;
-    5bcc:	10 92 8b 08 	sts	0x088B, r1
+    5bcc:	10 92 87 08 	sts	0x0887, r1
 		uint8_t posx;
 		uint8_t maxentries;
 		uint8_t maxentriesx;
@@ -13463,12 +13463,12 @@ void initialisierung(){
 		buffersize = 0;
     5bd0:	1f 8a       	std	Y+23, r1	; 0x17
 		oled = ol;
-    5bd2:	89 e1       	ldi	r24, 0x19	; 25
+    5bd2:	85 e1       	ldi	r24, 0x15	; 21
     5bd4:	9a e0       	ldi	r25, 0x0A	; 10
     5bd6:	99 8f       	std	Y+25, r25	; 0x19
     5bd8:	88 8f       	std	Y+24, r24	; 0x18
 		rtc = rt;
-    5bda:	8a e1       	ldi	r24, 0x1A	; 26
+    5bda:	86 e1       	ldi	r24, 0x16	; 22
     5bdc:	9e e0       	ldi	r25, 0x0E	; 14
     5bde:	9b 8f       	std	Y+27, r25	; 0x1b
     5be0:	8a 8f       	std	Y+26, r24	; 0x1a
@@ -13485,7 +13485,7 @@ class wilkommen: public monitor
 	
 	public:
 	wilkommen(Display *ol, RTC *rt):monitor(ol,rt)
-    5bea:	82 e1       	ldi	r24, 0x12	; 18
+    5bea:	8d e0       	ldi	r24, 0x0D	; 13
     5bec:	94 e0       	ldi	r25, 0x04	; 4
     5bee:	9a 83       	std	Y+2, r25	; 0x02
     5bf0:	89 83       	std	Y+1, r24	; 0x01
@@ -13495,7 +13495,7 @@ class wilkommen: public monitor
 	
 	void draw(){
 		oled->clearFrame();
-    5bf2:	89 e1       	ldi	r24, 0x19	; 25
+    5bf2:	85 e1       	ldi	r24, 0x15	; 21
     5bf4:	9a e0       	ldi	r25, 0x0A	; 10
     5bf6:	0e 94 45 0b 	call	0x168a	; 0x168a <_ZN7Display10clearFrameEv>
 		
@@ -13682,7 +13682,7 @@ class wilkommen: public monitor
 
 	//letzten Zeitpunkt holen und RTC starten
 	rtc.Sekunden= 0;
-    5d06:	0a e1       	ldi	r16, 0x1A	; 26
+    5d06:	06 e1       	ldi	r16, 0x16	; 22
     5d08:	1e e0       	ldi	r17, 0x0E	; 14
     5d0a:	f8 01       	movw	r30, r16
     5d0c:	12 8a       	std	Z+18, r1	; 0x12
@@ -13786,9 +13786,9 @@ void tastaturhandler(monitor *mon, uint8_t taste){
     5da0:	dc 01       	movw	r26, r24
 	{
 		anzeige |= (1<<refreshdisplay);
-    5da2:	80 91 ea 08 	lds	r24, 0x08EA
+    5da2:	80 91 e6 08 	lds	r24, 0x08E6
     5da6:	81 60       	ori	r24, 0x01	; 1
-    5da8:	80 93 ea 08 	sts	0x08EA, r24
+    5da8:	80 93 e6 08 	sts	0x08E6, r24
 		switch (taste)							//Tastendruck ueberpruefen
     5dac:	46 2f       	mov	r20, r22
     5dae:	50 e0       	ldi	r21, 0x00	; 0
@@ -13805,7 +13805,7 @@ void tastaturhandler(monitor *mon, uint8_t taste){
 			case 'm':
 			position = numberofpages;
     5dc4:	85 e0       	ldi	r24, 0x05	; 5
-    5dc6:	80 93 e8 08 	sts	0x08E8, r24
+    5dc6:	80 93 e4 08 	sts	0x08E4, r24
 			break;
     5dca:	78 c0       	rjmp	.+240    	; 0x5ebc <_Z15tastaturhandlerP7monitorh+0x12e>
 			case 'l':
@@ -13818,7 +13818,7 @@ void tastaturhandler(monitor *mon, uint8_t taste){
 			{
 				position = numberofpages;
     5dd6:	85 e0       	ldi	r24, 0x05	; 5
-    5dd8:	80 93 e8 08 	sts	0x08E8, r24
+    5dd8:	80 93 e4 08 	sts	0x08E4, r24
     5ddc:	6f c0       	rjmp	.+222    	; 0x5ebc <_Z15tastaturhandlerP7monitorh+0x12e>
 			}
 			else{
@@ -13831,14 +13831,14 @@ void tastaturhandler(monitor *mon, uint8_t taste){
 			break;
 			case 'r':
 			if (position==numberofpages)
-    5de6:	80 91 e8 08 	lds	r24, 0x08E8
+    5de6:	80 91 e4 08 	lds	r24, 0x08E4
     5dea:	85 30       	cpi	r24, 0x05	; 5
     5dec:	29 f4       	brne	.+10     	; 0x5df8 <_Z15tastaturhandlerP7monitorh+0x6a>
 			{
 				position=mon->posy;
     5dee:	95 96       	adiw	r26, 0x25	; 37
     5df0:	8c 91       	ld	r24, X
-    5df2:	80 93 e8 08 	sts	0x08E8, r24
+    5df2:	80 93 e4 08 	sts	0x08E4, r24
     5df6:	62 c0       	rjmp	.+196    	; 0x5ebc <_Z15tastaturhandlerP7monitorh+0x12e>
 			}
 			else if (!(mon->posx >= mon->maxentriesx))
@@ -13861,14 +13861,14 @@ void tastaturhandler(monitor *mon, uint8_t taste){
 			break;
 			case 'o':
 			if (position==numberofpages)
-    5e12:	80 91 e8 08 	lds	r24, 0x08E8
+    5e12:	80 91 e4 08 	lds	r24, 0x08E4
     5e16:	85 30       	cpi	r24, 0x05	; 5
     5e18:	29 f4       	brne	.+10     	; 0x5e24 <_Z15tastaturhandlerP7monitorh+0x96>
 			{
 				position=mon->posy;
     5e1a:	95 96       	adiw	r26, 0x25	; 37
     5e1c:	8c 91       	ld	r24, X
-    5e1e:	80 93 e8 08 	sts	0x08E8, r24
+    5e1e:	80 93 e4 08 	sts	0x08E4, r24
     5e22:	4c c0       	rjmp	.+152    	; 0x5ebc <_Z15tastaturhandlerP7monitorh+0x12e>
 			}
 			else if (!(mon->posx >= mon->maxentriesx))
@@ -13946,21 +13946,21 @@ void tastaturhandler(monitor *mon, uint8_t taste){
 			case '0':
 			//Licht an/aus
 			if (LED.ison())
-    5e86:	8f ee       	ldi	r24, 0xEF	; 239
+    5e86:	8b ee       	ldi	r24, 0xEB	; 235
     5e88:	98 e0       	ldi	r25, 0x08	; 8
     5e8a:	0e 94 0e 3d 	call	0x7a1c	; 0x7a1c <_ZN6Output4isonEv>
     5e8e:	88 23       	and	r24, r24
     5e90:	29 f0       	breq	.+10     	; 0x5e9c <_Z15tastaturhandlerP7monitorh+0x10e>
 			{
 				LED.off();
-    5e92:	8f ee       	ldi	r24, 0xEF	; 239
+    5e92:	8b ee       	ldi	r24, 0xEB	; 235
     5e94:	98 e0       	ldi	r25, 0x08	; 8
     5e96:	0e 94 49 3d 	call	0x7a92	; 0x7a92 <_ZN6Output3offEv>
     5e9a:	10 c0       	rjmp	.+32     	; 0x5ebc <_Z15tastaturhandlerP7monitorh+0x12e>
 			}
 			else{
 				LED.on();
-    5e9c:	8f ee       	ldi	r24, 0xEF	; 239
+    5e9c:	8b ee       	ldi	r24, 0xEB	; 235
     5e9e:	98 e0       	ldi	r25, 0x08	; 8
     5ea0:	0e 94 d1 3c 	call	0x79a2	; 0x79a2 <_ZN6Output2onEv>
     5ea4:	0b c0       	rjmp	.+22     	; 0x5ebc <_Z15tastaturhandlerP7monitorh+0x12e>
@@ -14010,7 +14010,7 @@ void maininterupthandler(monitor *mon){
     5ee2:	cd bf       	out	0x3d, r28	; 61
     5ee4:	8c 01       	movw	r16, r24
 	if (position==1)							//Berechnung der Geschwindigkeit fuer Tacho
-    5ee6:	90 91 e8 08 	lds	r25, 0x08E8
+    5ee6:	90 91 e4 08 	lds	r25, 0x08E4
     5eea:	91 30       	cpi	r25, 0x01	; 1
     5eec:	09 f5       	brne	.+66     	; 0x5f30 <_Z19maininterupthandlerP7monitor+0x6c>
 	{
@@ -14047,10 +14047,10 @@ void maininterupthandler(monitor *mon){
     5f16:	10 92 85 00 	sts	0x0085, r1
     5f1a:	10 92 84 00 	sts	0x0084, r1
 			geschw=0;
-    5f1e:	10 92 87 08 	sts	0x0887, r1
-    5f22:	10 92 88 08 	sts	0x0888, r1
-    5f26:	10 92 89 08 	sts	0x0889, r1
-    5f2a:	10 92 8a 08 	sts	0x088A, r1
+    5f1e:	10 92 83 08 	sts	0x0883, r1
+    5f22:	10 92 84 08 	sts	0x0884, r1
+    5f26:	10 92 85 08 	sts	0x0885, r1
+    5f2a:	10 92 86 08 	sts	0x0886, r1
     5f2e:	a9 c0       	rjmp	.+338    	; 0x6082 <_Z19maininterupthandlerP7monitor+0x1be>
 		}
 	}
@@ -14074,7 +14074,7 @@ void maininterupthandler(monitor *mon){
     5f4a:	9b c0       	rjmp	.+310    	; 0x6082 <_Z19maininterupthandlerP7monitor+0x1be>
 		{
 			if (!(statusreg&(1<<mounttingstat)))
-    5f4c:	80 91 e9 08 	lds	r24, 0x08E9
+    5f4c:	80 91 e5 08 	lds	r24, 0x08E5
     5f50:	81 fd       	sbrc	r24, 1
     5f52:	14 c0       	rjmp	.+40     	; 0x5f7c <_Z19maininterupthandlerP7monitor+0xb8>
 			{
@@ -14089,16 +14089,16 @@ void maininterupthandler(monitor *mon){
     5f5e:	40 e0       	ldi	r20, 0x00	; 0
     5f60:	66 e0       	ldi	r22, 0x06	; 6
     5f62:	73 e0       	ldi	r23, 0x03	; 3
-    5f64:	8d e4       	ldi	r24, 0x4D	; 77
+    5f64:	89 e4       	ldi	r24, 0x49	; 73
     5f66:	96 e0       	ldi	r25, 0x06	; 6
     5f68:	0e 94 59 1a 	call	0x34b2	; 0x34b2 <f_mount>
     5f6c:	81 11       	cpse	r24, r1
     5f6e:	14 c0       	rjmp	.+40     	; 0x5f98 <_Z19maininterupthandlerP7monitor+0xd4>
 					{
 						statusreg |= (1<<mounttingstat);
-    5f70:	80 91 e9 08 	lds	r24, 0x08E9
+    5f70:	80 91 e5 08 	lds	r24, 0x08E5
     5f74:	82 60       	ori	r24, 0x02	; 2
-    5f76:	80 93 e9 08 	sts	0x08E9, r24
+    5f76:	80 93 e5 08 	sts	0x08E5, r24
     5f7a:	0e c0       	rjmp	.+28     	; 0x5f98 <_Z19maininterupthandlerP7monitor+0xd4>
 					}
 				}
@@ -14115,9 +14115,9 @@ void maininterupthandler(monitor *mon){
     5f88:	90 e0       	ldi	r25, 0x00	; 0
     5f8a:	0e 94 59 1a 	call	0x34b2	; 0x34b2 <f_mount>
 				statusreg &= ~(1<<mounttingstat);
-    5f8e:	80 91 e9 08 	lds	r24, 0x08E9
+    5f8e:	80 91 e5 08 	lds	r24, 0x08E5
     5f92:	8d 7f       	andi	r24, 0xFD	; 253
-    5f94:	80 93 e9 08 	sts	0x08E9, r24
+    5f94:	80 93 e5 08 	sts	0x08E5, r24
 			}
 			mon->posx--;
     5f98:	f8 01       	movw	r30, r16
@@ -14138,7 +14138,7 @@ void maininterupthandler(monitor *mon){
     5fb2:	67 c0       	rjmp	.+206    	; 0x6082 <_Z19maininterupthandlerP7monitor+0x1be>
 		{
 			if (!(statusreg&(1<<loggingstat)) && (statusreg&(1<<mounttingstat)) )
-    5fb4:	80 91 e9 08 	lds	r24, 0x08E9
+    5fb4:	80 91 e5 08 	lds	r24, 0x08E5
     5fb8:	82 fd       	sbrc	r24, 2
     5fba:	4f c0       	rjmp	.+158    	; 0x605a <_Z19maininterupthandlerP7monitor+0x196>
     5fbc:	81 ff       	sbrs	r24, 1
@@ -14152,7 +14152,7 @@ void maininterupthandler(monitor *mon){
 				{
 					char name[13];
 					sprintf(name,"%02u%02u%02u%02u.txt",rtc.Monat,rtc.Tag,rtc.Stunden,rtc.Minuten);
-    5fca:	ea e1       	ldi	r30, 0x1A	; 26
+    5fca:	e6 e1       	ldi	r30, 0x16	; 22
     5fcc:	fe e0       	ldi	r31, 0x0E	; 14
     5fce:	81 89       	ldd	r24, Z+17	; 0x11
     5fd0:	1f 92       	push	r1
@@ -14179,7 +14179,7 @@ void maininterupthandler(monitor *mon){
 					f_open(&logger, name, FA_OPEN_ALWAYS | FA_WRITE);
     5ffc:	42 e1       	ldi	r20, 0x12	; 18
     5ffe:	b7 01       	movw	r22, r14
-    6000:	8d e2       	ldi	r24, 0x2D	; 45
+    6000:	89 e2       	ldi	r24, 0x29	; 41
     6002:	94 e0       	ldi	r25, 0x04	; 4
     6004:	0e 94 ac 1a 	call	0x3558	; 0x3558 <f_open>
 					//Zeit und GPS
@@ -14189,7 +14189,7 @@ void maininterupthandler(monitor *mon){
     600c:	9f 93       	push	r25
     600e:	8f 93       	push	r24
     6010:	0f 2e       	mov	r0, r31
-    6012:	fd e2       	ldi	r31, 0x2D	; 45
+    6012:	f9 e2       	ldi	r31, 0x29	; 41
     6014:	ef 2e       	mov	r14, r31
     6016:	f4 e0       	ldi	r31, 0x04	; 4
     6018:	ff 2e       	mov	r15, r31
@@ -14223,24 +14223,24 @@ void maininterupthandler(monitor *mon){
 				}
 				
 				statusreg |= (1<<loggingstat);
-    604e:	80 91 e9 08 	lds	r24, 0x08E9
+    604e:	80 91 e5 08 	lds	r24, 0x08E5
     6052:	84 60       	ori	r24, 0x04	; 4
-    6054:	80 93 e9 08 	sts	0x08E9, r24
+    6054:	80 93 e5 08 	sts	0x08E5, r24
     6058:	0d c0       	rjmp	.+26     	; 0x6074 <_Z19maininterupthandlerP7monitor+0x1b0>
 			}
 			else{
 				f_sync(&logger);
-    605a:	8d e2       	ldi	r24, 0x2D	; 45
+    605a:	89 e2       	ldi	r24, 0x29	; 41
     605c:	94 e0       	ldi	r25, 0x04	; 4
     605e:	0e 94 34 20 	call	0x4068	; 0x4068 <f_sync>
 				f_close(&logger);
-    6062:	8d e2       	ldi	r24, 0x2D	; 45
+    6062:	89 e2       	ldi	r24, 0x29	; 41
     6064:	94 e0       	ldi	r25, 0x04	; 4
     6066:	0e 94 01 21 	call	0x4202	; 0x4202 <f_close>
 				statusreg &= ~(1<<loggingstat);
-    606a:	80 91 e9 08 	lds	r24, 0x08E9
+    606a:	80 91 e5 08 	lds	r24, 0x08E5
     606e:	8b 7f       	andi	r24, 0xFB	; 251
-    6070:	80 93 e9 08 	sts	0x08E9, r24
+    6070:	80 93 e5 08 	sts	0x08E5, r24
 			}
 			mon->posx--;
     6074:	d8 01       	movw	r26, r16
@@ -14256,33 +14256,33 @@ void maininterupthandler(monitor *mon){
 	}
 	
 	if ((rtc.interupts&(1<<sekundeninterupt)))	//Sekunden
-    6082:	80 91 32 0e 	lds	r24, 0x0E32
+    6082:	80 91 2e 0e 	lds	r24, 0x0E2E
     6086:	81 ff       	sbrs	r24, 1
     6088:	3d c1       	rjmp	.+634    	; 0x6304 <_Z19maininterupthandlerP7monitor+0x440>
 	{
 		rtc.zeit();
-    608a:	8a e1       	ldi	r24, 0x1A	; 26
+    608a:	86 e1       	ldi	r24, 0x16	; 22
     608c:	9e e0       	ldi	r25, 0x0E	; 14
     608e:	0e 94 7b 3e 	call	0x7cf6	; 0x7cf6 <_ZN3RTC4zeitEv>
 		druck.bmp180_getaltitude();
-    6092:	85 ef       	ldi	r24, 0xF5	; 245
+    6092:	81 ef       	ldi	r24, 0xF1	; 241
     6094:	98 e0       	ldi	r25, 0x08	; 8
     6096:	0e 94 ef 06 	call	0xdde	; 0xdde <_ZN6BMP18018bmp180_getaltitudeEv>
 		if (position==1)
-    609a:	80 91 e8 08 	lds	r24, 0x08E8
+    609a:	80 91 e4 08 	lds	r24, 0x08E4
     609e:	81 30       	cpi	r24, 0x01	; 1
     60a0:	09 f0       	breq	.+2      	; 0x60a4 <_Z19maininterupthandlerP7monitor+0x1e0>
     60a2:	57 c0       	rjmp	.+174    	; 0x6152 <_Z19maininterupthandlerP7monitor+0x28e>
 		{
 			if (geschw>maxgeschw)
-    60a4:	c0 90 87 08 	lds	r12, 0x0887
-    60a8:	d0 90 88 08 	lds	r13, 0x0888
-    60ac:	e0 90 89 08 	lds	r14, 0x0889
-    60b0:	f0 90 8a 08 	lds	r15, 0x088A
-    60b4:	20 91 7f 08 	lds	r18, 0x087F
-    60b8:	30 91 80 08 	lds	r19, 0x0880
-    60bc:	40 91 81 08 	lds	r20, 0x0881
-    60c0:	50 91 82 08 	lds	r21, 0x0882
+    60a4:	c0 90 83 08 	lds	r12, 0x0883
+    60a8:	d0 90 84 08 	lds	r13, 0x0884
+    60ac:	e0 90 85 08 	lds	r14, 0x0885
+    60b0:	f0 90 86 08 	lds	r15, 0x0886
+    60b4:	20 91 7b 08 	lds	r18, 0x087B
+    60b8:	30 91 7c 08 	lds	r19, 0x087C
+    60bc:	40 91 7d 08 	lds	r20, 0x087D
+    60c0:	50 91 7e 08 	lds	r21, 0x087E
     60c4:	c7 01       	movw	r24, r14
     60c6:	b6 01       	movw	r22, r12
     60c8:	0e 94 e7 40 	call	0x81ce	; 0x81ce <__gesf2>
@@ -14290,10 +14290,10 @@ void maininterupthandler(monitor *mon){
     60ce:	44 f4       	brge	.+16     	; 0x60e0 <_Z19maininterupthandlerP7monitor+0x21c>
 			{
 				maxgeschw=geschw;
-    60d0:	c0 92 7f 08 	sts	0x087F, r12
-    60d4:	d0 92 80 08 	sts	0x0880, r13
-    60d8:	e0 92 81 08 	sts	0x0881, r14
-    60dc:	f0 92 82 08 	sts	0x0882, r15
+    60d0:	c0 92 7b 08 	sts	0x087B, r12
+    60d4:	d0 92 7c 08 	sts	0x087C, r13
+    60d8:	e0 92 7d 08 	sts	0x087D, r14
+    60dc:	f0 92 7e 08 	sts	0x087E, r15
 			}
 			if (geschw >= 1.0)
     60e0:	20 e0       	ldi	r18, 0x00	; 0
@@ -14307,17 +14307,17 @@ void maininterupthandler(monitor *mon){
     60f2:	9c f0       	brlt	.+38     	; 0x611a <_Z19maininterupthandlerP7monitor+0x256>
 			{
 				Fahrtzeit++;
-    60f4:	80 91 7b 08 	lds	r24, 0x087B
-    60f8:	90 91 7c 08 	lds	r25, 0x087C
-    60fc:	a0 91 7d 08 	lds	r26, 0x087D
-    6100:	b0 91 7e 08 	lds	r27, 0x087E
+    60f4:	80 91 77 08 	lds	r24, 0x0877
+    60f8:	90 91 78 08 	lds	r25, 0x0878
+    60fc:	a0 91 79 08 	lds	r26, 0x0879
+    6100:	b0 91 7a 08 	lds	r27, 0x087A
     6104:	01 96       	adiw	r24, 0x01	; 1
     6106:	a1 1d       	adc	r26, r1
     6108:	b1 1d       	adc	r27, r1
-    610a:	80 93 7b 08 	sts	0x087B, r24
-    610e:	90 93 7c 08 	sts	0x087C, r25
-    6112:	a0 93 7d 08 	sts	0x087D, r26
-    6116:	b0 93 7e 08 	sts	0x087E, r27
+    610a:	80 93 77 08 	sts	0x0877, r24
+    610e:	90 93 78 08 	sts	0x0878, r25
+    6112:	a0 93 79 08 	sts	0x0879, r26
+    6116:	b0 93 7a 08 	sts	0x087A, r27
 			}
 			strecke+=geschw/3.6;
     611a:	26 e6       	ldi	r18, 0x66	; 102
@@ -14329,16 +14329,16 @@ void maininterupthandler(monitor *mon){
     6126:	0e 94 3e 3f 	call	0x7e7c	; 0x7e7c <__divsf3>
     612a:	9b 01       	movw	r18, r22
     612c:	ac 01       	movw	r20, r24
-    612e:	60 91 83 08 	lds	r22, 0x0883
-    6132:	70 91 84 08 	lds	r23, 0x0884
-    6136:	80 91 85 08 	lds	r24, 0x0885
-    613a:	90 91 86 08 	lds	r25, 0x0886
+    612e:	60 91 7f 08 	lds	r22, 0x087F
+    6132:	70 91 80 08 	lds	r23, 0x0880
+    6136:	80 91 81 08 	lds	r24, 0x0881
+    613a:	90 91 82 08 	lds	r25, 0x0882
     613e:	0e 94 d7 3e 	call	0x7dae	; 0x7dae <__addsf3>
-    6142:	60 93 83 08 	sts	0x0883, r22
-    6146:	70 93 84 08 	sts	0x0884, r23
-    614a:	80 93 85 08 	sts	0x0885, r24
-    614e:	90 93 86 08 	sts	0x0886, r25
-    6152:	80 91 e9 08 	lds	r24, 0x08E9
+    6142:	60 93 7f 08 	sts	0x087F, r22
+    6146:	70 93 80 08 	sts	0x0880, r23
+    614a:	80 93 81 08 	sts	0x0881, r24
+    614e:	90 93 82 08 	sts	0x0882, r25
+    6152:	80 91 e5 08 	lds	r24, 0x08E5
     6156:	86 70       	andi	r24, 0x06	; 6
 		}
 		
@@ -14349,7 +14349,7 @@ void maininterupthandler(monitor *mon){
 		{
 			uint16_t Sekundenges = rtc.Stunden*3600;
     615e:	0f 2e       	mov	r0, r31
-    6160:	fa e1       	ldi	r31, 0x1A	; 26
+    6160:	f6 e1       	ldi	r31, 0x16	; 22
     6162:	cf 2e       	mov	r12, r31
     6164:	fe e0       	ldi	r31, 0x0E	; 14
     6166:	df 2e       	mov	r13, r31
@@ -14378,10 +14378,10 @@ void maininterupthandler(monitor *mon){
     618c:	30 e0       	ldi	r19, 0x00	; 0
     618e:	48 ec       	ldi	r20, 0xC8	; 200
     6190:	52 e4       	ldi	r21, 0x42	; 66
-    6192:	60 91 91 08 	lds	r22, 0x0891
-    6196:	70 91 92 08 	lds	r23, 0x0892
-    619a:	80 91 93 08 	lds	r24, 0x0893
-    619e:	90 91 94 08 	lds	r25, 0x0894
+    6192:	60 91 8d 08 	lds	r22, 0x088D
+    6196:	70 91 8e 08 	lds	r23, 0x088E
+    619a:	80 91 8f 08 	lds	r24, 0x088F
+    619e:	90 91 90 08 	lds	r25, 0x0890
     61a2:	0e 94 f2 40 	call	0x81e4	; 0x81e4 <__mulsf3>
     61a6:	0e 94 a6 3f 	call	0x7f4c	; 0x7f4c <__fixsfsi>
     61aa:	9f 93       	push	r25
@@ -14392,10 +14392,10 @@ void maininterupthandler(monitor *mon){
     61b4:	30 e5       	ldi	r19, 0x50	; 80
     61b6:	43 ec       	ldi	r20, 0xC3	; 195
     61b8:	57 e4       	ldi	r21, 0x47	; 71
-    61ba:	60 91 99 08 	lds	r22, 0x0899
-    61be:	70 91 9a 08 	lds	r23, 0x089A
-    61c2:	80 91 9b 08 	lds	r24, 0x089B
-    61c6:	90 91 9c 08 	lds	r25, 0x089C
+    61ba:	60 91 95 08 	lds	r22, 0x0895
+    61be:	70 91 96 08 	lds	r23, 0x0896
+    61c2:	80 91 97 08 	lds	r24, 0x0897
+    61c6:	90 91 98 08 	lds	r25, 0x0898
     61ca:	0e 94 f2 40 	call	0x81e4	; 0x81e4 <__mulsf3>
     61ce:	0e 94 a6 3f 	call	0x7f4c	; 0x7f4c <__fixsfsi>
     61d2:	9f 93       	push	r25
@@ -14406,10 +14406,10 @@ void maininterupthandler(monitor *mon){
     61dc:	34 e2       	ldi	r19, 0x24	; 36
     61de:	44 e7       	ldi	r20, 0x74	; 116
     61e0:	59 e4       	ldi	r21, 0x49	; 73
-    61e2:	60 91 95 08 	lds	r22, 0x0895
-    61e6:	70 91 96 08 	lds	r23, 0x0896
-    61ea:	80 91 97 08 	lds	r24, 0x0897
-    61ee:	90 91 98 08 	lds	r25, 0x0898
+    61e2:	60 91 91 08 	lds	r22, 0x0891
+    61e6:	70 91 92 08 	lds	r23, 0x0892
+    61ea:	80 91 93 08 	lds	r24, 0x0893
+    61ee:	90 91 94 08 	lds	r25, 0x0894
     61f2:	0e 94 f2 40 	call	0x81e4	; 0x81e4 <__mulsf3>
     61f6:	0e 94 a6 3f 	call	0x7f4c	; 0x7f4c <__fixsfsi>
     61fa:	9f 93       	push	r25
@@ -14438,7 +14438,7 @@ void maininterupthandler(monitor *mon){
     6218:	9f 93       	push	r25
     621a:	8f 93       	push	r24
     621c:	0f 2e       	mov	r0, r31
-    621e:	fd e2       	ldi	r31, 0x2D	; 45
+    621e:	f9 e2       	ldi	r31, 0x29	; 41
     6220:	ef 2e       	mov	r14, r31
     6222:	f4 e0       	ldi	r31, 0x04	; 4
     6224:	ff 2e       	mov	r15, r31
@@ -14447,22 +14447,22 @@ void maininterupthandler(monitor *mon){
     622a:	ef 92       	push	r14
     622c:	0e 94 11 21 	call	0x4222	; 0x4222 <f_printf>
 			//Tacho
-			f_printf(&logger,"%ld\n",(int32_t)(geschw*100));
+			f_printf(&logger,"%ld\t",(int32_t)(geschw*100));
     6230:	20 e0       	ldi	r18, 0x00	; 0
     6232:	30 e0       	ldi	r19, 0x00	; 0
     6234:	48 ec       	ldi	r20, 0xC8	; 200
     6236:	52 e4       	ldi	r21, 0x42	; 66
-    6238:	60 91 87 08 	lds	r22, 0x0887
-    623c:	70 91 88 08 	lds	r23, 0x0888
-    6240:	80 91 89 08 	lds	r24, 0x0889
-    6244:	90 91 8a 08 	lds	r25, 0x088A
+    6238:	60 91 83 08 	lds	r22, 0x0883
+    623c:	70 91 84 08 	lds	r23, 0x0884
+    6240:	80 91 85 08 	lds	r24, 0x0885
+    6244:	90 91 86 08 	lds	r25, 0x0886
     6248:	0e 94 f2 40 	call	0x81e4	; 0x81e4 <__mulsf3>
     624c:	0e 94 a6 3f 	call	0x7f4c	; 0x7f4c <__fixsfsi>
     6250:	9f 93       	push	r25
     6252:	8f 93       	push	r24
     6254:	7f 93       	push	r23
     6256:	6f 93       	push	r22
-    6258:	87 e0       	ldi	r24, 0x07	; 7
+    6258:	82 e0       	ldi	r24, 0x02	; 2
     625a:	93 e0       	ldi	r25, 0x03	; 3
     625c:	9f 93       	push	r25
     625e:	8f 93       	push	r24
@@ -14472,7 +14472,7 @@ void maininterupthandler(monitor *mon){
 			//Barometer
 			f_printf(&logger,"%d\t%u\t%d\n",(int16_t)(druck.temperature*10),(uint16_t)(druck.pressure*100),(int16_t)(druck.altitude*10));
     6268:	0f 2e       	mov	r0, r31
-    626a:	f5 ef       	ldi	r31, 0xF5	; 245
+    626a:	f1 ef       	ldi	r31, 0xF1	; 241
     626c:	cf 2e       	mov	r12, r31
     626e:	f8 e0       	ldi	r31, 0x08	; 8
     6270:	df 2e       	mov	r13, r31
@@ -14520,7 +14520,7 @@ void maininterupthandler(monitor *mon){
     62ce:	0e 94 a6 3f 	call	0x7f4c	; 0x7f4c <__fixsfsi>
     62d2:	7f 93       	push	r23
     62d4:	6f 93       	push	r22
-    62d6:	8c e0       	ldi	r24, 0x0C	; 12
+    62d6:	87 e0       	ldi	r24, 0x07	; 7
     62d8:	93 e0       	ldi	r25, 0x03	; 3
     62da:	9f 93       	push	r25
     62dc:	8f 93       	push	r24
@@ -14535,21 +14535,21 @@ void maininterupthandler(monitor *mon){
 		}
 		
 		anzeige |= (1<<refreshdisplay);
-    62f0:	80 91 ea 08 	lds	r24, 0x08EA
+    62f0:	80 91 e6 08 	lds	r24, 0x08E6
     62f4:	81 60       	ori	r24, 0x01	; 1
-    62f6:	80 93 ea 08 	sts	0x08EA, r24
+    62f6:	80 93 e6 08 	sts	0x08E6, r24
 		rtc.interupts &= ~(1<<sekundeninterupt);
-    62fa:	ea e1       	ldi	r30, 0x1A	; 26
+    62fa:	e6 e1       	ldi	r30, 0x16	; 22
     62fc:	fe e0       	ldi	r31, 0x0E	; 14
     62fe:	80 8d       	ldd	r24, Z+24	; 0x18
     6300:	8d 7f       	andi	r24, 0xFD	; 253
     6302:	80 8f       	std	Z+24, r24	; 0x18
 	}
 	if ((rtc.interupts&(1<<minuteninterupt)))		//Minuten
-    6304:	80 91 32 0e 	lds	r24, 0x0E32
+    6304:	80 91 2e 0e 	lds	r24, 0x0E2E
     6308:	82 ff       	sbrs	r24, 2
     630a:	13 c0       	rjmp	.+38     	; 0x6332 <_Z19maininterupthandlerP7monitor+0x46e>
-    630c:	80 91 e9 08 	lds	r24, 0x08E9
+    630c:	80 91 e5 08 	lds	r24, 0x08E5
     6310:	86 70       	andi	r24, 0x06	; 6
 	{
 		if ((statusreg&(1<<mounttingstat)) && (statusreg&(1<<loggingstat)))
@@ -14557,16 +14557,16 @@ void maininterupthandler(monitor *mon){
     6314:	21 f4       	brne	.+8      	; 0x631e <_Z19maininterupthandlerP7monitor+0x45a>
 		{
 			f_sync(&logger);
-    6316:	8d e2       	ldi	r24, 0x2D	; 45
+    6316:	89 e2       	ldi	r24, 0x29	; 41
     6318:	94 e0       	ldi	r25, 0x04	; 4
     631a:	0e 94 34 20 	call	0x4068	; 0x4068 <f_sync>
 		}
 		anzeige |= (1<<refreshdisplay);
-    631e:	80 91 ea 08 	lds	r24, 0x08EA
+    631e:	80 91 e6 08 	lds	r24, 0x08E6
     6322:	81 60       	ori	r24, 0x01	; 1
-    6324:	80 93 ea 08 	sts	0x08EA, r24
+    6324:	80 93 e6 08 	sts	0x08E6, r24
 		rtc.interupts &= ~(1<<minuteninterupt);
-    6328:	ea e1       	ldi	r30, 0x1A	; 26
+    6328:	e6 e1       	ldi	r30, 0x16	; 22
     632a:	fe e0       	ldi	r31, 0x0E	; 14
     632c:	80 8d       	ldd	r24, Z+24	; 0x18
     632e:	8b 7f       	andi	r24, 0xFB	; 251
@@ -14574,7 +14574,7 @@ void maininterupthandler(monitor *mon){
 	}
 	
 	if ((anzeige&(1<<refreshdisplay)))			//Anzeige aktualieseren
-    6332:	80 91 ea 08 	lds	r24, 0x08EA
+    6332:	80 91 e6 08 	lds	r24, 0x08E6
     6336:	80 ff       	sbrs	r24, 0
     6338:	0d c0       	rjmp	.+26     	; 0x6354 <_Z19maininterupthandlerP7monitor+0x490>
 	{
@@ -14589,9 +14589,9 @@ void maininterupthandler(monitor *mon){
     6346:	c8 01       	movw	r24, r16
     6348:	09 95       	icall
 		anzeige &= ~(1<<refreshdisplay);
-    634a:	80 91 ea 08 	lds	r24, 0x08EA
+    634a:	80 91 e6 08 	lds	r24, 0x08E6
     634e:	8e 7f       	andi	r24, 0xFE	; 254
-    6350:	80 93 ea 08 	sts	0x08EA, r24
+    6350:	80 93 e6 08 	sts	0x08E6, r24
 		{
 			anzeige |= (1<<blinkflag) | (1<<refreshdisplay);
 			rtc.interupts &= ~(1<<Weckerein);
@@ -14636,7 +14636,7 @@ void gpshandler(){
     6392:	cd b7       	in	r28, 0x3d	; 61
     6394:	de b7       	in	r29, 0x3e	; 62
 	if ((gpsstatus&(1<<complete)) && (gpsstatus&(1<<fix)))
-    6396:	e0 90 e6 08 	lds	r14, 0x08E6
+    6396:	e0 90 e2 08 	lds	r14, 0x08E2
     639a:	e2 fe       	sbrs	r14, 2
     639c:	e3 c2       	rjmp	.+1478   	; 0x6964 <_Z10gpshandlerv+0x5f2>
     639e:	ee 20       	and	r14, r14
@@ -14647,7 +14647,7 @@ void gpshandler(){
 		//Zeit
 		gpsstunde =		(gpsdata[7] - '0')*10;
 		gpsstunde +=	(gpsdata[8] - '0');
-    63a4:	0e e9       	ldi	r16, 0x9E	; 158
+    63a4:	0a e9       	ldi	r16, 0x9A	; 154
     63a6:	18 e0       	ldi	r17, 0x08	; 8
     63a8:	f8 01       	movw	r30, r16
     63aa:	80 85       	ldd	r24, Z+8	; 0x08
@@ -14669,7 +14669,7 @@ void gpshandler(){
 		gpsstunde +=	(gpsdata[8] - '0');
 		gpsstunde += GMT;
     63be:	82 0f       	add	r24, r18
-    63c0:	80 93 90 08 	sts	0x0890, r24
+    63c0:	80 93 8c 08 	sts	0x088C, r24
     63c4:	82 85       	ldd	r24, Z+10	; 0x0a
     63c6:	20 ed       	ldi	r18, 0xD0	; 208
     63c8:	28 0f       	add	r18, r24
@@ -14683,7 +14683,7 @@ void gpshandler(){
     63d6:	89 0f       	add	r24, r25
 		gpsminute +=	(gpsdata[10] - '0');
     63d8:	82 0f       	add	r24, r18
-    63da:	80 93 8f 08 	sts	0x088F, r24
+    63da:	80 93 8b 08 	sts	0x088B, r24
     63de:	84 85       	ldd	r24, Z+12	; 0x0c
     63e0:	20 ed       	ldi	r18, 0xD0	; 208
     63e2:	28 0f       	add	r18, r24
@@ -14697,7 +14697,7 @@ void gpshandler(){
     63f0:	89 0f       	add	r24, r25
 		gpssekunde +=	(gpsdata[12] - '0');
     63f2:	82 0f       	add	r24, r18
-    63f4:	80 93 8e 08 	sts	0x088E, r24
+    63f4:	80 93 8a 08 	sts	0x088A, r24
 		
 		//Latitude
 		lat =	(gpsdata[20] - '0')*10;
@@ -14879,10 +14879,10 @@ void gpshandler(){
     6554:	c3 01       	movw	r24, r6
     6556:	b2 01       	movw	r22, r4
     6558:	0e 94 d7 3e 	call	0x7dae	; 0x7dae <__addsf3>
-    655c:	60 93 99 08 	sts	0x0899, r22
-    6560:	70 93 9a 08 	sts	0x089A, r23
-    6564:	80 93 9b 08 	sts	0x089B, r24
-    6568:	90 93 9c 08 	sts	0x089C, r25
+    655c:	60 93 95 08 	sts	0x0895, r22
+    6560:	70 93 96 08 	sts	0x0896, r23
+    6564:	80 93 97 08 	sts	0x0897, r24
+    6568:	90 93 98 08 	sts	0x0898, r25
 		if (gpsdata[30] != 'N')
     656c:	f8 01       	movw	r30, r16
     656e:	26 8d       	ldd	r18, Z+30	; 0x1e
@@ -14893,17 +14893,17 @@ void gpshandler(){
     6574:	dc 01       	movw	r26, r24
     6576:	cb 01       	movw	r24, r22
     6578:	b0 58       	subi	r27, 0x80	; 128
-    657a:	80 93 99 08 	sts	0x0899, r24
-    657e:	90 93 9a 08 	sts	0x089A, r25
-    6582:	a0 93 9b 08 	sts	0x089B, r26
-    6586:	b0 93 9c 08 	sts	0x089C, r27
+    657a:	80 93 95 08 	sts	0x0895, r24
+    657e:	90 93 96 08 	sts	0x0896, r25
+    6582:	a0 93 97 08 	sts	0x0897, r26
+    6586:	b0 93 98 08 	sts	0x0898, r27
 		
 		//Longitude
 		lon =	(gpsdata[32] - '0')*100;
 		lon +=	(gpsdata[33] - '0')*10;
 		lon +=	(gpsdata[34] - '0');
 		float lonmin =	(gpsdata[35] - '0')*10;
-    658a:	0e e9       	ldi	r16, 0x9E	; 158
+    658a:	0a e9       	ldi	r16, 0x9A	; 154
     658c:	18 e0       	ldi	r17, 0x08	; 8
     658e:	f8 01       	movw	r30, r16
     6590:	83 a1       	ldd	r24, Z+35	; 0x23
@@ -15105,10 +15105,10 @@ void gpshandler(){
     671c:	c3 01       	movw	r24, r6
     671e:	b2 01       	movw	r22, r4
     6720:	0e 94 d7 3e 	call	0x7dae	; 0x7dae <__addsf3>
-    6724:	60 93 95 08 	sts	0x0895, r22
-    6728:	70 93 96 08 	sts	0x0896, r23
-    672c:	80 93 97 08 	sts	0x0897, r24
-    6730:	90 93 98 08 	sts	0x0898, r25
+    6724:	60 93 91 08 	sts	0x0891, r22
+    6728:	70 93 92 08 	sts	0x0892, r23
+    672c:	80 93 93 08 	sts	0x0893, r24
+    6730:	90 93 94 08 	sts	0x0894, r25
 		if (gpsdata[43] != 'E')
     6734:	f8 01       	movw	r30, r16
     6736:	23 a5       	ldd	r18, Z+43	; 0x2b
@@ -15119,10 +15119,10 @@ void gpshandler(){
     673c:	dc 01       	movw	r26, r24
     673e:	cb 01       	movw	r24, r22
     6740:	b0 58       	subi	r27, 0x80	; 128
-    6742:	80 93 95 08 	sts	0x0895, r24
-    6746:	90 93 96 08 	sts	0x0896, r25
-    674a:	a0 93 97 08 	sts	0x0897, r26
-    674e:	b0 93 98 08 	sts	0x0898, r27
+    6742:	80 93 91 08 	sts	0x0891, r24
+    6746:	90 93 92 08 	sts	0x0892, r25
+    674a:	a0 93 93 08 	sts	0x0893, r26
+    674e:	b0 93 94 08 	sts	0x0894, r27
 		}
 		//Speed 
 		volatile uint8_t counter = 45;
@@ -15134,7 +15134,7 @@ void gpshandler(){
 			if (gpsdata[counter]=='.')
     6756:	ec 81       	ldd	r30, Y+4	; 0x04
     6758:	f0 e0       	ldi	r31, 0x00	; 0
-    675a:	e2 56       	subi	r30, 0x62	; 98
+    675a:	e6 56       	subi	r30, 0x66	; 102
     675c:	f7 4f       	sbci	r31, 0xF7	; 247
     675e:	80 81       	ld	r24, Z
     6760:	8e 32       	cpi	r24, 0x2E	; 46
@@ -15153,10 +15153,10 @@ void gpshandler(){
 		}
 		
 		gpsspeed = 0;
-    6770:	10 92 91 08 	sts	0x0891, r1
-    6774:	10 92 92 08 	sts	0x0892, r1
-    6778:	10 92 93 08 	sts	0x0893, r1
-    677c:	10 92 94 08 	sts	0x0894, r1
+    6770:	10 92 8d 08 	sts	0x088D, r1
+    6774:	10 92 8e 08 	sts	0x088E, r1
+    6778:	10 92 8f 08 	sts	0x088F, r1
+    677c:	10 92 90 08 	sts	0x0890, r1
 		for(uint8_t i=45;i<counter;i++){
     6780:	8c 81       	ldd	r24, Y+4	; 0x04
     6782:	8e 32       	cpi	r24, 0x2E	; 46
@@ -15206,7 +15206,7 @@ void gpshandler(){
     67c8:	2b 01       	movw	r4, r22
     67ca:	3c 01       	movw	r6, r24
     67cc:	f8 01       	movw	r30, r16
-    67ce:	e2 56       	subi	r30, 0x62	; 98
+    67ce:	e6 56       	subi	r30, 0x66	; 102
     67d0:	f7 4f       	sbci	r31, 0xF7	; 247
     67d2:	60 81       	ld	r22, Z
     67d4:	70 e0       	ldi	r23, 0x00	; 0
@@ -15237,10 +15237,10 @@ void gpshandler(){
     6800:	8c 81       	ldd	r24, Y+4	; 0x04
     6802:	f8 16       	cp	r15, r24
     6804:	60 f2       	brcs	.-104    	; 0x679e <_Z10gpshandlerv+0x42c>
-    6806:	80 92 91 08 	sts	0x0891, r8
-    680a:	90 92 92 08 	sts	0x0892, r9
-    680e:	a0 92 93 08 	sts	0x0893, r10
-    6812:	b0 92 94 08 	sts	0x0894, r11
+    6806:	80 92 8d 08 	sts	0x088D, r8
+    680a:	90 92 8e 08 	sts	0x088E, r9
+    680e:	a0 92 8f 08 	sts	0x088F, r10
+    6812:	b0 92 90 08 	sts	0x0890, r11
 			gpsspeed += (gpsdata[i]-'0')*pow(10,(counter-i-1));
 		}
 		gpsspeed += (gpsdata[counter+1]-'0')*0.1;
@@ -15254,7 +15254,7 @@ void gpshandler(){
 		}
 		gpsspeed += (gpsdata[counter+1]-'0')*0.1;
     681a:	f0 e0       	ldi	r31, 0x00	; 0
-    681c:	e2 56       	subi	r30, 0x62	; 98
+    681c:	e6 56       	subi	r30, 0x66	; 102
     681e:	f7 4f       	sbci	r31, 0xF7	; 247
     6820:	61 81       	ldd	r22, Z+1	; 0x01
     6822:	70 e0       	ldi	r23, 0x00	; 0
@@ -15270,17 +15270,17 @@ void gpshandler(){
     6838:	4c ec       	ldi	r20, 0xCC	; 204
     683a:	5d e3       	ldi	r21, 0x3D	; 61
     683c:	0e 94 f2 40 	call	0x81e4	; 0x81e4 <__mulsf3>
-    6840:	20 91 91 08 	lds	r18, 0x0891
-    6844:	30 91 92 08 	lds	r19, 0x0892
-    6848:	40 91 93 08 	lds	r20, 0x0893
-    684c:	50 91 94 08 	lds	r21, 0x0894
+    6840:	20 91 8d 08 	lds	r18, 0x088D
+    6844:	30 91 8e 08 	lds	r19, 0x088E
+    6848:	40 91 8f 08 	lds	r20, 0x088F
+    684c:	50 91 90 08 	lds	r21, 0x0890
     6850:	0e 94 d7 3e 	call	0x7dae	; 0x7dae <__addsf3>
     6854:	4b 01       	movw	r8, r22
     6856:	5c 01       	movw	r10, r24
 		gpsspeed += (gpsdata[counter+2]-'0')*0.01;
     6858:	e1 2f       	mov	r30, r17
     685a:	f0 e0       	ldi	r31, 0x00	; 0
-    685c:	e2 56       	subi	r30, 0x62	; 98
+    685c:	e6 56       	subi	r30, 0x66	; 102
     685e:	f7 4f       	sbci	r31, 0xF7	; 247
     6860:	82 81       	ldd	r24, Z+2	; 0x02
     6862:	90 e0       	ldi	r25, 0x00	; 0
@@ -15307,10 +15307,10 @@ void gpshandler(){
     688e:	4d ee       	ldi	r20, 0xED	; 237
     6890:	5f e3       	ldi	r21, 0x3F	; 63
     6892:	0e 94 f2 40 	call	0x81e4	; 0x81e4 <__mulsf3>
-    6896:	60 93 91 08 	sts	0x0891, r22
-    689a:	70 93 92 08 	sts	0x0892, r23
-    689e:	80 93 93 08 	sts	0x0893, r24
-    68a2:	90 93 94 08 	sts	0x0894, r25
+    6896:	60 93 8d 08 	sts	0x088D, r22
+    689a:	70 93 8e 08 	sts	0x088E, r23
+    689e:	80 93 8f 08 	sts	0x088F, r24
+    68a2:	90 93 90 08 	sts	0x0890, r25
 		
 		//date
 		counter =19;
@@ -15327,7 +15327,7 @@ void gpshandler(){
 			if (gpsdata[counter] == ',')
     68b2:	ec 81       	ldd	r30, Y+4	; 0x04
     68b4:	f0 e0       	ldi	r31, 0x00	; 0
-    68b6:	e2 56       	subi	r30, 0x62	; 98
+    68b6:	e6 56       	subi	r30, 0x66	; 102
     68b8:	f7 4f       	sbci	r31, 0xF7	; 247
     68ba:	80 81       	ld	r24, Z
     68bc:	8c 32       	cpi	r24, 0x2C	; 44
@@ -15367,7 +15367,7 @@ void gpshandler(){
 		//Datum
 		gpsTag =	(gpsdata[counter+0] - '0')*10;
     68d6:	b0 e0       	ldi	r27, 0x00	; 0
-    68d8:	a2 56       	subi	r26, 0x62	; 98
+    68d8:	a6 56       	subi	r26, 0x66	; 102
     68da:	b7 4f       	sbci	r27, 0xF7	; 247
     68dc:	8c 91       	ld	r24, X
     68de:	88 0f       	add	r24, r24
@@ -15378,14 +15378,14 @@ void gpshandler(){
     68e8:	28 0f       	add	r18, r24
 		gpsTag +=	(gpsdata[counter+1] - '0');
     68ea:	f0 e0       	ldi	r31, 0x00	; 0
-    68ec:	e2 56       	subi	r30, 0x62	; 98
+    68ec:	e6 56       	subi	r30, 0x66	; 102
     68ee:	f7 4f       	sbci	r31, 0xF7	; 247
     68f0:	81 81       	ldd	r24, Z+1	; 0x01
     68f2:	90 e0       	ldi	r25, 0x00	; 0
     68f4:	c0 97       	sbiw	r24, 0x30	; 48
     68f6:	82 0f       	add	r24, r18
     68f8:	91 1d       	adc	r25, r1
-    68fa:	80 93 8d 08 	sts	0x088D, r24
+    68fa:	80 93 89 08 	sts	0x0889, r24
 		gpsMonat =	(gpsdata[counter+2] - '0')*10;
     68fe:	ac 81       	ldd	r26, Y+4	; 0x04
 		gpsMonat +=	(gpsdata[counter+3] - '0');
@@ -15397,7 +15397,7 @@ void gpshandler(){
 		gpsTag +=	(gpsdata[counter+1] - '0');
 		gpsMonat =	(gpsdata[counter+2] - '0')*10;
     6902:	b0 e0       	ldi	r27, 0x00	; 0
-    6904:	a2 56       	subi	r26, 0x62	; 98
+    6904:	a6 56       	subi	r26, 0x66	; 102
     6906:	b7 4f       	sbci	r27, 0xF7	; 247
     6908:	12 96       	adiw	r26, 0x02	; 2
     690a:	8c 91       	ld	r24, X
@@ -15409,14 +15409,14 @@ void gpshandler(){
     6916:	28 0f       	add	r18, r24
 		gpsMonat +=	(gpsdata[counter+3] - '0');
     6918:	f0 e0       	ldi	r31, 0x00	; 0
-    691a:	e2 56       	subi	r30, 0x62	; 98
+    691a:	e6 56       	subi	r30, 0x66	; 102
     691c:	f7 4f       	sbci	r31, 0xF7	; 247
     691e:	83 81       	ldd	r24, Z+3	; 0x03
     6920:	90 e0       	ldi	r25, 0x00	; 0
     6922:	c0 97       	sbiw	r24, 0x30	; 48
     6924:	82 0f       	add	r24, r18
     6926:	91 1d       	adc	r25, r1
-    6928:	80 93 8c 08 	sts	0x088C, r24
+    6928:	80 93 88 08 	sts	0x0888, r24
 		gpsJahr =	(gpsdata[counter+4] - '0')*10;
     692c:	ac 81       	ldd	r26, Y+4	; 0x04
 		gpsJahr +=	(gpsdata[counter+5] - '0');
@@ -15428,7 +15428,7 @@ void gpshandler(){
 		gpsMonat +=	(gpsdata[counter+3] - '0');
 		gpsJahr =	(gpsdata[counter+4] - '0')*10;
     6930:	b0 e0       	ldi	r27, 0x00	; 0
-    6932:	a2 56       	subi	r26, 0x62	; 98
+    6932:	a6 56       	subi	r26, 0x66	; 102
     6934:	b7 4f       	sbci	r27, 0xF7	; 247
     6936:	14 96       	adiw	r26, 0x04	; 4
     6938:	8c 91       	ld	r24, X
@@ -15440,19 +15440,19 @@ void gpshandler(){
     6944:	28 0f       	add	r18, r24
 		gpsJahr +=	(gpsdata[counter+5] - '0');
     6946:	f0 e0       	ldi	r31, 0x00	; 0
-    6948:	e2 56       	subi	r30, 0x62	; 98
+    6948:	e6 56       	subi	r30, 0x66	; 102
     694a:	f7 4f       	sbci	r31, 0xF7	; 247
     694c:	85 81       	ldd	r24, Z+5	; 0x05
     694e:	90 e0       	ldi	r25, 0x00	; 0
     6950:	c0 97       	sbiw	r24, 0x30	; 48
     6952:	82 0f       	add	r24, r18
     6954:	91 1d       	adc	r25, r1
-    6956:	80 93 8b 08 	sts	0x088B, r24
+    6956:	80 93 87 08 	sts	0x0887, r24
 		
 		gpsstatus &= ~(1<<complete);
     695a:	8e 2d       	mov	r24, r14
     695c:	8b 7f       	andi	r24, 0xFB	; 251
-    695e:	80 93 e6 08 	sts	0x08E6, r24
+    695e:	80 93 e2 08 	sts	0x08E2, r24
     6962:	a4 c0       	rjmp	.+328    	; 0x6aac <_Z10gpshandlerv+0x73a>
 	}
 	else if ((gpsstatus&(1<<completenotvalid))  && (gpsstatus&(1<<fix)))
@@ -15464,24 +15464,24 @@ void gpshandler(){
 	{
 		//Andere Daten vernichten
 		lat = 0;
-    696e:	10 92 99 08 	sts	0x0899, r1
-    6972:	10 92 9a 08 	sts	0x089A, r1
-    6976:	10 92 9b 08 	sts	0x089B, r1
-    697a:	10 92 9c 08 	sts	0x089C, r1
+    696e:	10 92 95 08 	sts	0x0895, r1
+    6972:	10 92 96 08 	sts	0x0896, r1
+    6976:	10 92 97 08 	sts	0x0897, r1
+    697a:	10 92 98 08 	sts	0x0898, r1
 		lon = 0;
-    697e:	10 92 95 08 	sts	0x0895, r1
-    6982:	10 92 96 08 	sts	0x0896, r1
-    6986:	10 92 97 08 	sts	0x0897, r1
-    698a:	10 92 98 08 	sts	0x0898, r1
+    697e:	10 92 91 08 	sts	0x0891, r1
+    6982:	10 92 92 08 	sts	0x0892, r1
+    6986:	10 92 93 08 	sts	0x0893, r1
+    698a:	10 92 94 08 	sts	0x0894, r1
 		gpsspeed = 0;
-    698e:	10 92 91 08 	sts	0x0891, r1
-    6992:	10 92 92 08 	sts	0x0892, r1
-    6996:	10 92 93 08 	sts	0x0893, r1
-    699a:	10 92 94 08 	sts	0x0894, r1
+    698e:	10 92 8d 08 	sts	0x088D, r1
+    6992:	10 92 8e 08 	sts	0x088E, r1
+    6996:	10 92 8f 08 	sts	0x088F, r1
+    699a:	10 92 90 08 	sts	0x0890, r1
 		//Zeit
 		gpsstunde =		(gpsdata[7] - '0')*10;
 		gpsstunde +=	(gpsdata[8] - '0');
-    699e:	ee e9       	ldi	r30, 0x9E	; 158
+    699e:	ea e9       	ldi	r30, 0x9A	; 154
     69a0:	f8 e0       	ldi	r31, 0x08	; 8
     69a2:	80 85       	ldd	r24, Z+8	; 0x08
     69a4:	21 ed       	ldi	r18, 0xD1	; 209
@@ -15502,7 +15502,7 @@ void gpshandler(){
 		gpsstunde +=	(gpsdata[8] - '0');
 		gpsstunde += GMT;
     69b6:	82 0f       	add	r24, r18
-    69b8:	80 93 90 08 	sts	0x0890, r24
+    69b8:	80 93 8c 08 	sts	0x088C, r24
     69bc:	82 85       	ldd	r24, Z+10	; 0x0a
     69be:	20 ed       	ldi	r18, 0xD0	; 208
     69c0:	28 0f       	add	r18, r24
@@ -15516,7 +15516,7 @@ void gpshandler(){
     69ce:	89 0f       	add	r24, r25
 		gpsminute +=	(gpsdata[10] - '0');
     69d0:	82 0f       	add	r24, r18
-    69d2:	80 93 8f 08 	sts	0x088F, r24
+    69d2:	80 93 8b 08 	sts	0x088B, r24
     69d6:	84 85       	ldd	r24, Z+12	; 0x0c
     69d8:	20 ed       	ldi	r18, 0xD0	; 208
     69da:	28 0f       	add	r18, r24
@@ -15530,7 +15530,7 @@ void gpshandler(){
     69e8:	89 0f       	add	r24, r25
 		gpssekunde +=	(gpsdata[12] - '0');
     69ea:	82 0f       	add	r24, r18
-    69ec:	80 93 8e 08 	sts	0x088E, r24
+    69ec:	80 93 8a 08 	sts	0x088A, r24
 		
 		volatile uint8_t counter = 19;
     69f0:	83 e1       	ldi	r24, 0x13	; 19
@@ -15546,7 +15546,7 @@ void gpshandler(){
 			if (gpsdata[counter] == ',')
     69fc:	ea 81       	ldd	r30, Y+2	; 0x02
     69fe:	f0 e0       	ldi	r31, 0x00	; 0
-    6a00:	e2 56       	subi	r30, 0x62	; 98
+    6a00:	e6 56       	subi	r30, 0x66	; 102
     6a02:	f7 4f       	sbci	r31, 0xF7	; 247
     6a04:	80 81       	ld	r24, Z
     6a06:	8c 32       	cpi	r24, 0x2C	; 44
@@ -15586,7 +15586,7 @@ void gpshandler(){
 		//Datum
 		gpsTag =	(gpsdata[counter+0] - '0')*10;
     6a20:	b0 e0       	ldi	r27, 0x00	; 0
-    6a22:	a2 56       	subi	r26, 0x62	; 98
+    6a22:	a6 56       	subi	r26, 0x66	; 102
     6a24:	b7 4f       	sbci	r27, 0xF7	; 247
     6a26:	8c 91       	ld	r24, X
     6a28:	88 0f       	add	r24, r24
@@ -15597,14 +15597,14 @@ void gpshandler(){
     6a32:	28 0f       	add	r18, r24
 		gpsTag +=	(gpsdata[counter+1] - '0');
     6a34:	f0 e0       	ldi	r31, 0x00	; 0
-    6a36:	e2 56       	subi	r30, 0x62	; 98
+    6a36:	e6 56       	subi	r30, 0x66	; 102
     6a38:	f7 4f       	sbci	r31, 0xF7	; 247
     6a3a:	81 81       	ldd	r24, Z+1	; 0x01
     6a3c:	90 e0       	ldi	r25, 0x00	; 0
     6a3e:	c0 97       	sbiw	r24, 0x30	; 48
     6a40:	82 0f       	add	r24, r18
     6a42:	91 1d       	adc	r25, r1
-    6a44:	80 93 8d 08 	sts	0x088D, r24
+    6a44:	80 93 89 08 	sts	0x0889, r24
 		gpsMonat =	(gpsdata[counter+2] - '0')*10;
     6a48:	aa 81       	ldd	r26, Y+2	; 0x02
 		gpsMonat +=	(gpsdata[counter+3] - '0');
@@ -15616,7 +15616,7 @@ void gpshandler(){
 		gpsTag +=	(gpsdata[counter+1] - '0');
 		gpsMonat =	(gpsdata[counter+2] - '0')*10;
     6a4c:	b0 e0       	ldi	r27, 0x00	; 0
-    6a4e:	a2 56       	subi	r26, 0x62	; 98
+    6a4e:	a6 56       	subi	r26, 0x66	; 102
     6a50:	b7 4f       	sbci	r27, 0xF7	; 247
     6a52:	12 96       	adiw	r26, 0x02	; 2
     6a54:	8c 91       	ld	r24, X
@@ -15628,14 +15628,14 @@ void gpshandler(){
     6a60:	28 0f       	add	r18, r24
 		gpsMonat +=	(gpsdata[counter+3] - '0');
     6a62:	f0 e0       	ldi	r31, 0x00	; 0
-    6a64:	e2 56       	subi	r30, 0x62	; 98
+    6a64:	e6 56       	subi	r30, 0x66	; 102
     6a66:	f7 4f       	sbci	r31, 0xF7	; 247
     6a68:	83 81       	ldd	r24, Z+3	; 0x03
     6a6a:	90 e0       	ldi	r25, 0x00	; 0
     6a6c:	c0 97       	sbiw	r24, 0x30	; 48
     6a6e:	82 0f       	add	r24, r18
     6a70:	91 1d       	adc	r25, r1
-    6a72:	80 93 8c 08 	sts	0x088C, r24
+    6a72:	80 93 88 08 	sts	0x0888, r24
 		gpsJahr =	(gpsdata[counter+4] - '0')*10;
     6a76:	aa 81       	ldd	r26, Y+2	; 0x02
 		gpsJahr +=	(gpsdata[counter+5] - '0');
@@ -15647,7 +15647,7 @@ void gpshandler(){
 		gpsMonat +=	(gpsdata[counter+3] - '0');
 		gpsJahr =	(gpsdata[counter+4] - '0')*10;
     6a7a:	b0 e0       	ldi	r27, 0x00	; 0
-    6a7c:	a2 56       	subi	r26, 0x62	; 98
+    6a7c:	a6 56       	subi	r26, 0x66	; 102
     6a7e:	b7 4f       	sbci	r27, 0xF7	; 247
     6a80:	14 96       	adiw	r26, 0x04	; 4
     6a82:	8c 91       	ld	r24, X
@@ -15659,19 +15659,19 @@ void gpshandler(){
     6a8e:	28 0f       	add	r18, r24
 		gpsJahr +=	(gpsdata[counter+5] - '0');
     6a90:	f0 e0       	ldi	r31, 0x00	; 0
-    6a92:	e2 56       	subi	r30, 0x62	; 98
+    6a92:	e6 56       	subi	r30, 0x66	; 102
     6a94:	f7 4f       	sbci	r31, 0xF7	; 247
     6a96:	85 81       	ldd	r24, Z+5	; 0x05
     6a98:	90 e0       	ldi	r25, 0x00	; 0
     6a9a:	c0 97       	sbiw	r24, 0x30	; 48
     6a9c:	82 0f       	add	r24, r18
     6a9e:	91 1d       	adc	r25, r1
-    6aa0:	80 93 8b 08 	sts	0x088B, r24
+    6aa0:	80 93 87 08 	sts	0x0887, r24
 		
 		gpsstatus &= ~(1<<completenotvalid);
     6aa4:	8e 2d       	mov	r24, r14
     6aa6:	87 7f       	andi	r24, 0xF7	; 247
-    6aa8:	80 93 e6 08 	sts	0x08E6, r24
+    6aa8:	80 93 e2 08 	sts	0x08E2, r24
 	}
 	//fix status pruefen, wenn implementiert
 }
@@ -15732,12 +15732,12 @@ void * operator new(size_t size)
 		buffersize = 0;
     6af2:	16 8a       	std	Z+22, r1	; 0x16
 		oled = ol;
-    6af4:	89 e1       	ldi	r24, 0x19	; 25
+    6af4:	85 e1       	ldi	r24, 0x15	; 21
     6af6:	9a e0       	ldi	r25, 0x0A	; 10
     6af8:	90 8f       	std	Z+24, r25	; 0x18
     6afa:	87 8b       	std	Z+23, r24	; 0x17
 		rtc = rt;
-    6afc:	8a e1       	ldi	r24, 0x1A	; 26
+    6afc:	86 e1       	ldi	r24, 0x16	; 22
     6afe:	9e e0       	ldi	r25, 0x0E	; 14
     6b00:	92 8f       	std	Z+26, r25	; 0x1a
     6b02:	81 8f       	std	Z+25, r24	; 0x19
@@ -15754,7 +15754,7 @@ class uhr:public monitor
 	uint8_t Zeiger;
 	public:
 	uhr(Display *ol, RTC *rt):monitor(ol,rt)
-    6b0c:	82 ef       	ldi	r24, 0xF2	; 242
+    6b0c:	8d ee       	ldi	r24, 0xED	; 237
     6b0e:	93 e0       	ldi	r25, 0x03	; 3
     6b10:	91 83       	std	Z+1, r25	; 0x01
     6b12:	80 83       	st	Z, r24
@@ -15856,12 +15856,12 @@ void * operator new(size_t size)
     6b6e:	fc 01       	movw	r30, r24
     6b70:	16 8a       	std	Z+22, r1	; 0x16
 		oled = ol;
-    6b72:	89 e1       	ldi	r24, 0x19	; 25
+    6b72:	85 e1       	ldi	r24, 0x15	; 21
     6b74:	9a e0       	ldi	r25, 0x0A	; 10
     6b76:	90 8f       	std	Z+24, r25	; 0x18
     6b78:	87 8b       	std	Z+23, r24	; 0x17
 		rtc = rt;
-    6b7a:	8a e1       	ldi	r24, 0x1A	; 26
+    6b7a:	86 e1       	ldi	r24, 0x16	; 22
     6b7c:	9e e0       	ldi	r25, 0x0E	; 14
     6b7e:	92 8f       	std	Z+26, r25	; 0x1a
     6b80:	81 8f       	std	Z+25, r24	; 0x19
@@ -15878,7 +15878,7 @@ class tacho: public monitor
 		
 	public:
 	tacho(Display *ol,RTC *rtc):monitor(ol,rtc)
-    6b8a:	8a ef       	ldi	r24, 0xFA	; 250
+    6b8a:	85 ef       	ldi	r24, 0xF5	; 245
     6b8c:	93 e0       	ldi	r25, 0x03	; 3
     6b8e:	91 83       	std	Z+1, r25	; 0x01
     6b90:	80 83       	st	Z, r24
@@ -15974,14 +15974,14 @@ void * operator new(size_t size)
     6be4:	1c 92       	st	X, r1
     6be6:	56 97       	sbiw	r26, 0x16	; 22
 		oled = ol;
-    6be8:	29 e1       	ldi	r18, 0x19	; 25
+    6be8:	25 e1       	ldi	r18, 0x15	; 21
     6bea:	3a e0       	ldi	r19, 0x0A	; 10
     6bec:	58 96       	adiw	r26, 0x18	; 24
     6bee:	3c 93       	st	X, r19
     6bf0:	2e 93       	st	-X, r18
     6bf2:	57 97       	sbiw	r26, 0x17	; 23
 		rtc = rt;
-    6bf4:	2a e1       	ldi	r18, 0x1A	; 26
+    6bf4:	26 e1       	ldi	r18, 0x16	; 22
     6bf6:	3e e0       	ldi	r19, 0x0E	; 14
     6bf8:	5a 96       	adiw	r26, 0x1a	; 26
     6bfa:	3c 93       	st	X, r19
@@ -16006,8 +16006,8 @@ class wandern: public monitor
 	
 	public:	
 	wandern(Display *ol,RTC *rtc):monitor(ol,rtc)
-    6c14:	22 e0       	ldi	r18, 0x02	; 2
-    6c16:	34 e0       	ldi	r19, 0x04	; 4
+    6c14:	2d ef       	ldi	r18, 0xFD	; 253
+    6c16:	33 e0       	ldi	r19, 0x03	; 3
     6c18:	2d 93       	st	X+, r18
     6c1a:	3c 93       	st	X, r19
 	{
@@ -16094,12 +16094,12 @@ void * operator new(size_t size)
     6c68:	fc 01       	movw	r30, r24
     6c6a:	16 8a       	std	Z+22, r1	; 0x16
 		oled = ol;
-    6c6c:	29 e1       	ldi	r18, 0x19	; 25
+    6c6c:	25 e1       	ldi	r18, 0x15	; 21
     6c6e:	3a e0       	ldi	r19, 0x0A	; 10
     6c70:	30 8f       	std	Z+24, r19	; 0x18
     6c72:	27 8b       	std	Z+23, r18	; 0x17
 		rtc = rt;
-    6c74:	2a e1       	ldi	r18, 0x1A	; 26
+    6c74:	26 e1       	ldi	r18, 0x16	; 22
     6c76:	3e e0       	ldi	r19, 0x0E	; 14
     6c78:	32 8f       	std	Z+26, r19	; 0x1a
     6c7a:	21 8f       	std	Z+25, r18	; 0x19
@@ -16116,14 +16116,14 @@ class einstellungen: public monitor
 	private:
 	public:
 	einstellungen(Display *ol,RTC *rt): monitor(ol,rt)
-    6c84:	2a e0       	ldi	r18, 0x0A	; 10
+    6c84:	25 e0       	ldi	r18, 0x05	; 5
     6c86:	34 e0       	ldi	r19, 0x04	; 4
     6c88:	31 83       	std	Z+1, r19	; 0x01
     6c8a:	20 83       	st	Z, r18
 	{
 		char na[] = "Settings";
     6c8c:	29 e0       	ldi	r18, 0x09	; 9
-    6c8e:	e6 e1       	ldi	r30, 0x16	; 22
+    6c8e:	e1 e1       	ldi	r30, 0x11	; 17
     6c90:	f3 e0       	ldi	r31, 0x03	; 3
     6c92:	de 01       	movw	r26, r28
     6c94:	1d 96       	adiw	r26, 0x0d	; 13
@@ -16215,7 +16215,7 @@ void * operator new(size_t size)
     6ce2:	16 8a       	std	Z+22, r1	; 0x16
 		oled = ol;
     6ce4:	0f 2e       	mov	r0, r31
-    6ce6:	f9 e1       	ldi	r31, 0x19	; 25
+    6ce6:	f5 e1       	ldi	r31, 0x15	; 21
     6ce8:	cf 2e       	mov	r12, r31
     6cea:	fa e0       	ldi	r31, 0x0A	; 10
     6cec:	df 2e       	mov	r13, r31
@@ -16224,7 +16224,7 @@ void * operator new(size_t size)
     6cf2:	c7 8a       	std	Z+23, r12	; 0x17
 		rtc = rt;
     6cf4:	0f 2e       	mov	r0, r31
-    6cf6:	fa e1       	ldi	r31, 0x1A	; 26
+    6cf6:	f6 e1       	ldi	r31, 0x16	; 22
     6cf8:	ef 2e       	mov	r14, r31
     6cfa:	fe e0       	ldi	r31, 0x0E	; 14
     6cfc:	ff 2e       	mov	r15, r31
@@ -16244,7 +16244,7 @@ class offscreen: public monitor
 	
 	public:
 	offscreen(Display *ol, RTC *rt):monitor(ol,rt){
-    6d0c:	82 e2       	ldi	r24, 0x22	; 34
+    6d0c:	8d e1       	ldi	r24, 0x1D	; 29
     6d0e:	94 e0       	ldi	r25, 0x04	; 4
     6d10:	91 83       	std	Z+1, r25	; 0x01
     6d12:	80 83       	st	Z, r24
@@ -16291,14 +16291,14 @@ class menue: public monitor
 	private:
 	public:
 	menue(Display *ol, RTC *rt):monitor(ol,rt)
-    6d32:	2a e1       	ldi	r18, 0x1A	; 26
+    6d32:	25 e1       	ldi	r18, 0x15	; 21
     6d34:	34 e0       	ldi	r19, 0x04	; 4
     6d36:	31 83       	std	Z+1, r19	; 0x01
     6d38:	20 83       	st	Z, r18
 	{
 		char na[] = "Menue";
     6d3a:	26 e0       	ldi	r18, 0x06	; 6
-    6d3c:	ef e1       	ldi	r30, 0x1F	; 31
+    6d3c:	ea e1       	ldi	r30, 0x1A	; 26
     6d3e:	f3 e0       	ldi	r31, 0x03	; 3
     6d40:	de 01       	movw	r26, r28
     6d42:	1d 96       	adiw	r26, 0x0d	; 13
@@ -16377,7 +16377,7 @@ class menue: public monitor
     6d8a:	8b 87       	std	Y+11, r24	; 0x0b
 	
 	druck.bmp180_getcalibration();
-    6d8c:	85 ef       	ldi	r24, 0xF5	; 245
+    6d8c:	81 ef       	ldi	r24, 0xF1	; 241
     6d8e:	98 e0       	ldi	r25, 0x08	; 8
     6d90:	0e 94 a7 03 	call	0x74e	; 0x74e <_ZN6BMP18021bmp180_getcalibrationEv>
 	//speichern der Werte und per hand rechnen
@@ -16386,10 +16386,10 @@ class menue: public monitor
 	while (1) 
     {
 		tastaturhandler(Folien[position],Tastatur.unified());
-    6d94:	8d e0       	ldi	r24, 0x0D	; 13
+    6d94:	89 e0       	ldi	r24, 0x09	; 9
     6d96:	9a e0       	ldi	r25, 0x0A	; 10
     6d98:	0e 94 70 24 	call	0x48e0	; 0x48e0 <_ZN9Interface7unifiedEv>
-    6d9c:	e0 91 e8 08 	lds	r30, 0x08E8
+    6d9c:	e0 91 e4 08 	lds	r30, 0x08E4
     6da0:	f0 e0       	ldi	r31, 0x00	; 0
     6da2:	ee 0f       	add	r30, r30
     6da4:	ff 1f       	adc	r31, r31
@@ -16404,7 +16404,7 @@ class menue: public monitor
     6db6:	91 81       	ldd	r25, Z+1	; 0x01
     6db8:	0e 94 c7 2e 	call	0x5d8e	; 0x5d8e <_Z15tastaturhandlerP7monitorh>
 		maininterupthandler(Folien[position]);
-    6dbc:	e0 91 e8 08 	lds	r30, 0x08E8
+    6dbc:	e0 91 e4 08 	lds	r30, 0x08E4
     6dc0:	f0 e0       	ldi	r31, 0x00	; 0
     6dc2:	ee 0f       	add	r30, r30
     6dc4:	ff 1f       	adc	r31, r31
@@ -16456,12 +16456,12 @@ void uhreinstellen(){
     6e0c:	0f be       	out	0x3f, r0	; 63
     6e0e:	cd bf       	out	0x3d, r28	; 61
 	rtc.RTCstop();
-    6e10:	8a e1       	ldi	r24, 0x1A	; 26
+    6e10:	86 e1       	ldi	r24, 0x16	; 22
     6e12:	9e e0       	ldi	r25, 0x0E	; 14
     6e14:	c5 d7       	rcall	.+3978   	; 0x7da0 <_ZN3RTC7RTCstopEv>
 	
 	oled.clearFrame();
-    6e16:	89 e1       	ldi	r24, 0x19	; 25
+    6e16:	85 e1       	ldi	r24, 0x15	; 21
     6e18:	9a e0       	ldi	r25, 0x0A	; 10
     6e1a:	0e 94 45 0b 	call	0x168a	; 0x168a <_ZN7Display10clearFrameEv>
 	char buffer[20];
@@ -16489,7 +16489,7 @@ void uhreinstellen(){
 		}
 		buffer[0]=rtc.Stunden/10;
     6e34:	0f 2e       	mov	r0, r31
-    6e36:	fa e1       	ldi	r31, 0x1A	; 26
+    6e36:	f6 e1       	ldi	r31, 0x16	; 22
     6e38:	cf 2e       	mov	r12, r31
     6e3a:	fe e0       	ldi	r31, 0x0E	; 14
     6e3c:	df 2e       	mov	r13, r31
@@ -16519,7 +16519,7 @@ void uhreinstellen(){
 	uint8_t pos=0;
 	while(pos<11){
 		buffersize=sprintf(buffer,"Uhreinstellung");
-    6e56:	e5 e2       	ldi	r30, 0x25	; 37
+    6e56:	e0 e2       	ldi	r30, 0x20	; 32
     6e58:	f3 e0       	ldi	r31, 0x03	; 3
     6e5a:	d2 01       	movw	r26, r4
     6e5c:	87 2d       	mov	r24, r7
@@ -16537,7 +16537,7 @@ void uhreinstellen(){
     6e70:	1f 01       	movw	r2, r30
     6e72:	2f 2d       	mov	r18, r15
     6e74:	41 2f       	mov	r20, r17
-    6e76:	89 e1       	ldi	r24, 0x19	; 25
+    6e76:	85 e1       	ldi	r24, 0x15	; 21
     6e78:	9a e0       	ldi	r25, 0x0A	; 10
     6e7a:	0e 94 68 0c 	call	0x18d0	; 0x18d0 <_ZN7Display9draw_ASCIEhhh>
     6e7e:	1a 5f       	subi	r17, 0xFA	; 250
@@ -16570,7 +16570,7 @@ void uhreinstellen(){
     6e9e:	1f 01       	movw	r2, r30
     6ea0:	28 e0       	ldi	r18, 0x08	; 8
     6ea2:	41 2f       	mov	r20, r17
-    6ea4:	89 e1       	ldi	r24, 0x19	; 25
+    6ea4:	85 e1       	ldi	r24, 0x15	; 21
     6ea6:	9a e0       	ldi	r25, 0x0A	; 10
     6ea8:	0e 94 68 0c 	call	0x18d0	; 0x18d0 <_ZN7Display9draw_ASCIEhhh>
     6eac:	1a 5f       	subi	r17, 0xFA	; 250
@@ -16702,7 +16702,7 @@ void uhreinstellen(){
     6f74:	42 2d       	mov	r20, r2
     6f76:	f8 01       	movw	r30, r16
     6f78:	60 81       	ld	r22, Z
-    6f7a:	89 e1       	ldi	r24, 0x19	; 25
+    6f7a:	85 e1       	ldi	r24, 0x15	; 21
     6f7c:	9a e0       	ldi	r25, 0x0A	; 10
     6f7e:	0e 94 b2 0c 	call	0x1964	; 0x1964 <_ZN7Display16draw_number16x16Ehhh>
 		buffer[10]=rtc.Monat%10;
@@ -16723,7 +16723,7 @@ void uhreinstellen(){
     6f8a:	24 e1       	ldi	r18, 0x14	; 20
     6f8c:	48 e2       	ldi	r20, 0x28	; 40
     6f8e:	6b 81       	ldd	r22, Y+3	; 0x03
-    6f90:	89 e1       	ldi	r24, 0x19	; 25
+    6f90:	85 e1       	ldi	r24, 0x15	; 21
     6f92:	9a e0       	ldi	r25, 0x0A	; 10
     6f94:	0e 94 68 0c 	call	0x18d0	; 0x18d0 <_ZN7Display9draw_ASCIEhhh>
     6f98:	e4 cf       	rjmp	.-56     	; 0x6f62 <_Z13uhreinstellenv+0x186>
@@ -16758,7 +16758,7 @@ void uhreinstellen(){
     6fb8:	42 2d       	mov	r20, r2
     6fba:	f8 01       	movw	r30, r16
     6fbc:	60 81       	ld	r22, Z
-    6fbe:	89 e1       	ldi	r24, 0x19	; 25
+    6fbe:	85 e1       	ldi	r24, 0x15	; 21
     6fc0:	9a e0       	ldi	r25, 0x0A	; 10
     6fc2:	0e 94 b2 0c 	call	0x1964	; 0x1964 <_ZN7Display16draw_number16x16Ehhh>
     6fc6:	09 c0       	rjmp	.+18     	; 0x6fda <_Z13uhreinstellenv+0x1fe>
@@ -16770,7 +16770,7 @@ void uhreinstellen(){
     6fcc:	42 0d       	add	r20, r2
     6fce:	f8 01       	movw	r30, r16
     6fd0:	60 81       	ld	r22, Z
-    6fd2:	89 e1       	ldi	r24, 0x19	; 25
+    6fd2:	85 e1       	ldi	r24, 0x15	; 21
     6fd4:	9a e0       	ldi	r25, 0x0A	; 10
     6fd6:	0e 94 68 0c 	call	0x18d0	; 0x18d0 <_ZN7Display9draw_ASCIEhhh>
 			}
@@ -16793,11 +16793,11 @@ void uhreinstellen(){
 		}
 
 		oled.sendFrame();
-    6fea:	89 e1       	ldi	r24, 0x19	; 25
+    6fea:	85 e1       	ldi	r24, 0x15	; 21
     6fec:	9a e0       	ldi	r25, 0x0A	; 10
     6fee:	0e 94 c5 0b 	call	0x178a	; 0x178a <_ZN7Display9sendFrameEv>
 		oled.clearFrame();
-    6ff2:	89 e1       	ldi	r24, 0x19	; 25
+    6ff2:	85 e1       	ldi	r24, 0x15	; 21
     6ff4:	9a e0       	ldi	r25, 0x0A	; 10
     6ff6:	0e 94 45 0b 	call	0x168a	; 0x168a <_ZN7Display10clearFrameEv>
 		switch (pos) {
@@ -16813,7 +16813,7 @@ void uhreinstellen(){
     700c:	0c 94 7a 46 	jmp	0x8cf4	; 0x8cf4 <__tablejump2__>
 			case 0:
 			rtc.Stunden=Tastatur.ZahlenausTastatur()*10;
-    7010:	8d e0       	ldi	r24, 0x0D	; 13
+    7010:	89 e0       	ldi	r24, 0x09	; 9
     7012:	9a e0       	ldi	r25, 0x0A	; 10
     7014:	0e 94 94 24 	call	0x4928	; 0x4928 <_ZN9Interface17ZahlenausTastaturEv>
     7018:	88 0f       	add	r24, r24
@@ -16830,7 +16830,7 @@ void uhreinstellen(){
     702a:	10 8a       	std	Z+16, r1	; 0x10
 				pos=-1;
 				buffersize=sprintf(buffer,"Stunden falsch");
-    702c:	e4 e3       	ldi	r30, 0x34	; 52
+    702c:	ef e2       	ldi	r30, 0x2F	; 47
     702e:	f3 e0       	ldi	r31, 0x03	; 3
     7030:	d2 01       	movw	r26, r4
     7032:	87 2d       	mov	r24, r7
@@ -16846,7 +16846,7 @@ void uhreinstellen(){
     7042:	5f 01       	movw	r10, r30
     7044:	28 e3       	ldi	r18, 0x38	; 56
     7046:	41 2f       	mov	r20, r17
-    7048:	89 e1       	ldi	r24, 0x19	; 25
+    7048:	85 e1       	ldi	r24, 0x15	; 21
     704a:	9a e0       	ldi	r25, 0x0A	; 10
     704c:	0e 94 68 0c 	call	0x18d0	; 0x18d0 <_ZN7Display9draw_ASCIEhhh>
     7050:	1a 5f       	subi	r17, 0xFA	; 250
@@ -16873,7 +16873,7 @@ void uhreinstellen(){
 			break;
 			case 1:
 			rtc.Stunden+=Tastatur.ZahlenausTastatur();
-    705c:	8d e0       	ldi	r24, 0x0D	; 13
+    705c:	89 e0       	ldi	r24, 0x09	; 9
     705e:	9a e0       	ldi	r25, 0x0A	; 10
     7060:	0e 94 94 24 	call	0x4928	; 0x4928 <_ZN9Interface17ZahlenausTastaturEv>
     7064:	f6 01       	movw	r30, r12
@@ -16898,7 +16898,7 @@ void uhreinstellen(){
     7078:	10 8a       	std	Z+16, r1	; 0x10
 				pos=-1;
 				buffersize=sprintf(buffer,"Stunden falsch");
-    707a:	e4 e3       	ldi	r30, 0x34	; 52
+    707a:	ef e2       	ldi	r30, 0x2F	; 47
     707c:	f3 e0       	ldi	r31, 0x03	; 3
     707e:	d2 01       	movw	r26, r4
     7080:	87 2d       	mov	r24, r7
@@ -16914,7 +16914,7 @@ void uhreinstellen(){
     7090:	5f 01       	movw	r10, r30
     7092:	28 e3       	ldi	r18, 0x38	; 56
     7094:	41 2f       	mov	r20, r17
-    7096:	89 e1       	ldi	r24, 0x19	; 25
+    7096:	85 e1       	ldi	r24, 0x15	; 21
     7098:	9a e0       	ldi	r25, 0x0A	; 10
     709a:	0e 94 68 0c 	call	0x18d0	; 0x18d0 <_ZN7Display9draw_ASCIEhhh>
     709e:	1a 5f       	subi	r17, 0xFA	; 250
@@ -16941,7 +16941,7 @@ void uhreinstellen(){
 			break;
 			case 2:
 			rtc.Minuten=Tastatur.ZahlenausTastatur()*10;
-    70aa:	8d e0       	ldi	r24, 0x0D	; 13
+    70aa:	89 e0       	ldi	r24, 0x09	; 9
     70ac:	9a e0       	ldi	r25, 0x0A	; 10
     70ae:	0e 94 94 24 	call	0x4928	; 0x4928 <_ZN9Interface17ZahlenausTastaturEv>
     70b2:	88 0f       	add	r24, r24
@@ -16967,7 +16967,7 @@ void uhreinstellen(){
     70c8:	11 8a       	std	Z+17, r1	; 0x11
 				pos=1;
 				buffersize=sprintf(buffer,"Minuten falsch");
-    70ca:	e3 e4       	ldi	r30, 0x43	; 67
+    70ca:	ee e3       	ldi	r30, 0x3E	; 62
     70cc:	f3 e0       	ldi	r31, 0x03	; 3
     70ce:	d2 01       	movw	r26, r4
     70d0:	87 2d       	mov	r24, r7
@@ -16983,7 +16983,7 @@ void uhreinstellen(){
     70e0:	5f 01       	movw	r10, r30
     70e2:	28 e3       	ldi	r18, 0x38	; 56
     70e4:	41 2f       	mov	r20, r17
-    70e6:	89 e1       	ldi	r24, 0x19	; 25
+    70e6:	85 e1       	ldi	r24, 0x15	; 21
     70e8:	9a e0       	ldi	r25, 0x0A	; 10
     70ea:	0e 94 68 0c 	call	0x18d0	; 0x18d0 <_ZN7Display9draw_ASCIEhhh>
     70ee:	1a 5f       	subi	r17, 0xFA	; 250
@@ -17010,7 +17010,7 @@ void uhreinstellen(){
 			break;
 			case 3:
 			rtc.Minuten+=Tastatur.ZahlenausTastatur();
-    70fa:	8d e0       	ldi	r24, 0x0D	; 13
+    70fa:	89 e0       	ldi	r24, 0x09	; 9
     70fc:	9a e0       	ldi	r25, 0x0A	; 10
     70fe:	0e 94 94 24 	call	0x4928	; 0x4928 <_ZN9Interface17ZahlenausTastaturEv>
     7102:	f6 01       	movw	r30, r12
@@ -17035,7 +17035,7 @@ void uhreinstellen(){
     7116:	11 8a       	std	Z+17, r1	; 0x11
 				pos=1;
 				buffersize=sprintf(buffer,"Minuten falsch");
-    7118:	e3 e4       	ldi	r30, 0x43	; 67
+    7118:	ee e3       	ldi	r30, 0x3E	; 62
     711a:	f3 e0       	ldi	r31, 0x03	; 3
     711c:	d2 01       	movw	r26, r4
     711e:	87 2d       	mov	r24, r7
@@ -17051,7 +17051,7 @@ void uhreinstellen(){
     712e:	5f 01       	movw	r10, r30
     7130:	28 e3       	ldi	r18, 0x38	; 56
     7132:	41 2f       	mov	r20, r17
-    7134:	89 e1       	ldi	r24, 0x19	; 25
+    7134:	85 e1       	ldi	r24, 0x15	; 21
     7136:	9a e0       	ldi	r25, 0x0A	; 10
     7138:	0e 94 68 0c 	call	0x18d0	; 0x18d0 <_ZN7Display9draw_ASCIEhhh>
     713c:	1a 5f       	subi	r17, 0xFA	; 250
@@ -17078,7 +17078,7 @@ void uhreinstellen(){
 			break;
 			case 4:
 			rtc.Tag=Tastatur.ZahlenausTastatur()*10;
-    7148:	8d e0       	ldi	r24, 0x0D	; 13
+    7148:	89 e0       	ldi	r24, 0x09	; 9
     714a:	9a e0       	ldi	r25, 0x0A	; 10
     714c:	0e 94 94 24 	call	0x4928	; 0x4928 <_ZN9Interface17ZahlenausTastaturEv>
     7150:	88 0f       	add	r24, r24
@@ -17105,7 +17105,7 @@ void uhreinstellen(){
 				pos=3;
 				buffersize=sprintf(buffer,"Tag falsch");
     7168:	8b e0       	ldi	r24, 0x0B	; 11
-    716a:	e2 e5       	ldi	r30, 0x52	; 82
+    716a:	ed e4       	ldi	r30, 0x4D	; 77
     716c:	f3 e0       	ldi	r31, 0x03	; 3
     716e:	d2 01       	movw	r26, r4
     7170:	01 90       	ld	r0, Z+
@@ -17120,7 +17120,7 @@ void uhreinstellen(){
     717e:	5f 01       	movw	r10, r30
     7180:	28 e3       	ldi	r18, 0x38	; 56
     7182:	41 2f       	mov	r20, r17
-    7184:	89 e1       	ldi	r24, 0x19	; 25
+    7184:	85 e1       	ldi	r24, 0x15	; 21
     7186:	9a e0       	ldi	r25, 0x0A	; 10
     7188:	0e 94 68 0c 	call	0x18d0	; 0x18d0 <_ZN7Display9draw_ASCIEhhh>
     718c:	1a 5f       	subi	r17, 0xFA	; 250
@@ -17149,7 +17149,7 @@ void uhreinstellen(){
 			break;
 			case 5:
 			rtc.Tag+=Tastatur.ZahlenausTastatur();
-    719c:	8d e0       	ldi	r24, 0x0D	; 13
+    719c:	89 e0       	ldi	r24, 0x09	; 9
     719e:	9a e0       	ldi	r25, 0x0A	; 10
     71a0:	0e 94 94 24 	call	0x4928	; 0x4928 <_ZN9Interface17ZahlenausTastaturEv>
     71a4:	f6 01       	movw	r30, r12
@@ -17175,7 +17175,7 @@ void uhreinstellen(){
 				pos=3;
 				buffersize=sprintf(buffer,"Tag falsch");
     71ba:	8b e0       	ldi	r24, 0x0B	; 11
-    71bc:	e2 e5       	ldi	r30, 0x52	; 82
+    71bc:	ed e4       	ldi	r30, 0x4D	; 77
     71be:	f3 e0       	ldi	r31, 0x03	; 3
     71c0:	d2 01       	movw	r26, r4
     71c2:	01 90       	ld	r0, Z+
@@ -17190,7 +17190,7 @@ void uhreinstellen(){
     71d0:	5f 01       	movw	r10, r30
     71d2:	28 e3       	ldi	r18, 0x38	; 56
     71d4:	41 2f       	mov	r20, r17
-    71d6:	89 e1       	ldi	r24, 0x19	; 25
+    71d6:	85 e1       	ldi	r24, 0x15	; 21
     71d8:	9a e0       	ldi	r25, 0x0A	; 10
     71da:	0e 94 68 0c 	call	0x18d0	; 0x18d0 <_ZN7Display9draw_ASCIEhhh>
     71de:	1a 5f       	subi	r17, 0xFA	; 250
@@ -17219,7 +17219,7 @@ void uhreinstellen(){
 			break;
 			case 6:
 			rtc.Monat=Tastatur.ZahlenausTastatur()*10;
-    71ee:	8d e0       	ldi	r24, 0x0D	; 13
+    71ee:	89 e0       	ldi	r24, 0x09	; 9
     71f0:	9a e0       	ldi	r25, 0x0A	; 10
     71f2:	0e 94 94 24 	call	0x4928	; 0x4928 <_ZN9Interface17ZahlenausTastaturEv>
     71f6:	88 0f       	add	r24, r24
@@ -17246,7 +17246,7 @@ void uhreinstellen(){
 				pos=5;
 				buffersize=sprintf(buffer,"Monat falsch");
     720e:	8d e0       	ldi	r24, 0x0D	; 13
-    7210:	ed e5       	ldi	r30, 0x5D	; 93
+    7210:	e8 e5       	ldi	r30, 0x58	; 88
     7212:	f3 e0       	ldi	r31, 0x03	; 3
     7214:	d2 01       	movw	r26, r4
     7216:	01 90       	ld	r0, Z+
@@ -17261,7 +17261,7 @@ void uhreinstellen(){
     7224:	5f 01       	movw	r10, r30
     7226:	28 e3       	ldi	r18, 0x38	; 56
     7228:	41 2f       	mov	r20, r17
-    722a:	89 e1       	ldi	r24, 0x19	; 25
+    722a:	85 e1       	ldi	r24, 0x15	; 21
     722c:	9a e0       	ldi	r25, 0x0A	; 10
     722e:	0e 94 68 0c 	call	0x18d0	; 0x18d0 <_ZN7Display9draw_ASCIEhhh>
     7232:	1a 5f       	subi	r17, 0xFA	; 250
@@ -17290,7 +17290,7 @@ void uhreinstellen(){
 			break;
 			case 7:
 			rtc.Monat+=Tastatur.ZahlenausTastatur();
-    7242:	8d e0       	ldi	r24, 0x0D	; 13
+    7242:	89 e0       	ldi	r24, 0x09	; 9
     7244:	9a e0       	ldi	r25, 0x0A	; 10
     7246:	0e 94 94 24 	call	0x4928	; 0x4928 <_ZN9Interface17ZahlenausTastaturEv>
     724a:	f6 01       	movw	r30, r12
@@ -17316,7 +17316,7 @@ void uhreinstellen(){
 				pos=5;
 				buffersize=sprintf(buffer,"Monat falsch");
     7260:	8d e0       	ldi	r24, 0x0D	; 13
-    7262:	ed e5       	ldi	r30, 0x5D	; 93
+    7262:	e8 e5       	ldi	r30, 0x58	; 88
     7264:	f3 e0       	ldi	r31, 0x03	; 3
     7266:	d2 01       	movw	r26, r4
     7268:	01 90       	ld	r0, Z+
@@ -17333,7 +17333,7 @@ void uhreinstellen(){
     727a:	1f 01       	movw	r2, r30
     727c:	28 e3       	ldi	r18, 0x38	; 56
     727e:	41 2f       	mov	r20, r17
-    7280:	89 e1       	ldi	r24, 0x19	; 25
+    7280:	85 e1       	ldi	r24, 0x15	; 21
     7282:	9a e0       	ldi	r25, 0x0A	; 10
     7284:	0e 94 68 0c 	call	0x18d0	; 0x18d0 <_ZN7Display9draw_ASCIEhhh>
     7288:	1a 5f       	subi	r17, 0xFA	; 250
@@ -17382,7 +17382,7 @@ void uhreinstellen(){
 					pos=3;
 					buffersize=sprintf(buffer,"Tag falsch");
     72b4:	8b e0       	ldi	r24, 0x0B	; 11
-    72b6:	e2 e5       	ldi	r30, 0x52	; 82
+    72b6:	ed e4       	ldi	r30, 0x4D	; 77
     72b8:	f3 e0       	ldi	r31, 0x03	; 3
     72ba:	d2 01       	movw	r26, r4
     72bc:	01 90       	ld	r0, Z+
@@ -17397,7 +17397,7 @@ void uhreinstellen(){
     72ca:	5f 01       	movw	r10, r30
     72cc:	28 e3       	ldi	r18, 0x38	; 56
     72ce:	41 2f       	mov	r20, r17
-    72d0:	89 e1       	ldi	r24, 0x19	; 25
+    72d0:	85 e1       	ldi	r24, 0x15	; 21
     72d2:	9a e0       	ldi	r25, 0x0A	; 10
     72d4:	0e 94 68 0c 	call	0x18d0	; 0x18d0 <_ZN7Display9draw_ASCIEhhh>
     72d8:	1a 5f       	subi	r17, 0xFA	; 250
@@ -17442,7 +17442,7 @@ void uhreinstellen(){
 					pos=3;
 					buffersize=sprintf(buffer,"Tag falsch");
     72fc:	8b e0       	ldi	r24, 0x0B	; 11
-    72fe:	e2 e5       	ldi	r30, 0x52	; 82
+    72fe:	ed e4       	ldi	r30, 0x4D	; 77
     7300:	f3 e0       	ldi	r31, 0x03	; 3
     7302:	d2 01       	movw	r26, r4
     7304:	01 90       	ld	r0, Z+
@@ -17457,7 +17457,7 @@ void uhreinstellen(){
     7312:	5f 01       	movw	r10, r30
     7314:	28 e3       	ldi	r18, 0x38	; 56
     7316:	41 2f       	mov	r20, r17
-    7318:	89 e1       	ldi	r24, 0x19	; 25
+    7318:	85 e1       	ldi	r24, 0x15	; 21
     731a:	9a e0       	ldi	r25, 0x0A	; 10
     731c:	0e 94 68 0c 	call	0x18d0	; 0x18d0 <_ZN7Display9draw_ASCIEhhh>
     7320:	1a 5f       	subi	r17, 0xFA	; 250
@@ -17486,7 +17486,7 @@ void uhreinstellen(){
 			break;
 			case 8:
 			rtc.Jahr=Tastatur.ZahlenausTastatur()*10;
-    7330:	8d e0       	ldi	r24, 0x0D	; 13
+    7330:	89 e0       	ldi	r24, 0x09	; 9
     7332:	9a e0       	ldi	r25, 0x0A	; 10
     7334:	0e 94 94 24 	call	0x4928	; 0x4928 <_ZN9Interface17ZahlenausTastaturEv>
     7338:	88 0f       	add	r24, r24
@@ -17513,7 +17513,7 @@ void uhreinstellen(){
 				pos=7;
 				buffersize=sprintf(buffer,"Jahr falsch");
     7350:	8c e0       	ldi	r24, 0x0C	; 12
-    7352:	ea e6       	ldi	r30, 0x6A	; 106
+    7352:	e5 e6       	ldi	r30, 0x65	; 101
     7354:	f3 e0       	ldi	r31, 0x03	; 3
     7356:	d2 01       	movw	r26, r4
     7358:	01 90       	ld	r0, Z+
@@ -17528,7 +17528,7 @@ void uhreinstellen(){
     7366:	5f 01       	movw	r10, r30
     7368:	28 e3       	ldi	r18, 0x38	; 56
     736a:	41 2f       	mov	r20, r17
-    736c:	89 e1       	ldi	r24, 0x19	; 25
+    736c:	85 e1       	ldi	r24, 0x15	; 21
     736e:	9a e0       	ldi	r25, 0x0A	; 10
     7370:	0e 94 68 0c 	call	0x18d0	; 0x18d0 <_ZN7Display9draw_ASCIEhhh>
     7374:	1a 5f       	subi	r17, 0xFA	; 250
@@ -17557,7 +17557,7 @@ void uhreinstellen(){
 			break;
 			case 9:
 			rtc.Jahr+=Tastatur.ZahlenausTastatur();
-    7384:	8d e0       	ldi	r24, 0x0D	; 13
+    7384:	89 e0       	ldi	r24, 0x09	; 9
     7386:	9a e0       	ldi	r25, 0x0A	; 10
     7388:	0e 94 94 24 	call	0x4928	; 0x4928 <_ZN9Interface17ZahlenausTastaturEv>
     738c:	f6 01       	movw	r30, r12
@@ -17574,7 +17574,7 @@ void uhreinstellen(){
 				pos=7;
 				buffersize=sprintf(buffer,"Jahr falsch");
     739e:	8c e0       	ldi	r24, 0x0C	; 12
-    73a0:	ea e6       	ldi	r30, 0x6A	; 106
+    73a0:	e5 e6       	ldi	r30, 0x65	; 101
     73a2:	f3 e0       	ldi	r31, 0x03	; 3
     73a4:	d2 01       	movw	r26, r4
     73a6:	01 90       	ld	r0, Z+
@@ -17591,7 +17591,7 @@ void uhreinstellen(){
     73b8:	1f 01       	movw	r2, r30
     73ba:	28 e3       	ldi	r18, 0x38	; 56
     73bc:	41 2f       	mov	r20, r17
-    73be:	89 e1       	ldi	r24, 0x19	; 25
+    73be:	85 e1       	ldi	r24, 0x15	; 21
     73c0:	9a e0       	ldi	r25, 0x0A	; 10
     73c2:	0e 94 68 0c 	call	0x18d0	; 0x18d0 <_ZN7Display9draw_ASCIEhhh>
     73c6:	1a 5f       	subi	r17, 0xFA	; 250
@@ -17638,7 +17638,7 @@ void uhreinstellen(){
 						pos=3;
 						buffersize=sprintf(buffer,"Tag falsch");
     73ea:	8b e0       	ldi	r24, 0x0B	; 11
-    73ec:	e2 e5       	ldi	r30, 0x52	; 82
+    73ec:	ed e4       	ldi	r30, 0x4D	; 77
     73ee:	f3 e0       	ldi	r31, 0x03	; 3
     73f0:	d2 01       	movw	r26, r4
     73f2:	01 90       	ld	r0, Z+
@@ -17652,7 +17652,7 @@ void uhreinstellen(){
     73fe:	5f 01       	movw	r10, r30
     7400:	28 e3       	ldi	r18, 0x38	; 56
     7402:	41 2f       	mov	r20, r17
-    7404:	89 e1       	ldi	r24, 0x19	; 25
+    7404:	85 e1       	ldi	r24, 0x15	; 21
     7406:	9a e0       	ldi	r25, 0x0A	; 10
     7408:	0e 94 68 0c 	call	0x18d0	; 0x18d0 <_ZN7Display9draw_ASCIEhhh>
     740c:	1a 5f       	subi	r17, 0xFA	; 250
@@ -17694,7 +17694,7 @@ void uhreinstellen(){
 						pos=3;
 						buffersize=sprintf(buffer,"Tag falsch");
     742a:	8b e0       	ldi	r24, 0x0B	; 11
-    742c:	e2 e5       	ldi	r30, 0x52	; 82
+    742c:	ed e4       	ldi	r30, 0x4D	; 77
     742e:	f3 e0       	ldi	r31, 0x03	; 3
     7430:	d2 01       	movw	r26, r4
     7432:	01 90       	ld	r0, Z+
@@ -17709,7 +17709,7 @@ void uhreinstellen(){
     7440:	5f 01       	movw	r10, r30
     7442:	28 e3       	ldi	r18, 0x38	; 56
     7444:	41 2f       	mov	r20, r17
-    7446:	89 e1       	ldi	r24, 0x19	; 25
+    7446:	85 e1       	ldi	r24, 0x15	; 21
     7448:	9a e0       	ldi	r25, 0x0A	; 10
     744a:	0e 94 68 0c 	call	0x18d0	; 0x18d0 <_ZN7Display9draw_ASCIEhhh>
     744e:	1a 5f       	subi	r17, 0xFA	; 250
@@ -17759,7 +17759,7 @@ void uhreinstellen(){
 	}
 	
 	rtc.Sekunden		= 0;
-    746a:	0a e1       	ldi	r16, 0x1A	; 26
+    746a:	06 e1       	ldi	r16, 0x16	; 22
     746c:	1e e0       	ldi	r17, 0x0E	; 14
     746e:	f8 01       	movw	r30, r16
     7470:	12 8a       	std	Z+18, r1	; 0x12
@@ -17797,7 +17797,7 @@ void uhreinstellen(){
     74aa:	0e 94 42 2b 	call	0x5684	; 0x5684 <_Z12EEPROM_Writejh>
 	
 	oled.clearFrame();
-    74ae:	89 e1       	ldi	r24, 0x19	; 25
+    74ae:	85 e1       	ldi	r24, 0x15	; 21
     74b0:	9a e0       	ldi	r25, 0x0A	; 10
     74b2:	0e 94 45 0b 	call	0x168a	; 0x168a <_ZN7Display10clearFrameEv>
 	rtc.ausgabedatumneu();
@@ -18044,7 +18044,7 @@ void uhreinstellen(){
 		{
 			buffersize=sprintf(buffer,"Zeit einstellen");
     75e8:	80 e1       	ldi	r24, 0x10	; 16
-    75ea:	e6 e7       	ldi	r30, 0x76	; 118
+    75ea:	e1 e7       	ldi	r30, 0x71	; 113
     75ec:	f3 e0       	ldi	r31, 0x03	; 3
     75ee:	d7 01       	movw	r26, r14
     75f0:	01 90       	ld	r0, Z+
@@ -18072,7 +18072,7 @@ void uhreinstellen(){
     761c:	88 f3       	brcs	.-30     	; 0x7600 <_ZN13einstellungen4drawEv+0xf0>
 			buffersize=sprintf(buffer,"g bestimmen");
     761e:	8c e0       	ldi	r24, 0x0C	; 12
-    7620:	e6 e8       	ldi	r30, 0x86	; 134
+    7620:	e1 e8       	ldi	r30, 0x81	; 129
     7622:	f3 e0       	ldi	r31, 0x03	; 3
     7624:	d7 01       	movw	r26, r14
     7626:	01 90       	ld	r0, Z+
@@ -18100,7 +18100,7 @@ void uhreinstellen(){
     7652:	88 f3       	brcs	.-30     	; 0x7636 <_ZN13einstellungen4drawEv+0x126>
 			buffersize=sprintf(buffer,"Versionsnummer");
     7654:	8f e0       	ldi	r24, 0x0F	; 15
-    7656:	e2 e9       	ldi	r30, 0x92	; 146
+    7656:	ed e8       	ldi	r30, 0x8D	; 141
     7658:	f3 e0       	ldi	r31, 0x03	; 3
     765a:	d7 01       	movw	r26, r14
     765c:	01 90       	ld	r0, Z+
@@ -18127,12 +18127,12 @@ void uhreinstellen(){
     7686:	18 17       	cp	r17, r24
     7688:	88 f3       	brcs	.-30     	; 0x766c <_ZN13einstellungen4drawEv+0x15c>
 			buffersize=sprintf(buffer,"Mount SD: %u", (bool)(statusreg&(1<<mounttingstat)));
-    768a:	80 91 e9 08 	lds	r24, 0x08E9
+    768a:	80 91 e5 08 	lds	r24, 0x08E5
     768e:	86 95       	lsr	r24
     7690:	81 70       	andi	r24, 0x01	; 1
     7692:	1f 92       	push	r1
     7694:	8f 93       	push	r24
-    7696:	81 ea       	ldi	r24, 0xA1	; 161
+    7696:	8c e9       	ldi	r24, 0x9C	; 156
     7698:	93 e0       	ldi	r25, 0x03	; 3
     769a:	9f 93       	push	r25
     769c:	8f 93       	push	r24
@@ -18166,13 +18166,13 @@ void uhreinstellen(){
     76d6:	18 17       	cp	r17, r24
     76d8:	88 f3       	brcs	.-30     	; 0x76bc <_ZN13einstellungen4drawEv+0x1ac>
 			buffersize=sprintf(buffer,"Logging:  %u", (bool)(statusreg&(1<<loggingstat)));
-    76da:	80 91 e9 08 	lds	r24, 0x08E9
+    76da:	80 91 e5 08 	lds	r24, 0x08E5
     76de:	82 fb       	bst	r24, 2
     76e0:	88 27       	eor	r24, r24
     76e2:	80 f9       	bld	r24, 0
     76e4:	1f 92       	push	r1
     76e6:	8f 93       	push	r24
-    76e8:	8e ea       	ldi	r24, 0xAE	; 174
+    76e8:	89 ea       	ldi	r24, 0xA9	; 169
     76ea:	93 e0       	ldi	r25, 0x03	; 3
     76ec:	9f 93       	push	r25
     76ee:	8f 93       	push	r24
@@ -18245,7 +18245,7 @@ void uhreinstellen(){
 			//g bestimmen einbauen
 			buffersize=sprintf(buffer,"Geraet nicht bewegen");
     7762:	85 e1       	ldi	r24, 0x15	; 21
-    7764:	eb eb       	ldi	r30, 0xBB	; 187
+    7764:	e6 eb       	ldi	r30, 0xB6	; 182
     7766:	f3 e0       	ldi	r31, 0x03	; 3
     7768:	d7 01       	movw	r26, r14
     776a:	01 90       	ld	r0, Z+
@@ -18273,7 +18273,7 @@ void uhreinstellen(){
     7796:	88 f3       	brcs	.-30     	; 0x777a <_ZN13einstellungen4drawEv+0x26a>
 			buffersize=sprintf(buffer,"* fuer start");
     7798:	8d e0       	ldi	r24, 0x0D	; 13
-    779a:	e0 ed       	ldi	r30, 0xD0	; 208
+    779a:	eb ec       	ldi	r30, 0xCB	; 203
     779c:	f3 e0       	ldi	r31, 0x03	; 3
     779e:	d7 01       	movw	r26, r14
     77a0:	01 90       	ld	r0, Z+
@@ -18305,7 +18305,7 @@ void uhreinstellen(){
     77ce:	1f 92       	push	r1
     77d0:	85 e0       	ldi	r24, 0x05	; 5
     77d2:	8f 93       	push	r24
-    77d4:	8d ed       	ldi	r24, 0xDD	; 221
+    77d4:	88 ed       	ldi	r24, 0xD8	; 216
     77d6:	93 e0       	ldi	r25, 0x03	; 3
     77d8:	9f 93       	push	r25
     77da:	8f 93       	push	r24
@@ -18451,19 +18451,19 @@ void uhreinstellen(){
 
 #include "RTC.h"
 RTC rtc;
-    78ac:	8a e1       	ldi	r24, 0x1A	; 26
+    78ac:	86 e1       	ldi	r24, 0x16	; 22
     78ae:	9e e0       	ldi	r25, 0x0E	; 14
     78b0:	b5 d1       	rcall	.+874    	; 0x7c1c <_ZN3RTCC1Ev>
 
 #include "Display.h"
 Display oled;
-    78b2:	89 e1       	ldi	r24, 0x19	; 25
+    78b2:	85 e1       	ldi	r24, 0x15	; 21
     78b4:	9a e0       	ldi	r25, 0x0A	; 10
     78b6:	0e 94 b8 0b 	call	0x1770	; 0x1770 <_ZN7DisplayC1Ev>
 
 #include "Interface.h"
 Interface Tastatur;
-    78ba:	8d e0       	ldi	r24, 0x0D	; 13
+    78ba:	89 e0       	ldi	r24, 0x09	; 9
     78bc:	9a e0       	ldi	r25, 0x0A	; 10
     78be:	0e 94 89 23 	call	0x4712	; 0x4712 <_ZN9InterfaceC1Ev>
 //nicht mehr verwendet
@@ -18472,13 +18472,13 @@ Interface Tastatur;
 
 #include "LSM303D.h"
 LSM303D Accelerometer;
-    78c2:	84 e2       	ldi	r24, 0x24	; 36
+    78c2:	80 e2       	ldi	r24, 0x20	; 32
     78c4:	99 e0       	ldi	r25, 0x09	; 9
     78c6:	0e 94 d3 24 	call	0x49a6	; 0x49a6 <_ZN7LSM303DC1Ev>
 
 #include "BMP180.h"
 BMP180 druck;
-    78ca:	85 ef       	ldi	r24, 0xF5	; 245
+    78ca:	81 ef       	ldi	r24, 0xF1	; 241
     78cc:	98 e0       	ldi	r25, 0x08	; 8
     78ce:	0e 94 79 04 	call	0x8f2	; 0x8f2 <_ZN6BMP180C1Ev>
 //Kompass kompass;
@@ -18489,25 +18489,25 @@ BMP180 druck;
 Output LED('B',PORTB1);
     78d2:	41 e0       	ldi	r20, 0x01	; 1
     78d4:	62 e4       	ldi	r22, 0x42	; 66
-    78d6:	8f ee       	ldi	r24, 0xEF	; 239
+    78d6:	8b ee       	ldi	r24, 0xEB	; 235
     78d8:	98 e0       	ldi	r25, 0x08	; 8
     78da:	28 d0       	rcall	.+80     	; 0x792c <_ZN6OutputC1Ehh>
 Output Vibrationsmotor('B',PORTB2);
     78dc:	42 e0       	ldi	r20, 0x02	; 2
     78de:	62 e4       	ldi	r22, 0x42	; 66
-    78e0:	8d ee       	ldi	r24, 0xED	; 237
+    78e0:	89 ee       	ldi	r24, 0xE9	; 233
     78e2:	98 e0       	ldi	r25, 0x08	; 8
     78e4:	23 d0       	rcall	.+70     	; 0x792c <_ZN6OutputC1Ehh>
 Output IRLED('D',PORTD7);
     78e6:	47 e0       	ldi	r20, 0x07	; 7
     78e8:	64 e4       	ldi	r22, 0x44	; 68
-    78ea:	8b ee       	ldi	r24, 0xEB	; 235
+    78ea:	87 ee       	ldi	r24, 0xE7	; 231
     78ec:	98 e0       	ldi	r25, 0x08	; 8
     78ee:	1e c0       	rjmp	.+60     	; 0x792c <_ZN6OutputC1Ehh>
     78f0:	08 95       	ret
 
 000078f2 <_GLOBAL__sub_D__Znwj>:
-    78f2:	8b ee       	ldi	r24, 0xEB	; 235
+    78f2:	87 ee       	ldi	r24, 0xE7	; 231
     78f4:	98 e0       	ldi	r25, 0x08	; 8
     78f6:	54 d0       	rcall	.+168    	; 0x79a0 <_ZN6OutputD1Ev>
 
@@ -18516,7 +18516,7 @@ Output IRLED('D',PORTD7);
 #include "Output.h"
 Output LED('B',PORTB1);
 Output Vibrationsmotor('B',PORTB2);
-    78f8:	8d ee       	ldi	r24, 0xED	; 237
+    78f8:	89 ee       	ldi	r24, 0xE9	; 233
     78fa:	98 e0       	ldi	r25, 0x08	; 8
     78fc:	51 d0       	rcall	.+162    	; 0x79a0 <_ZN6OutputD1Ev>
 //Kompass kompass;
@@ -18525,7 +18525,7 @@ Output Vibrationsmotor('B',PORTB2);
 
 #include "Output.h"
 Output LED('B',PORTB1);
-    78fe:	8f ee       	ldi	r24, 0xEF	; 239
+    78fe:	8b ee       	ldi	r24, 0xEB	; 235
     7900:	98 e0       	ldi	r25, 0x08	; 8
     7902:	4e d0       	rcall	.+156    	; 0x79a0 <_ZN6OutputD1Ev>
 
@@ -18534,7 +18534,7 @@ LSM303D Accelerometer;
 
 #include "BMP180.h"
 BMP180 druck;
-    7904:	85 ef       	ldi	r24, 0xF5	; 245
+    7904:	81 ef       	ldi	r24, 0xF1	; 241
     7906:	98 e0       	ldi	r25, 0x08	; 8
     7908:	0e 94 84 03 	call	0x708	; 0x708 <_ZN6BMP180D1Ev>
 //nicht mehr verwendet
@@ -18543,7 +18543,7 @@ BMP180 druck;
 
 #include "LSM303D.h"
 LSM303D Accelerometer;
-    790c:	84 e2       	ldi	r24, 0x24	; 36
+    790c:	80 e2       	ldi	r24, 0x20	; 32
     790e:	99 e0       	ldi	r25, 0x09	; 9
     7910:	0e 94 9f 24 	call	0x493e	; 0x493e <_ZN7LSM303DD1Ev>
 
@@ -18552,7 +18552,7 @@ Display oled;
 
 #include "Interface.h"
 Interface Tastatur;
-    7914:	8d e0       	ldi	r24, 0x0D	; 13
+    7914:	89 e0       	ldi	r24, 0x09	; 9
     7916:	9a e0       	ldi	r25, 0x0A	; 10
     7918:	0e 94 9c 23 	call	0x4738	; 0x4738 <_ZN9InterfaceD1Ev>
 
@@ -18561,7 +18561,7 @@ RTC rtc;
 
 #include "Display.h"
 Display oled;
-    791c:	89 e1       	ldi	r24, 0x19	; 25
+    791c:	85 e1       	ldi	r24, 0x15	; 21
     791e:	9a e0       	ldi	r25, 0x0A	; 10
     7920:	0e 94 41 0b 	call	0x1682	; 0x1682 <_ZN7DisplayD1Ev>
 {
@@ -18570,7 +18570,7 @@ Display oled;
 
 #include "RTC.h"
 RTC rtc;
-    7924:	8a e1       	ldi	r24, 0x1A	; 26
+    7924:	86 e1       	ldi	r24, 0x16	; 22
     7926:	9e e0       	ldi	r25, 0x0E	; 14
     7928:	f5 c0       	rjmp	.+490    	; 0x7b14 <_ZN3RTCD1Ev>
     792a:	08 95       	ret
@@ -21409,8 +21409,8 @@ void RTC::RTCstop(){
     8d4c:	10 f4       	brcc	.+4      	; 0x8d52 <malloc+0xe>
     8d4e:	82 e0       	ldi	r24, 0x02	; 2
     8d50:	90 e0       	ldi	r25, 0x00	; 0
-    8d52:	e0 91 3b 0e 	lds	r30, 0x0E3B
-    8d56:	f0 91 3c 0e 	lds	r31, 0x0E3C
+    8d52:	e0 91 37 0e 	lds	r30, 0x0E37
+    8d56:	f0 91 38 0e 	lds	r31, 0x0E38
     8d5a:	20 e0       	ldi	r18, 0x00	; 0
     8d5c:	30 e0       	ldi	r19, 0x00	; 0
     8d5e:	c0 e0       	ldi	r28, 0x00	; 0
@@ -21432,8 +21432,8 @@ void RTC::RTCstop(){
     8d7e:	9b 83       	std	Y+3, r25	; 0x03
     8d80:	8a 83       	std	Y+2, r24	; 0x02
     8d82:	2b c0       	rjmp	.+86     	; 0x8dda <malloc+0x96>
-    8d84:	90 93 3c 0e 	sts	0x0E3C, r25
-    8d88:	80 93 3b 0e 	sts	0x0E3B, r24
+    8d84:	90 93 38 0e 	sts	0x0E38, r25
+    8d88:	80 93 37 0e 	sts	0x0E37, r24
     8d8c:	26 c0       	rjmp	.+76     	; 0x8dda <malloc+0x96>
     8d8e:	21 15       	cp	r18, r1
     8d90:	31 05       	cpc	r19, r1
@@ -21468,8 +21468,8 @@ void RTC::RTCstop(){
     8dca:	93 83       	std	Z+3, r25	; 0x03
     8dcc:	82 83       	std	Z+2, r24	; 0x02
     8dce:	04 c0       	rjmp	.+8      	; 0x8dd8 <malloc+0x94>
-    8dd0:	90 93 3c 0e 	sts	0x0E3C, r25
-    8dd4:	80 93 3b 0e 	sts	0x0E3B, r24
+    8dd0:	90 93 38 0e 	sts	0x0E38, r25
+    8dd4:	80 93 37 0e 	sts	0x0E37, r24
     8dd8:	fd 01       	movw	r30, r26
     8dda:	32 96       	adiw	r30, 0x02	; 2
     8ddc:	44 c0       	rjmp	.+136    	; 0x8e66 <malloc+0x122>
@@ -21483,14 +21483,14 @@ void RTC::RTCstop(){
     8dec:	2d 93       	st	X+, r18
     8dee:	3c 93       	st	X, r19
     8df0:	3a c0       	rjmp	.+116    	; 0x8e66 <malloc+0x122>
-    8df2:	20 91 39 0e 	lds	r18, 0x0E39
-    8df6:	30 91 3a 0e 	lds	r19, 0x0E3A
+    8df2:	20 91 35 0e 	lds	r18, 0x0E35
+    8df6:	30 91 36 0e 	lds	r19, 0x0E36
     8dfa:	23 2b       	or	r18, r19
     8dfc:	41 f4       	brne	.+16     	; 0x8e0e <malloc+0xca>
     8dfe:	20 91 02 01 	lds	r18, 0x0102
     8e02:	30 91 03 01 	lds	r19, 0x0103
-    8e06:	30 93 3a 0e 	sts	0x0E3A, r19
-    8e0a:	20 93 39 0e 	sts	0x0E39, r18
+    8e06:	30 93 36 0e 	sts	0x0E36, r19
+    8e0a:	20 93 35 0e 	sts	0x0E35, r18
     8e0e:	20 91 00 01 	lds	r18, 0x0100
     8e12:	30 91 01 01 	lds	r19, 0x0101
     8e16:	21 15       	cp	r18, r1
@@ -21502,8 +21502,8 @@ void RTC::RTCstop(){
     8e24:	50 91 05 01 	lds	r21, 0x0105
     8e28:	24 1b       	sub	r18, r20
     8e2a:	35 0b       	sbc	r19, r21
-    8e2c:	e0 91 39 0e 	lds	r30, 0x0E39
-    8e30:	f0 91 3a 0e 	lds	r31, 0x0E3A
+    8e2c:	e0 91 35 0e 	lds	r30, 0x0E35
+    8e30:	f0 91 36 0e 	lds	r31, 0x0E36
     8e34:	e2 17       	cp	r30, r18
     8e36:	f3 07       	cpc	r31, r19
     8e38:	a0 f4       	brcc	.+40     	; 0x8e62 <malloc+0x11e>
@@ -21520,8 +21520,8 @@ void RTC::RTCstop(){
     8e4e:	48 f0       	brcs	.+18     	; 0x8e62 <malloc+0x11e>
     8e50:	4e 0f       	add	r20, r30
     8e52:	5f 1f       	adc	r21, r31
-    8e54:	50 93 3a 0e 	sts	0x0E3A, r21
-    8e58:	40 93 39 0e 	sts	0x0E39, r20
+    8e54:	50 93 36 0e 	sts	0x0E36, r21
+    8e58:	40 93 35 0e 	sts	0x0E35, r20
     8e5c:	81 93       	st	Z+, r24
     8e5e:	91 93       	st	Z+, r25
     8e60:	02 c0       	rjmp	.+4      	; 0x8e66 <malloc+0x122>
@@ -21544,8 +21544,8 @@ void RTC::RTCstop(){
     8e7e:	32 97       	sbiw	r30, 0x02	; 2
     8e80:	13 82       	std	Z+3, r1	; 0x03
     8e82:	12 82       	std	Z+2, r1	; 0x02
-    8e84:	00 91 3b 0e 	lds	r16, 0x0E3B
-    8e88:	10 91 3c 0e 	lds	r17, 0x0E3C
+    8e84:	00 91 37 0e 	lds	r16, 0x0E37
+    8e88:	10 91 38 0e 	lds	r17, 0x0E38
     8e8c:	01 15       	cp	r16, r1
     8e8e:	11 05       	cpc	r17, r1
     8e90:	81 f4       	brne	.+32     	; 0x8eb2 <free+0x44>
@@ -21553,13 +21553,13 @@ void RTC::RTCstop(){
     8e94:	31 81       	ldd	r19, Z+1	; 0x01
     8e96:	82 0f       	add	r24, r18
     8e98:	93 1f       	adc	r25, r19
-    8e9a:	20 91 39 0e 	lds	r18, 0x0E39
-    8e9e:	30 91 3a 0e 	lds	r19, 0x0E3A
+    8e9a:	20 91 35 0e 	lds	r18, 0x0E35
+    8e9e:	30 91 36 0e 	lds	r19, 0x0E36
     8ea2:	28 17       	cp	r18, r24
     8ea4:	39 07       	cpc	r19, r25
     8ea6:	79 f5       	brne	.+94     	; 0x8f06 <free+0x98>
-    8ea8:	f0 93 3a 0e 	sts	0x0E3A, r31
-    8eac:	e0 93 39 0e 	sts	0x0E39, r30
+    8ea8:	f0 93 36 0e 	sts	0x0E36, r31
+    8eac:	e0 93 35 0e 	sts	0x0E35, r30
     8eb0:	71 c0       	rjmp	.+226    	; 0x8f94 <free+0x126>
     8eb2:	d8 01       	movw	r26, r16
     8eb4:	40 e0       	ldi	r20, 0x00	; 0
@@ -21603,8 +21603,8 @@ void RTC::RTCstop(){
     8f00:	82 83       	std	Z+2, r24	; 0x02
     8f02:	45 2b       	or	r20, r21
     8f04:	29 f4       	brne	.+10     	; 0x8f10 <free+0xa2>
-    8f06:	f0 93 3c 0e 	sts	0x0E3C, r31
-    8f0a:	e0 93 3b 0e 	sts	0x0E3B, r30
+    8f06:	f0 93 38 0e 	sts	0x0E38, r31
+    8f0a:	e0 93 37 0e 	sts	0x0E37, r30
     8f0e:	42 c0       	rjmp	.+132    	; 0x8f94 <free+0x126>
     8f10:	13 96       	adiw	r26, 0x03	; 3
     8f12:	fc 93       	st	X, r31
@@ -21652,20 +21652,20 @@ void RTC::RTCstop(){
     8f66:	3f 4f       	sbci	r19, 0xFF	; 255
     8f68:	82 0f       	add	r24, r18
     8f6a:	93 1f       	adc	r25, r19
-    8f6c:	20 91 39 0e 	lds	r18, 0x0E39
-    8f70:	30 91 3a 0e 	lds	r19, 0x0E3A
+    8f6c:	20 91 35 0e 	lds	r18, 0x0E35
+    8f70:	30 91 36 0e 	lds	r19, 0x0E36
     8f74:	28 17       	cp	r18, r24
     8f76:	39 07       	cpc	r19, r25
     8f78:	69 f4       	brne	.+26     	; 0x8f94 <free+0x126>
     8f7a:	30 97       	sbiw	r30, 0x00	; 0
     8f7c:	29 f4       	brne	.+10     	; 0x8f88 <free+0x11a>
-    8f7e:	10 92 3c 0e 	sts	0x0E3C, r1
-    8f82:	10 92 3b 0e 	sts	0x0E3B, r1
+    8f7e:	10 92 38 0e 	sts	0x0E38, r1
+    8f82:	10 92 37 0e 	sts	0x0E37, r1
     8f86:	02 c0       	rjmp	.+4      	; 0x8f8c <free+0x11e>
     8f88:	13 82       	std	Z+3, r1	; 0x03
     8f8a:	12 82       	std	Z+2, r1	; 0x02
-    8f8c:	10 93 3a 0e 	sts	0x0E3A, r17
-    8f90:	00 93 39 0e 	sts	0x0E39, r16
+    8f8c:	10 93 36 0e 	sts	0x0E36, r17
+    8f90:	00 93 35 0e 	sts	0x0E35, r16
     8f94:	df 91       	pop	r29
     8f96:	cf 91       	pop	r28
     8f98:	1f 91       	pop	r17
