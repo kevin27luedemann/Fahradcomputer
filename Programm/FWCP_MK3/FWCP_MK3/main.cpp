@@ -106,6 +106,8 @@ ISR(TIMER1_COMPA_vect){
 #define notvalidgetdate		4
 #define fix					7
 //GPS sachen
+#define GPSENABLE()		PORTC |=  (1<<PINC4)
+#define GPSDISABLE()	PORTC &= ~(1<<PINC4)
 uint8_t gpsstatus;
 uint8_t gpsdata[72];
 uint8_t gpscounter;
@@ -259,7 +261,11 @@ int main(void)
     }
 }
 
-void initialisierung(){	
+void initialisierung(){
+	//GPS EN aktivieren	
+	DDRC |= (1<<PINC4);
+	//GPSDISABLE();
+	GPSENABLE();
 	//nullen der Flagregister
 	anzeige=0;
 	statusreg=0;

@@ -322,6 +322,14 @@ class wandern: public monitor
 			EEPROM_Write(EEMONAT,rtc->Monat);
 			EEPROM_Write(EEJAHR,rtc->Jahr);
 		}
+		else if (*tast=='A')
+		{
+			GPSENABLE();
+		}
+		else if (*tast=='B')
+		{
+			GPSDISABLE();
+		}
 		return 0;
 	}
 	
