@@ -47,16 +47,12 @@ LSM303D Accelerometer;
 #include "BMP180.h"
 BMP180 druck;
 
-//#include "Kompass.h"
-//Kompass kompass;
-
 #include "ADC.h"
 
 #include "Output.h"
 Output LED('B',PORTB1);
 Output Vibrationsmotor('B',PORTB2);
 Output IRLED('D',PORTD7);
-//Output Sound('B',PORTB3);
 
 extern "C" {
 	#include "ffconf.h"
@@ -112,7 +108,9 @@ uint8_t gpsstatus;
 uint8_t gpsdata[72];
 uint8_t gpscounter;
 double lat;
+double lattitude[4];
 double lon;
+double longitude[4];
 double gpsspeed;
 uint8_t gpsstunde;
 uint8_t gpsminute;
@@ -639,10 +637,6 @@ void gpshandler(){
 	}
 	else if ((gpsstatus&(1<<completenotvalid))  && (gpsstatus&(1<<fix)))
 	{
-		//Andere Daten vernichten
-		lat = 0;
-		lon = 0;
-		gpsspeed = 0;
 		//Zeit
 		gpsstunde =		(gpsdata[7] - '0')*10;
 		gpsstunde +=	(gpsdata[8] - '0');
