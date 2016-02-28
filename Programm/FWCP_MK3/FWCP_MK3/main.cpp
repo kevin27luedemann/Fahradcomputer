@@ -4,10 +4,11 @@
  * Created: 28.11.2015 18:12:54
  * Author : Lüdemann
  */ 
-#define VERSIONSNUMMER 3.04
+#define VERSIONSNUMMER 3.05
 #define SPANNUNGSTEILER 2.0069
 #define F_CPU 8000000
 #define BATMIN 3.6
+#define BATMAX 4.2
 #define zeitproachtzaehlungen 0.001024
 #define zaehlungenprozeiteinheit 8.0
 #define REEDMS 5
@@ -108,9 +109,9 @@ uint8_t gpsstatus;
 uint8_t gpsdata[72];
 uint8_t gpscounter;
 double lat;
-double lattitude[4];
+double latavv[4];
 double lon;
-double longitude[4];
+double lonavv[4];
 double gpsspeed;
 uint8_t gpsstunde;
 uint8_t gpsminute;
@@ -314,8 +315,7 @@ void initialisierung(){
 		_delay_ms(50);
 		_delay_ms(50);
 	}
-
-	//letzten Zeitpunkt holen und RTC starten
+	//Zeit aus speicher
 	rtc.Sekunden= 0;
 	rtc.Minuten	= EEPROM_Read(EEMINUTEN);
 	rtc.Stunden	= EEPROM_Read(EESTUNDEN);
@@ -336,6 +336,7 @@ void initialisierung(){
 	OCR0A	 = 38;		//ctc counter ende
 	TIMSK0	|= (1<<OCIE0A);
 	TCCR0B	|= (1<<CS02) | (1<<CS00);	//presc=1024
+	
 	sei();
 }
 
@@ -547,9 +548,32 @@ void maininterupthandler(monitor *mon){
 	}*/
 }
 
+#define gpsmovavvnumber	4.0
+void gpsmovingavv(double latneu, double lonneu){
+	for (uint8_t i = gpsmovavvnumber; i >= 1; i--)
+	{
+		latavv[i]	= latavv[i-1];
+		lonavv[i]	= lonavv[i-1];
+	}
+	latavv[0]	= latneu;
+	lonavv[0]	= lonneu;
+	
+	double summelat	= 0;
+	double summelon	= 0;
+	for (uint8_t i = 0; i < gpsmovavvnumber; i++)
+	{
+		summelat	+= latavv[i];
+		summelon	+= lonavv[i];
+	}
+	lat	= summelat/gpsmovavvnumber;
+	lon	= summelon/gpsmovavvnumber;
+}
+
 void gpshandler(){
 	if ((gpsstatus&(1<<complete)) && (gpsstatus&(1<<fix)))
 	{
+		double la	= 0;
+		double lo	= 0;
 		//brechnung von Latitutde, Longitude, Zeit und Datum
 		//Zeit
 		gpsstunde =		(gpsdata[7] - '0')*10;
@@ -561,35 +585,39 @@ void gpshandler(){
 		gpssekunde +=	(gpsdata[12] - '0');
 		
 		//Latitude
-		lat =	(gpsdata[20] - '0')*10;
-		lat +=	(gpsdata[21] - '0');
-		float latmin =	(gpsdata[22] - '0')*10;
-		latmin +=		(gpsdata[23] - '0');
-		latmin +=		(gpsdata[25] - '0')/10.0;
-		latmin +=		(gpsdata[26] - '0')/100.0;
-		latmin +=		(gpsdata[27] - '0')/1000.0;
-		latmin +=		(gpsdata[28] - '0')/10000.0;
-		lat +=	latmin/60.0;
+		la =	(gpsdata[20] - '0')*10;
+		la +=	(gpsdata[21] - '0');
+		float lamin =	(gpsdata[22] - '0')*10;
+		lamin +=		(gpsdata[23] - '0');
+		lamin +=		(gpsdata[25] - '0')/10.0;
+		lamin +=		(gpsdata[26] - '0')/100.0;
+		lamin +=		(gpsdata[27] - '0')/1000.0;
+		lamin +=		(gpsdata[28] - '0')/10000.0;
+		la +=	lamin/60.0;
 		if (gpsdata[30] != 'N')
 		{
-			lat *= -1;
+			la *= -1;
 		}
 		
 		//Longitude
-		lon =	(gpsdata[32] - '0')*100;
-		lon +=	(gpsdata[33] - '0')*10;
-		lon +=	(gpsdata[34] - '0');
-		float lonmin =	(gpsdata[35] - '0')*10;
-		lonmin +=		(gpsdata[36] - '0');
-		lonmin +=		(gpsdata[38] - '0')/10.0;
-		lonmin +=		(gpsdata[39] - '0')/100.0;
-		lonmin +=		(gpsdata[40] - '0')/1000.0;
-		lonmin +=		(gpsdata[41] - '0')/10000.0;
-		lon +=			lonmin/60.0;
+		lo =	(gpsdata[32] - '0')*100;
+		lo +=	(gpsdata[33] - '0')*10;
+		lo +=	(gpsdata[34] - '0');
+		float lomin =	(gpsdata[35] - '0')*10;
+		lomin +=		(gpsdata[36] - '0');
+		lomin +=		(gpsdata[38] - '0')/10.0;
+		lomin +=		(gpsdata[39] - '0')/100.0;
+		lomin +=		(gpsdata[40] - '0')/1000.0;
+		lomin +=		(gpsdata[41] - '0')/10000.0;
+		lo +=			lomin/60.0;
 		if (gpsdata[43] != 'E')
 		{
-			lon *= -1;
+			lo *= -1;
 		}
+		
+		//Avvaragging
+		gpsmovingavv(la,lo);
+		
 		//Speed 
 		volatile uint8_t counter = 45;
 		uint8_t weiter = true;

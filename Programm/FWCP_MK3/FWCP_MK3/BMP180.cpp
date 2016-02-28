@@ -143,7 +143,7 @@ void BMP180::bmp180_getpressure(){
 	bmp180_rawpressure >>= 4;
 	bmp180_rawpressure  += p;
 	//Korrektur heuristisch 
-	bmp180_rawpressure  -= 23700;
+	//bmp180_rawpressure  -= 23700;
 	
 	pressure = (bmp180_rawpressure+BMP180_UNITPAOFFSET)/100.0;
 	
@@ -182,7 +182,7 @@ void BMP180::bmp180_gettemperature(){
 	x2	 /= (x1 + bmp180_regmd);
 	bmp180_rawtemperature = x1 + x2;
 	//Korrektur heuristisch 
-	bmp180_rawtemperature -= 3077;
+	//bmp180_rawtemperature -= 3077;
 	
 	temperature	  = (bmp180_rawtemperature+8);
 	temperature	/= 16.0;

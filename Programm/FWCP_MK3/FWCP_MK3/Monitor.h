@@ -348,7 +348,7 @@ class wandern: public monitor
 		//Latitude
 		buffersize=sprintf(buffer,"Lat: %.7f",lat);
 		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,2*charhighte);}
-			
+		
 		//Longitude
 		buffersize=sprintf(buffer,"Lon: %.7f",lon);
 		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,3*charhighte);}
@@ -361,14 +361,14 @@ class wandern: public monitor
 		buffersize=sprintf(buffer,"%02i:%02i:%02i %02i.%02i.%02i",gpsstunde,gpsminute,gpssekunde,gpsTag,gpsMonat,gpsJahr);
 		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,5*charhighte);}
 		
-		/*
+		
 		//Druckdaten	
 		buffersize=sprintf(buffer,"%.02f",druck.pressure);
 		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,6*charhighte);}
 		
 		buffersize=sprintf(buffer,"%.02f",druck.altitude);
 		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,7*charhighte);}
-		*/
+		
 			
 		send();	
 	}

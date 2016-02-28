@@ -32,13 +32,16 @@ uint16_t ADC_Read_Avg( uint8_t channel, uint8_t nsamples )
 double batterie;
 
 #ifndef BATMIN
-#define BATMIN 3.0
+#define BATMIN	3.0
+#endif
+#ifndef BATMAX
+#define BATMAX	4.2
 #endif
 
 int8_t Batteriestatus(){
 	uint16_t ADCwert=ADC_Read(0);
 	batterie = (ADCwert/1023.0)*3.29*SPANNUNGSTEILER;
-	float stat = ((batterie-BATMIN)/(4.2-BATMIN)*100);
+	float stat = ((batterie-BATMIN)/(BATMAX-BATMIN)*100);
 	uint8_t temp =(uint8_t) (stat*10);
 	if (temp%10>=5)
 	{
