@@ -4,7 +4,7 @@
  * Created: 28.11.2015 18:12:54
  * Author : Lüdemann
  */ 
-#define VERSIONSNUMMER 3.05
+#define VERSIONSNUMMER 3.06
 #define SPANNUNGSTEILER 2.0069
 #define F_CPU 8000000
 #define BATMIN 3.6
@@ -268,7 +268,7 @@ void initialisierung(){
 	//nullen der Flagregister
 	anzeige=0;
 	statusreg=0;
-	position=2;
+	position=0;
 	FPS=0;
 	
 	//initialisieren des Zaehler fuer die Winkelgeschw sowie den Timer
@@ -511,11 +511,11 @@ void maininterupthandler(monitor *mon){
 			Sekundenges += rtc.Minuten*60;
 			Sekundenges += rtc.Sekunden;
 			//GPS Daten und Zeit
-			f_printf(&logger,"%u\t%ld\t%ld\t%ld\t",(uint16_t)Sekundenges,(int32_t)(lon*1000000),(int32_t)(lat*100000),(int32_t)(gpsspeed*100));
+			f_printf(&logger,"%u\t%ld\t%ld\t%ld\t",(uint16_t)Sekundenges,(int64_t)(lon*1000000),(int64_t)(lat*100000),(int32_t)(gpsspeed*100));
 			//Tacho
 			f_printf(&logger,"%ld\t",(int32_t)(geschw*100));
 			//Barometer
-			f_printf(&logger,"%d\t%u\t%d\n",(int16_t)(druck.temperature*10),(uint16_t)(druck.pressure*100),(int16_t)(druck.altitude*10));
+			f_printf(&logger,"%d\t%lu\t%d\n",(int16_t)(druck.temperature*10),(uint32_t)(druck.pressure*100),(int16_t)(druck.altitude*10));
 		}
 		
 		anzeige |= (1<<refreshdisplay);
