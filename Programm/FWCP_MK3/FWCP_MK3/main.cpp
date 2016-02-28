@@ -263,12 +263,12 @@ int main(void)
 void initialisierung(){
 	//GPS EN aktivieren	
 	DDRC |= (1<<PINC4);
-	//GPSDISABLE();
-	GPSENABLE();
+	GPSDISABLE();
+	//GPSENABLE();
 	//nullen der Flagregister
 	anzeige=0;
 	statusreg=0;
-	position=0;
+	position=2;
 	FPS=0;
 	
 	//initialisieren des Zaehler fuer die Winkelgeschw sowie den Timer

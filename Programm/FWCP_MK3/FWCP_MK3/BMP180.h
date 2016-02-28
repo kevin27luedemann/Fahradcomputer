@@ -12,17 +12,17 @@
 #define BMP180_ADDR (0x77<<1) //0x77 default I2C address
 
 //registers
-#define BMP180_REGAC1 0xAA
-#define BMP180_REGAC2 0xAC
-#define BMP180_REGAC3 0xAE
-#define BMP180_REGAC4 0xB0
-#define BMP180_REGAC5 0xB2
-#define BMP180_REGAC6 0xB4
-#define BMP180_REGB1 0xB6
-#define BMP180_REGB2 0xB8
-#define BMP180_REGMB 0xBA
-#define BMP180_REGMC 0xBC
-#define BMP180_REGMD 0xBE
+#define BMP180_RAC1 0xAA
+#define BMP180_RAC2 0xAC
+#define BMP180_RAC3 0xAE
+#define BMP180_RAC4 0xB0
+#define BMP180_RAC5 0xB2
+#define BMP180_RAC6 0xB4
+#define BMP180_RB1 0xB6
+#define BMP180_RB2 0xB8
+#define BMP180_RMB 0xBA
+#define BMP180_RMC 0xBC
+#define BMP180_RMD 0xBE
 #define BMP180_REGCONTROL 0xF4 //control
 #define BMP180_REGCONTROLOUTPUT 0xF6 //output 0xF6=MSB, 0xF7=LSB, 0xF8=XLSB
 #define BMP180_REGREADTEMPERATURE 0x2E //read temperature
@@ -61,7 +61,7 @@ public:
 	double altitude;
 	int16_t bmp180_regac1, bmp180_regac2, bmp180_regac3, bmp180_regb1, bmp180_regb2, bmp180_regmb, bmp180_regmc, bmp180_regmd;
 	uint16_t bmp180_regac4, bmp180_regac5, bmp180_regac6;
-	uint32_t bmp180_rawtemperature, bmp180_rawpressure;
+	int32_t bmp180_rawtemperature, bmp180_rawpressure;
 protected:
 private:
 	I2C i2c;
@@ -80,7 +80,12 @@ private:
 	BMP180( const BMP180 &c );
 	BMP180& operator=( const BMP180 &c );
 	void bmp180_writemem(uint8_t reg, uint8_t value);
-
+	int8_t readS8(uint8_t reg);
+	int16_t readS16(uint8_t reg);
+	uint8_t readU8(uint8_t reg);
+	uint16_t readU16(uint8_t reg);
+	uint32_t readU32(uint8_t reg);
+	
 }; //BMP180
 
 #endif //__BMP180_H__

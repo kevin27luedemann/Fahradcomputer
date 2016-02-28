@@ -330,6 +330,10 @@ class wandern: public monitor
 		{
 			GPSDISABLE();
 		}
+		else if (*tast=='X')
+		{
+			druck.pressure0 = druck.pressure;
+		}
 		return 0;
 	}
 	
@@ -363,7 +367,7 @@ class wandern: public monitor
 		
 		
 		//Druckdaten	
-		buffersize=sprintf(buffer,"%.02f",druck.pressure);
+		buffersize=sprintf(buffer,"%.02f  %.02f",druck.pressure,druck.temperature);
 		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,6*charhighte);}
 		
 		buffersize=sprintf(buffer,"%.02f",druck.altitude);
