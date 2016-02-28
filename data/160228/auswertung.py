@@ -44,7 +44,7 @@ def getgpxfile(name):
 	
 	#bearbeiten der Punkte in Trackpints fuer das gpx
 	for i in range(len(daten[:,0])):
-		aus.write("\t\t\t<trkpt lat=\"{}\" lon=\"{}\"> <ele>{}</ele> </trkpt>\n".format(daten[i,2],daten[i,1],daten[i,7]))
+		aus.write("\t\t\t<trkpt lat=\"{}\" lon=\"{}\"> <ele>{}</ele> </trkpt>\n".format(daten[i,3],daten[i,1],daten[i,7]))
 
 	
 	
