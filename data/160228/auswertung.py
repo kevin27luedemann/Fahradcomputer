@@ -23,8 +23,8 @@ def longit(x,y):
 def getdata(name):
 	daten = np.array(np.genfromtxt("{}.TXT".format(name), comments='#', delimiter='\t'))
 	daten[:,1] /= 1e6
-	daten[:,2] /= 1e5
-	daten[:,3] /= 100.0
+	daten[:,3] /= 1e5
+	daten[:,2] /= 100.0
 	daten[:,4] /= 100.0
 	daten[:,5] /= 10.0
 #	daten[:,6] /= 1.0
