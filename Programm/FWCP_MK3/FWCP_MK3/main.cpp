@@ -263,8 +263,8 @@ int main(void)
 void initialisierung(){
 	//GPS EN aktivieren	
 	DDRC |= (1<<PINC4);
-	GPSDISABLE();
-	//GPSENABLE();
+	//GPSDISABLE();
+	GPSENABLE();
 	//nullen der Flagregister
 	anzeige=0;
 	statusreg=0;

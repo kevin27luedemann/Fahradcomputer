@@ -349,12 +349,21 @@ class wandern: public monitor
 		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,3*charhighte);}
 		*/
 
+		//Umrechnen in Grad Minuten und Sekunden
+		int8_t latgra = (int8_t) lat;
+		int8_t latmin = (int8_t) ((lat-(double)latgra)*60.0);
+		double latsek = ((lat-(double)latgra)*60.0-(double)latmin)*60.0;
+		
+		int16_t longra = (int16_t) lon;
+		int8_t lonmin = (int8_t) ((lon-(double)longra)*60.0);
+		double lonsek = ((lon-(double)longra)*60.0-(double)lonmin)*60.0;
+
 		//Latitude
-		buffersize=sprintf(buffer,"Lat: %.7f",lat);
+		buffersize=sprintf(buffer,"Lat: %02i %02i'%.3f''",latgra,latmin,latsek);
 		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,2*charhighte);}
 		
 		//Longitude
-		buffersize=sprintf(buffer,"Lon: %.7f",lon);
+		buffersize=sprintf(buffer,"Lon:%03i %02i'%.3f''",longra,lonmin,lonsek);
 		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,3*charhighte);}
 			
 		//Speed
