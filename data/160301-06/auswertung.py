@@ -23,8 +23,8 @@ def longit(x,y):
 def getdata(name):
 	daten = np.array(np.genfromtxt("{}.TXT".format(name), comments='#', delimiter='\t'))
 	daten[:,1] /= 1e6
-	daten[:,3] /= 1e5
-	daten[:,2] /= 100.0
+	daten[:,2] /= 1e5
+	daten[:,3] /= 100.0
 	daten[:,4] /= 100.0
 	daten[:,5] /= 10.0
 #	daten[:,6] /= 1.0
@@ -45,7 +45,7 @@ def getgpxfile(name):
 	
 	#bearbeiten der Punkte in Trackpints fuer das gpx
 	for i in range(len(daten[:,0])):
-		aus.write("\t\t\t<trkpt lat=\"{}\" lon=\"{}\"> <ele>{}</ele> </trkpt>\n".format(daten[i,3],daten[i,1],daten[i,7]))
+		aus.write("\t\t\t<trkpt lat=\"{}\" lon=\"{}\"> <ele>{}</ele> </trkpt>\n".format(daten[i,2],daten[i,1],daten[i,7]))
 
 	
 	
