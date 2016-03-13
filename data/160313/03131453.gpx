@@ -3,7 +3,7 @@
  version="1.0" 
  creator="Kevin Luedemann">
 	<trk>
-		<name>./160313/03131453</name>
+		<name>03131453</name>
 		<trkseg>
 			<trkpt lat="51.55825" lon="9.942472"> <ele>0.0</ele> </trkpt>
 			<trkpt lat="51.55825" lon="9.942497"> <ele>0.0</ele> </trkpt>
@@ -1739,10 +1739,6 @@
 			<trkpt lat="51.56783" lon="9.960222"> <ele>91.4</ele> </trkpt>
 			<trkpt lat="51.56784" lon="9.960226"> <ele>90.2</ele> </trkpt>
 			<trkpt lat="51.56786" lon="9.960229"> <ele>90.0</ele> </trkpt>
-			<trkpt lat="51.56787" lon="4.980333"> <ele>91.9</ele> </trkpt>
-			<trkpt lat="51.56788" lon="4.980334"> <ele>90.1</ele> </trkpt>
-			<trkpt lat="51.56788" lon="4.980334"> <ele>91.1</ele> </trkpt>
-			<trkpt lat="51.56789" lon="4.980335"> <ele>90.6</ele> </trkpt>
 			<trkpt lat="51.56789" lon="9.960234"> <ele>91.6</ele> </trkpt>
 			<trkpt lat="51.5679" lon="9.960236"> <ele>91.5</ele> </trkpt>
 			<trkpt lat="51.56791" lon="9.96024"> <ele>90.7</ele> </trkpt>
@@ -4930,10 +4926,6 @@
 			<trkpt lat="51.5691" lon="9.966427"> <ele>157.7</ele> </trkpt>
 			<trkpt lat="51.5691" lon="9.966407"> <ele>157.6</ele> </trkpt>
 			<trkpt lat="51.5691" lon="9.966389"> <ele>157.4</ele> </trkpt>
-			<trkpt lat="51.56911" lon="4.983197"> <ele>157.7</ele> </trkpt>
-			<trkpt lat="51.56911" lon="4.983181"> <ele>158.3</ele> </trkpt>
-			<trkpt lat="51.56911" lon="4.983165"> <ele>158.3</ele> </trkpt>
-			<trkpt lat="51.56912" lon="4.98315"> <ele>157.4</ele> </trkpt>
 			<trkpt lat="51.56912" lon="9.966309"> <ele>157.9</ele> </trkpt>
 			<trkpt lat="51.56912" lon="9.966293"> <ele>157.1</ele> </trkpt>
 			<trkpt lat="51.56912" lon="9.966279"> <ele>157.9</ele> </trkpt>
