@@ -48,67 +48,23 @@ class monitor
 	}
 	
 	//draw header and overload it
-	void header(){
+	virtual void header(){
 		for(uint8_t i=0;i<8;i++){
 			oled->draw_ASCI(rtc->msg_uhr[i],i*charsize,0);
 		}
+		oled->drawBATT(Batteriestatus(),SSD1306_WIDTH-13-4,0);
+		oled->drawGPS((gpsstatus&((1<<enable)|(1<<fix)))>>enable,SSD1306_WIDTH-27,0);
+		/*
 		buffersize=sprintf(buffer,"Bat: %i%%",Batteriestatus());
 		for(uint8_t i=((SSD1306_WIDTH/charsize)-buffersize);i<(SSD1306_WIDTH/charsize);i++){
 			oled->draw_ASCI(buffer[i-((SSD1306_WIDTH/charsize)-buffersize)],i*charsize,0);
-		}
-	}
-	void header(uint8_t page){
-		switch (page) {
-			case 0:	//standard Header fuer fast alle Pages
-				for(uint8_t i=0;i<8;i++){
-					oled->draw_ASCI(rtc->msg_uhr[i],i*charsize,0);
-				}
-				buffersize=sprintf(buffer,"Bat: %i%%",Batteriestatus());
-				for(uint8_t i=((SSD1306_WIDTH/charsize)-buffersize);i<(SSD1306_WIDTH/charsize);i++){
-					oled->draw_ASCI(buffer[i-((SSD1306_WIDTH/charsize)-buffersize)],i*charsize,0);
-				}
-				break;
-			case 1:	//standard Header fuer fast alle Pages
-				for(uint8_t i=0;i<(bitsderrtc-3);i++){oled->draw_ASCI(rtc->msg_uhr[i],65+i*charsize,0*charhighte);}
-				buffersize=sprintf(buffer,"%i%%",Batteriestatus());
-				for(uint8_t i=((SSD1306_WIDTH/charsize)-buffersize);i<(SSD1306_WIDTH/charsize);i++){
-					oled->draw_ASCI(buffer[i-((SSD1306_WIDTH/charsize)-buffersize)],i*charsize,0);
-				}
-				break;
-			case 2:	//standard Header fuer fast alle Pages
-				buffersize=sprintf(buffer,"Bat.: %i%%",Batteriestatus());
-				for(uint8_t i=((SSD1306_WIDTH/charsize)-buffersize);i<(SSD1306_WIDTH/charsize);i++){
-					oled->draw_ASCI(buffer[i-((SSD1306_WIDTH/charsize)-buffersize)],i*charsize,0);
-				}
-				break;
-			default:
-				break;
-		}
+		}*/
 	}
 	
 	//draw bottom and overload it
-	void bottom(){
+	virtual void bottom(){
 		for(uint8_t i=0;i<8;i++){
 			oled->draw_ASCI(rtc->msg_dat[i],i*charsize+(SSD1306_WIDTH-bitsderrtc*charsize),7*charhighte);
-		}
-	}
-	void bottom(uint8_t page){
-		switch (page) {
-			case 0:	//standard Header fuer fast alle Pages
-				for(uint8_t i=0;i<8;i++){
-					oled->draw_ASCI(rtc->msg_dat[i],i*charsize+(SSD1306_WIDTH-bitsderrtc*charsize),7*charhighte);
-				}
-				break;
-			case 1:
-				for(uint8_t i=0;i<8;i++){
-					oled->draw_ASCI(rtc->msg_dat[i],5+i*charsize,7*charhighte);
-				}
-				break;
-			case 2:
-				for(uint8_t i=0;i<bitsderrtc;i++){oled->draw_ASCI(rtc->msg_dat[i],65+i*charsize,7*charhighte);}
-				break;
-			default:
-				break;
 		}
 	}
 	
@@ -173,12 +129,27 @@ class uhr:public monitor
 	return 0;
 	}
 
+	//header
+	void header(){
+		for(uint8_t i=0;i<(bitsderrtc-3);i++){oled->draw_ASCI(rtc->msg_uhr[i],65+i*charsize,0*charhighte);}
+		oled->drawBATT(Batteriestatus(),SSD1306_WIDTH-13-4,0);
+		oled->drawGPS((gpsstatus&((1<<enable)|(1<<fix)))>>enable,SSD1306_WIDTH-27,0);
+		/*
+		buffersize=sprintf(buffer,"%i%%",Batteriestatus());
+		for(uint8_t i=((SSD1306_WIDTH/charsize)-buffersize);i<(SSD1306_WIDTH/charsize);i++){
+			oled->draw_ASCI(buffer[i-((SSD1306_WIDTH/charsize)-buffersize)],i*charsize,0);
+		}*/
+	}
+	void bottom(){
+		for(uint8_t i=0;i<bitsderrtc;i++){oled->draw_ASCI(rtc->msg_dat[i],65+i*charsize,7*charhighte);}
+	}
+
 	//anzeige vorbereiten
 	void draw()
 	{
 		monitor::draw();
-		header(1);
-		bottom(2);
+		header();
+		bottom();
 
 		oled->analog(rtc->Stunden,rtc->Minuten,rtc->Sekunden,Zeiger);
 		//draw large number
@@ -221,10 +192,21 @@ class tacho: public monitor
 		return 0;
 	}
 
+	//header 
+	void header(){
+		oled->drawBATT(Batteriestatus(),SSD1306_WIDTH-13-4,0);
+		oled->drawGPS((gpsstatus&((1<<enable)|(1<<fix)))>>enable,SSD1306_WIDTH-27,0);
+		/*
+		buffersize=sprintf(buffer,"Bat.: %i%%",Batteriestatus());
+		for(uint8_t i=((SSD1306_WIDTH/charsize)-buffersize);i<(SSD1306_WIDTH/charsize);i++){
+			oled->draw_ASCI(buffer[i-((SSD1306_WIDTH/charsize)-buffersize)],i*charsize,0);
+		}*/
+	}
+
 	//Anzeige schalten
 	void draw(){
 		monitor::draw();
-		header(2);
+		header();
 		bottom();
 
 		//Rahmen zeichnen

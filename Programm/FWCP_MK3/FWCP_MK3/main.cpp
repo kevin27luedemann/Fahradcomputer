@@ -4,7 +4,7 @@
  * Created: 28.11.2015 18:12:54
  * Author : Lüdemann
  */ 
-#define VERSIONSNUMMER 3.06
+#define VERSIONSNUMMER 3.07
 #define SPANNUNGSTEILER 2.0069
 #define F_CPU 8000000
 #define BATMIN 3.6
@@ -101,10 +101,8 @@ ISR(TIMER1_COMPA_vect){
 #define complete			2
 #define completenotvalid	3
 #define notvalidgetdate		4
+#define enable				6
 #define fix					7
-//GPS sachen
-#define GPSENABLE()		PORTC |=  (1<<PINC4)
-#define GPSDISABLE()	PORTC &= ~(1<<PINC4)
 uint8_t gpsstatus;
 uint8_t gpsdata[72];
 uint8_t gpscounter;
@@ -119,6 +117,17 @@ uint8_t gpssekunde;
 uint8_t gpsTag;
 uint8_t gpsMonat;
 uint8_t gpsJahr;
+//GPS sachen
+void GPSENABLE()
+{
+	PORTC |=  (1<<PINC4);
+	gpsstatus |= (1<<enable);
+}
+void GPSDISABLE()
+{
+	PORTC &= ~(1<<PINC4);
+	gpsstatus &= ~((1<<enable) | (1<<fix));
+}
 
 ISR(USART0_RX_vect){
 	uint8_t temp = UDR0;
@@ -165,7 +174,6 @@ ISR(USART0_RX_vect){
 		}
 	}
 }
-
 
 //Tacho funktionen
 double geschw;
@@ -263,8 +271,6 @@ int main(void)
 void initialisierung(){
 	//GPS EN aktivieren	
 	DDRC |= (1<<PINC4);
-	//GPSDISABLE();
-	GPSENABLE();
 	//nullen der Flagregister
 	anzeige=0;
 	statusreg=0;
@@ -306,6 +312,8 @@ void initialisierung(){
 	gpsTag = 0;
 	gpsMonat = 0;
 	gpsJahr = 0;
+	//GPSDISABLE();
+	GPSENABLE();
 	
 	//Wilkommensanzeige
 	wilkommen wil(&oled,&rtc);
@@ -347,69 +355,69 @@ void tastaturhandler(monitor *mon, uint8_t taste){
 		switch (taste)							//Tastendruck ueberpruefen
 		{
 			case 'm':
-			position = numberofpages;
-			break;
-			case 'l':
-			if (mon->posx==0)
-			{
 				position = numberofpages;
-			}
-			else{
-				mon->posx--;
-			}
-			break;
+				break;
+			case 'l':
+				if (mon->posx==0)
+				{
+					position = numberofpages;
+				}
+				else{
+					mon->posx--;
+				}
+				break;
 			case 'r':
-			if (position==numberofpages)
-			{
-				position=mon->posy;
-			}
-			else if (!(mon->posx >= mon->maxentriesx))
-			{
-				mon->posx++;
-			}
-			break;
+				if (position==numberofpages)
+				{
+					position=mon->posy;
+				}
+				else if (!(mon->posx >= mon->maxentriesx))
+				{
+					mon->posx++;
+				}
+				break;
 			case 'o':
-			if (position==numberofpages)
-			{
-				position=mon->posy;
-			}
-			else if (!(mon->posx >= mon->maxentriesx))
-			{
-				mon->posx++;
-			}
-			break;
+				if (position==numberofpages)
+				{
+					position=mon->posy;
+				}
+				else if (!(mon->posx >= mon->maxentriesx))
+				{
+					mon->posx++;
+				}
+				break;
 			case 'd':
-			if (!(mon->posy >= mon->maxentries-1))
-			{
-				mon->posy++;
-			}
-			else{
-				mon->posy = 0;
-			}
-			break;
+				if (!(mon->posy >= mon->maxentries-1))
+				{
+					mon->posy++;
+				}
+				else{
+					mon->posy = 0;
+				}
+				break;
 			case 'u':
-			if (!(mon->posy == 0))
-			{
-				mon->posy--;
-			}
-			else{
-				mon->posy=mon->maxentries-1;
-			}
-			break;
+				if (!(mon->posy == 0))
+				{
+					mon->posy--;
+				}
+				else{
+					mon->posy=mon->maxentries-1;
+				}
+				break;
 			case '0':
-			//Licht an/aus
-			if (LED.ison())
-			{
-				LED.off();
-			}
-			else{
-				LED.on();
-			}
-			break;
+				//Licht an/aus
+				if (LED.ison())
+				{
+					LED.off();
+				}
+				else{
+					LED.on();
+				}
+				break;
 			default:
-			//alle anderen Tasten werden an den jeweiligen Handler weiter gegeben
-			mon->tastendruck(&taste);
-			break;
+				//alle anderen Tasten werden an den jeweiligen Handler weiter gegeben
+				mon->tastendruck(&taste);
+				break;
 		}
 	}
 }
@@ -570,8 +578,12 @@ void gpsmovingavv(double latneu, double lonneu){
 }
 
 void gpshandler(){
-	if ((gpsstatus&(1<<complete)) && (gpsstatus&(1<<fix)))
+	if ((gpsstatus&(1<<complete)))
 	{
+		if (!(gpsstatus&(1<<fix)))
+		{
+			gpsstatus |= (1<<fix);
+		}
 		double la	= 0;
 		double lo	= 0;
 		//brechnung von Latitutde, Longitude, Zeit und Datum
@@ -663,8 +675,12 @@ void gpshandler(){
 		
 		gpsstatus &= ~(1<<complete);
 	}
-	else if ((gpsstatus&(1<<completenotvalid))  && (gpsstatus&(1<<fix)))
+	else if ((gpsstatus&(1<<completenotvalid)))
 	{
+		if (gpsstatus&(1<<fix))
+		{
+			gpsstatus &= ~(1<<fix);
+		}
 		//Zeit
 		gpsstunde =		(gpsdata[7] - '0')*10;
 		gpsstunde +=	(gpsdata[8] - '0');

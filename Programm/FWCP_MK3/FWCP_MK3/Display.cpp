@@ -152,6 +152,34 @@ void Display::drawRectangle(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint
 }
 
 //eigene Zeichenfunktionen
+
+void Display::draw_Circle(uint8_t x, uint8_t y, uint8_t r, uint8_t filled){
+	uint8_t x1 = 0 , y1 = 0;
+	if (filled == 1)
+	{
+		for (uint8_t j=0; j<=r;j++)
+		{
+			for(uint8_t i=0;i<360;i++){
+				
+				x1=(uint8_t) j*cos(i*M_PI/180.0)+x;
+				y1=(uint8_t) j*sin(i*M_PI/180.0)+y;
+
+				drawPixel(x1,y1,0);
+			}
+		}
+	}
+	else {
+		for(uint8_t i=0;i<360;i++){
+			
+			x1=(uint8_t) r*cos(i*M_PI/180.0)+x;
+			y1=(uint8_t) r*sin(i*M_PI/180.0)+y;
+
+			drawPixel(x1,y1,0);
+		}
+	}
+	
+}
+
 void Display::draw_line(uint8_t x, uint8_t y, uint8_t length, float phi){
 	//phi*=M_PI/180.0;
 	uint8_t pos_x=0, pos_y=0;
@@ -205,26 +233,6 @@ void Display::draw_ASCI(uint8_t sym,uint8_t x, uint8_t y){
 	else{
 		for(uint8_t i = 0; i < 7; i++){
 			Displayframe[x+(y/8)*SSD1306_WIDTH+i] |= 0;
-		}
-	}
-}
-
-void Display::draw_pikachu(){
-	for (uint8_t i = 0; i<8;i++)
-	{
-		for (uint8_t j = 0;j<64;j++)
-		{
-			Displayframe[i*SSD1306_WIDTH+j]=pgm_read_byte(&Pikachu[i][j]);
-		}
-	}
-}
-
-void Display::draw_glurak(){
-	for (uint8_t i = 0; i<8;i++)
-	{
-		for (uint8_t j = 0;j<64;j++)
-		{
-			Displayframe[i*SSD1306_WIDTH+j]=pgm_read_byte(&Glurak[i][j]);
 		}
 	}
 }
@@ -376,4 +384,90 @@ void Display::analog(uint8_t stunde, uint8_t minute, uint8_t sekunde, uint8_t se
 	drawPixel(26*cos((10*30.0)*M_PI/180.0-M_PI/2.0)+Px,26*sin((10*30.0)*M_PI/180.0-M_PI/2.0)+Px,0);
 	//11
 	drawPixel(26*cos((11*30.0)*M_PI/180.0-M_PI/2.0)+Px,26*sin((11*30.0)*M_PI/180.0-M_PI/2.0)+Px,0);
+}
+
+void Display::drawBATT(int8_t status, uint8_t xpos, uint8_t ypos){
+	/*
+	if (status <= 10 && status >= 1)
+	{
+		drawRectangle(xpos+11,ypos+1,xpos+11,ypos+6,true);
+	}
+	else if (status <= 20)
+	{
+		drawRectangle(xpos+10,ypos+1,xpos+11,ypos+6,true);
+	}
+	else if (status <= 30)
+	{
+		drawRectangle(xpos+9,ypos+1,xpos+11,ypos+6,true);
+	}
+	else if (status <= 40)
+	{
+		drawRectangle(xpos+8,ypos+1,xpos+11,ypos+6,true);
+	}
+	else if (status <= 50)
+	{
+		drawRectangle(xpos+7,ypos+1,xpos+11,ypos+6,true);
+	}
+	else if (status <= 60)
+	{
+		drawRectangle(xpos+6,ypos+1,xpos+11,ypos+6,true);
+	}
+	else if (status <= 70)
+	{
+		drawRectangle(xpos+5,ypos+1,xpos+11,ypos+6,true);
+	}
+	else if (status <= 80)
+	{
+		drawRectangle(xpos+4,ypos+1,xpos+11,ypos+6,true);
+	}
+	else if (status <= 90)
+	{
+		drawRectangle(xpos+3,ypos+1,xpos+11,ypos+6,true);
+	}
+	else
+	{
+		drawRectangle(xpos+2,ypos+1,xpos+11,ypos+6,true);
+	}*/
+	if (status <= 10 && status >= 1)
+	{
+		drawRectangle(xpos+11,ypos+1,xpos+11,ypos+6,true);
+	}
+	else if (status <= 20)
+	{
+		drawRectangle(xpos+10,ypos+1,xpos+11,ypos+6,true);
+	}
+	else if (status <= 30)
+	{
+		drawRectangle(xpos+8,ypos+1,xpos+11,ypos+6,true);
+	}
+	else if (status <= 40)
+	{
+		drawRectangle(xpos+6,ypos+1,xpos+11,ypos+6,true);
+	}
+	else if (status <= 50)
+	{
+		drawRectangle(xpos+4,ypos+1,xpos+11,ypos+6,true);
+	}
+	else
+	{
+		drawRectangle(xpos+2,ypos+1,xpos+11,ypos+6,true);
+	}
+	
+	drawRectangle(xpos+1,ypos,xpos+12,ypos+7,false);
+	drawPixel(xpos,ypos+2,false);
+	drawPixel(xpos,ypos+3,false);
+	drawPixel(xpos,ypos+4,false);
+}
+
+void Display::drawGPS(uint8_t status, uint8_t xpos, uint8_t ypos){
+	drawRectangle(xpos,ypos,xpos+7,ypos+7,false);
+	if (status == 1)
+	{
+		drawRectangle(xpos+1,ypos+1,xpos+6,ypos+3,true);
+	}
+	else if (status == 3)
+	{
+		drawRectangle(xpos+1,ypos+1,xpos+6,ypos+6,true);
+	}
+	//draw_ASCI(status+'0',xpos-charsize,ypos);
 }
