@@ -250,7 +250,7 @@ class tacho: public monitor
 		//anzeige der Fahrtzeit
 		buffersize=sprintf(buffer,"%02i:%02i:%02i",uint8_t(Fahrtzeit/3600),uint8_t(Fahrtzeit/60),uint8_t(Fahrtzeit%60));
 		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+70,6*charhighte);}
-		
+				
 		//anzeige der durschschnittsgeschw
 		if (Fahrtzeit==0)
 		{
@@ -330,7 +330,20 @@ class wandern: public monitor
 		buffersize=sprintf(buffer,"Data: %c%c%c%c%c",gpsdata[0],gpsdata[1],gpsdata[2],gpsdata[3],gpsdata[4]);
 		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,3*charhighte);}
 		*/
-
+		/*
+		//anzeige des Winkel
+		Accelerometer.magn_read_angle();		
+		buffersize=sprintf(buffer,"%.02f",Accelerometer.roll);
+		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,5*charhighte);}
+		buffersize=sprintf(buffer,"%.02f",Accelerometer.pitch);
+		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,6*charhighte);}
+		buffersize=sprintf(buffer,"%.02f",Accelerometer.angle_M);
+		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,7*charhighte);}
+		
+		buffersize=sprintf(buffer,"%i",FPS);
+		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+70,1*charhighte);}
+		*/
+		
 		//Umrechnen in Grad Minuten und Sekunden
 		int8_t latgra = (int8_t) lat;
 		int8_t latmin = (int8_t) ((lat-(double)latgra)*60.0);

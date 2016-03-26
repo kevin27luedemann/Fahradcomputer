@@ -12,45 +12,35 @@
 LSM303D::LSM303D()
 {
 	//Variablen initialisieren
-	Tempera=0;
-	roll=0.0;
-	pitch=0.0;
-	Schrittzaehler=0;
-	gravity=0;
-	higher=0;
-	lower=0;
-	threschold=27;	//aus Erfahrung
+	Tempera			=0;
+	angle_M			=0.0;
+	roll			=0.0;
+	pitch			=0.0;
+	Schrittzaehler	=0;
+	gravity			=0;
+	higher			=0;
+	lower			=0;
+	threschold		=27;	//aus Erfahrung
 	for (uint8_t i=0;i<3;i++)
 	{
-		achsen_A[i]=0;
+		achsen_A[i]	=0;
+		achsen_M[i]	=0;
+		offset_M[i]	=0;
+		min[i]		=0;
+		max[i]		=0;
 	}
 	for (uint8_t i=0;i<50;i++)
 	{
 		Daten[i]=0;
 	}
 	
-	//ACC init
-	acce_init();
+	LSM303_init();
 } //LSM303D
 
 // default destructor
 LSM303D::~LSM303D()
 {
 } //~LSM303D
-
-void LSM303D::acce_init(){
-	//ACC Activ und 25Hz ohne Block dataread
-	LSM303_command(CTRL1,(1<<AXEN)|(1<<AYEN)|(1<<AZEN)|(1<<AODR2));
-	
-	//ACC fuer +-2g
-	LSM303_command(CTRL2,0x00);
-	
-	//Temperatursensor an
-	LSM303_command(CTRL5,(1<<TEMP_EN));
-	
-	//FIFO Bypass Mode
-	ACCBypassmode();
-}
 
 void LSM303D::ACCStreammode(){
 	LSM303_command(FIFO_CTRL,(1<<FM1));
@@ -112,6 +102,144 @@ void LSM303D::readacc_fast(){
 	achsen_A[2] =(int16_t) (input[1]<<8 | input[0]);
 	achsen_A[0] =(int16_t) (input[3]<<8 | input[2]);
 	achsen_A[1] =(int16_t) (input[5]<<8 | input[4]);
+}
+
+void LSM303D::LSM303_init(){
+	//ACC Activ und 25Hz ohne Block dataread
+	LSM303_command(CTRL1,(1<<AXEN)|(1<<AYEN)|(1<<AZEN)|(1<<AODR2));
+		
+	//ACC fuer +-2g
+	LSM303_command(CTRL2,0x00);
+		
+	//Temperatursensor aus, Magnetometer 25Hz
+	LSM303_command(CTRL5,(1<<M_RES0)|(1<<M_RES1)|(1<<M_ODR1)|(0<<M_ODR0));
+	
+	//Magnetometer +-2gaus
+	LSM303_command(CTRL6,(1<<MFS0));
+	
+	//MagnMode continuus
+	MAGNMode(2);
+	
+	//FIFO Bypass Mode
+	ACCBypassmode();
+}
+
+void LSM303D::MAGNMode(uint8_t mode){
+	if (mode == 1){
+		LSM303_command(CTRL7,(1<<MD0));
+	}
+	else if (mode == 2){
+		LSM303_command(CTRL7,0x00);
+	}
+	else{
+		LSM303_command(CTRL7,(1<<MD1));
+	}
+}
+
+uint8_t LSM303D::magn_read_angle(){
+	readacc();
+	uint8_t input[6];
+	
+	cli();
+	i2c.twi_start();
+	i2c.twi_write(LSM303D_SA1_Write);
+	i2c.twi_write(OUT_X_L_M|(1<<7));
+	i2c.twi_start();
+	i2c.twi_write(LSM303D_SA1_READ);
+	
+	for(uint8_t i=0; i<6;i++){
+		if (i<5)
+		{
+			input[i]=i2c.twi_read(1);
+		}
+		else
+		{
+			input[i]=i2c.twi_read(0);
+		}
+	}
+	i2c.twi_stop();
+	sei();
+	achsen_M[2] =(int16_t) (input[1]<<8 | input[0]);
+	achsen_M[0] =(int16_t) (input[3]<<8 | input[2]);
+	achsen_M[1] =(int16_t) (input[5]<<8 | input[4]);
+	
+	if (achsen_M[0]==-4096 || achsen_M[1]==-4096 || achsen_M[2]==-4096)
+	{
+		return 1;
+	}
+	//Kallibrierung durchfuehren, jedes mal, wenn eine abfrage stattfindet
+	//somit passive kalibrierung
+	else{
+		for(uint8_t i=0;i<3;i++){
+			if(achsen_M[i]>max[i]){
+				max[i]=achsen_M[i];
+				offset_M[i]=(max[i]+min[i])/2;
+			}
+			else if(achsen_M[i]<min[i]){
+				min[i]=achsen_M[i];
+				offset_M[i]=(max[i]+min[i])/2;
+			}
+			else {
+				achsen_M[i]-=offset_M[i];
+			}
+		}
+		
+		//berechnung Winkel
+		//Projektion auf Ebene
+		/*
+		double	xh =  (double)achsen_M[0]*cos(pitch);
+				xh += (double)achsen_M[1]*sin(roll)*sin(pitch);
+				xh -= (double)achsen_M[2]*cos(roll)*sin(pitch);
+		double	yh =  (double)achsen_M[1]*cos(roll);
+				yh += (double)achsen_M[2]*sin(roll);
+		
+		if (xh>0)
+		{
+			angle_M = 180-atan(yh/xh)*180.0/M_PI;
+		}
+		else if (xh>0 && yh<0)
+		{
+			angle_M = -atan(yh/xh)*180.0/M_PI;
+		}
+		else if (xh>0 && yh>0)
+		{
+			angle_M = 360-atan(xh/xh)*180.0/M_PI;
+		}
+		else if (xh==0 && yh<0)
+		{
+			angle_M = 90;
+		}
+		else if (xh==0 && yh>0)
+		{
+			angle_M = 270;
+		}*/
+		
+		angle_M = atan2f(achsen_M[0],achsen_M[1])*180.0/M_PI;
+		
+		//deklination
+		angle_M+=2.35;
+		//Normierung auf %360
+		
+		if (angle_M>=360)
+		{
+			angle_M-=360;
+		}
+		else if (angle_M < 0)
+		{
+			angle_M+=360;
+		}
+	}
+
+	return 0;
+}
+
+void LSM303D::reset_Magn(){
+	for (uint8_t i=0; i<3;i++)
+	{
+		min[i]		=0;
+		max[i]		=0;
+		offset_M[i]	=0;
+	}
 }
 
 void LSM303D::readtempera(){

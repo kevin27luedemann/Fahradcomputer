@@ -77,12 +77,19 @@ uint8_t position;		//Numer der Aktuellen Seite fuer Array und sonstieges
 #include "EEPROM.h"
 //Ausgelagerte Sammlung der einzelnen Seitenlayouts
 uint8_t FPS;
+uint8_t FPScount;
 
 //schlechte variante der Uhreinstellung
 void uhreinstellen();
 
 //SD karten Timer
+uint8_t time0zahler;
 ISR(TIMER0_COMPA_vect){
+	time0zahler++;
+	if (time0zahler%20==0)
+	{
+		statusreg |= (1<<updaterate);
+	}
 	disk_timerproc();	//Timer der SD Karte
 }
 
@@ -276,6 +283,8 @@ void initialisierung(){
 	statusreg=0;
 	position=0;
 	FPS=0;
+	FPScount=0;
+	time0zahler=0;
 	
 	//initialisieren des Zaehler fuer die Winkelgeschw sowie den Timer
 	TCNT1 = 0;
@@ -493,7 +502,9 @@ void maininterupthandler(monitor *mon){
 	
 	if (statusreg&(1<<updaterate))				//24 FPS fuer schnelle anzeigen
 	{
-		//anzeige &= (1<<refreshdisplay);
+		statusreg &= ~(1<<updaterate);
+		anzeige |= (1<<refreshdisplay);
+		FPScount++;
 	}
 	
 	if ((rtc.interupts&(1<<sekundeninterupt)))	//Sekunden
@@ -526,6 +537,8 @@ void maininterupthandler(monitor *mon){
 			f_printf(&logger,"%d\t%lu\t%d\n",(int16_t)(druck.temperature*10),(uint32_t)(druck.pressure*100),(int16_t)(druck.altitude*10));
 		}
 		
+		FPS=FPScount;
+		FPScount=0;
 		anzeige |= (1<<refreshdisplay);
 		rtc.interupts &= ~(1<<sekundeninterupt);
 	}

@@ -16,7 +16,13 @@
 #define LSM303D_SA1_READ	0x3B
 #define LSM303D_SA1_Write	0x3A
 
-//Register and Bits (at the Moment only Accelerometer)
+//Magnetometer Output
+#define OUT_X_L_M	0x08
+#define OUT_X_H_M	0x09
+#define OUT_Y_L_M	0x0A
+#define OUT_Y_H_M	0x0B
+#define OUT_Z_L_M	0x0C
+#define OUT_Z_H_M	0x0D
 //Temperature output (only active after request)
 #define TEMP_OUT_L_A	0x05
 #define TEMP_OUT_H_A	0x06
@@ -153,7 +159,7 @@
 */
 #define AFDS	5	//Filter accelerometer Data, default 0 = Bypass filter
 #define T_ONLY	4	//Temperatur sensor only, default 0, at 1 Magnetometer off
-#define MLP	2	//Magnetic low power Mode, default 0, at 1 ony low level Magnetometer
+#define MLP	2	//Magnetic low power Mode, default 0, at 1 only low level Magnetometer
 //Magnetic sensor Mode selection, default 10
 #define MD1	1
 #define MD0	0
@@ -225,7 +231,9 @@ class LSM303D
 //variables
 public:
 	int16_t achsen_A[3];
+	int16_t achsen_M[3];
 	int16_t Tempera;
+	double angle_M;
 	double roll;
 	double pitch;
 	uint16_t Schrittzaehler;
@@ -237,24 +245,30 @@ private:
 	uint32_t higher;
 	uint32_t lower;
 	int16_t threschold;
+	int16_t offset_M[3];
+	int16_t max[3];
+	int16_t min[3];
 
 //functions
 public:
 	LSM303D();
 	~LSM303D();
-	void acce_init();
 	void readacc();
 	void readtempera();
-	void ACCStreammode();
-	void ACCBypassmode();
 	void get_gravity();
 	void schritt(uint8_t stat);
+	void LSM303_init();
+	uint8_t magn_read_angle();
+	void reset_Magn();
 protected:
 private:
 	LSM303D( const LSM303D &c );
 	LSM303D& operator=( const LSM303D &c );
 	void LSM303_command(uint8_t reg, uint8_t c);
 	void readacc_fast();
+	void ACCStreammode();
+	void ACCBypassmode();
+	void MAGNMode(uint8_t mode);
 
 }; //LSM303D
 
