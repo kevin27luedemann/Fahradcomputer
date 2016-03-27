@@ -4,7 +4,7 @@
  * Created: 28.11.2015 18:12:54
  * Author : Lüdemann
  */ 
-#define VERSIONSNUMMER 3.07
+#define VERSIONSNUMMER 3.08
 #define SPANNUNGSTEILER 2.0069
 #define F_CPU 8000000
 #define BATMIN 3.6
@@ -12,7 +12,7 @@
 #define zeitproachtzaehlungen 0.001024
 #define zaehlungenprozeiteinheit 8.0
 #define REEDMS 5
-#define GMT 1
+#define GMT 2
 
 #include <avr/io.h>
 #include <stdlib.h>

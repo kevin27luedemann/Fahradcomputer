@@ -38,6 +38,25 @@ double batterie;
 #define BATMAX	4.2
 #endif
 
+#define numberavv 13.0
+int8_t statavv(int8_t stat){
+	static int8_t mavv[(uint8_t)numberavv];
+	int16_t summe = 0;
+	
+	for (uint8_t i=numberavv; i>=1; i--)
+	{
+		mavv[i] = mavv[i-1];
+	}
+	mavv[0] = stat;
+	
+	for (uint8_t i=0; i<numberavv; i++)
+	{
+		summe += mavv[i];
+	}
+	
+	return summe/numberavv;
+}
+
 int8_t Batteriestatus(){
 	uint16_t ADCwert=ADC_Read(0);
 	batterie = (ADCwert/1023.0)*3.29*SPANNUNGSTEILER;
@@ -51,7 +70,8 @@ int8_t Batteriestatus(){
 	{
 		stat = (uint8_t)stat;
 	}
-	return stat;
+	
+	return statavv(stat);
 }
 
 #endif /* ADC_H_ */
