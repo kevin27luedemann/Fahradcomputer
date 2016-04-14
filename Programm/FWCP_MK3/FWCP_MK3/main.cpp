@@ -481,6 +481,7 @@ void maininterupthandler(monitor *mon){
 					char name[13];
 					sprintf(name,"%02u%02u%02u%02u.txt",rtc.Monat,rtc.Tag,rtc.Stunden,rtc.Minuten);
 					f_open(&logger, name, FA_OPEN_ALWAYS | FA_WRITE);
+					//f_open(&logger, "heute.TXT", FA_OPEN_ALWAYS | FA_WRITE);
 					//Zeit und GPS
 					f_printf(&logger,"#Zeit [s]\tlongitude [1e6]\tLatitude [1e5]\tGPSSpeed [1e2 km/h] ");
 					//Tacho
@@ -502,8 +503,8 @@ void maininterupthandler(monitor *mon){
 	
 	if (statusreg&(1<<updaterate))				//24 FPS fuer schnelle anzeigen
 	{
-		statusreg &= ~(1<<updaterate);
-		anzeige |= (1<<refreshdisplay);
+		//statusreg &= ~(1<<updaterate);
+		//anzeige |= (1<<refreshdisplay);
 		FPScount++;
 	}
 	
