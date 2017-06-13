@@ -481,13 +481,14 @@ void maininterupthandler(monitor *mon){
 					char name[13];
 					sprintf(name,"%02u%02u%02u%02u.txt",rtc.Monat,rtc.Tag,rtc.Stunden,rtc.Minuten);
 					f_open(&logger, name, FA_OPEN_ALWAYS | FA_WRITE);
-					//f_open(&logger, "heute.TXT", FA_OPEN_ALWAYS | FA_WRITE);
 					//Zeit und GPS
 					f_printf(&logger,"#Zeit [s]\tlongitude [1e6]\tLatitude [1e5]\tGPSSpeed [1e2 km/h] ");
 					//Tacho
 					f_printf(&logger,"\tTacho [1e2 km/h] ");
 					//Barometer
-					f_printf(&logger,"\tTemperatur [10 C] \tDruck [Pa] \tHoeheSee [10 m]\n");
+					f_printf(&logger,"\tTemperatur [10 C] \tDruck [Pa] \tHoeheSee [10 m]");
+					//Batterie
+					f_printf(&logger,"\tBatterie[1e2 V]\n");
 				}
 				
 				statusreg |= (1<<loggingstat);
@@ -503,8 +504,8 @@ void maininterupthandler(monitor *mon){
 	
 	if (statusreg&(1<<updaterate))				//24 FPS fuer schnelle anzeigen
 	{
-		//statusreg &= ~(1<<updaterate);
-		//anzeige |= (1<<refreshdisplay);
+		statusreg &= ~(1<<updaterate);
+		anzeige |= (1<<refreshdisplay);
 		FPScount++;
 	}
 	
@@ -527,15 +528,20 @@ void maininterupthandler(monitor *mon){
 		
 		if ((statusreg&(1<<mounttingstat)) && (statusreg&(1<<loggingstat)))
 		{
-			uint16_t Sekundenges = rtc.Stunden*3600;
+			uint32_t Sekundenges = rtc.Stunden*3600;
 			Sekundenges += rtc.Minuten*60;
 			Sekundenges += rtc.Sekunden;
+			//Zeit
+			f_printf(&logger,"%02d.%02d.%02d_%02d:%02d:%02d",rtc.Tag,rtc.Monat,rtc.Jahr+2000,rtc.Stunden,rtc.Minuten,rtc.Sekunden);
 			//GPS Daten und Zeit
-			f_printf(&logger,"%u\t%ld\t%ld\t%ld\t",(uint16_t)Sekundenges,(int32_t)(lon*1000000),(int32_t)(lat*100000),(int32_t)(gpsspeed*100));
+			//f_printf(&logger,"%ld\t%ld\t%ld\t%ld\t",(uint32_t)Sekundenges,(int32_t)(lon*1000000),(int32_t)(lat*100000),(int32_t)(gpsspeed*100));
+			f_printf(&logger,"\t%ld\t%ld\t%ld",(int32_t)(lon*1000000),(int32_t)(lat*100000),(int32_t)(gpsspeed*100));
 			//Tacho
-			f_printf(&logger,"%ld\t",(int32_t)(geschw*100));
+			f_printf(&logger,"\t%ld",(int32_t)(geschw*100));
 			//Barometer
-			f_printf(&logger,"%d\t%lu\t%d\n",(int16_t)(druck.temperature*10),(uint32_t)(druck.pressure*100),(int16_t)(druck.altitude*10));
+			f_printf(&logger,"\t%d\t%lu\t%d",(int16_t)(druck.temperature*10),(uint32_t)(druck.pressure*100),(int16_t)(druck.altitude*10));
+			//Batterie
+			f_printf(&logger,"\t%d\n",(int16_t)(batterie*100.0));
 		}
 		
 		FPS=FPScount;
