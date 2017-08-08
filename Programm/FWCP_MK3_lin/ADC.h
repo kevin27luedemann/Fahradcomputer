@@ -41,7 +41,12 @@ double batterie;
 
 int8_t Batteriestatus(){
 	uint16_t ADCwert=ADC_Read(0);
-	batterie = (ADCwert/1023.0)*3.29*SPANNUNGSTEILER;
+	static double bat_mavg[5];
+	for(uint8_t i=0; i<4; i++){bat_mavg[i+1] = bat_mavg[i];}
+	double batt_now = (ADCwert/1023.0)*3.29*SPANNUNGSTEILER;
+	bat_mavg[0] = batt_now;
+	batterie = 0;
+	for(uint8_t i=0; i<5; i++){batterie += bat_mavg[i]/5.;}
 	float stat = ((batterie-BATMIN)/(BATMAX-BATMIN)*100);
 	uint8_t temp =(uint8_t) (stat*10);
 	if (temp%10>=5)

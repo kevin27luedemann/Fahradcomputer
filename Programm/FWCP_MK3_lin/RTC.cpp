@@ -19,8 +19,8 @@ RTC::RTC()
 	Monat=0;
 	Jahr=0;
 	WTag=0;
-	WMinuten=40;
-	WStunden=10;
+	WMinuten=0;
+	WStunden=6;
 	Timerzahler=0;
 	Stoppuhrzahler=0;
 	for(uint8_t i=0;i<bitsderrtc;i++){

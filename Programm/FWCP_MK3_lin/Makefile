@@ -1,6 +1,6 @@
 TARGET=main
 MCU=atmega1284p
-SOURCES=$(TARGET).cpp  BMP180.cpp I2C.cpp Display.cpp Interface.cpp Kompass.cpp LSM303D.cpp Output.cpp RTC.cpp SOUND.cpp diskio.c ff.c
+SOURCES=$(TARGET).cpp SOUND.cpp BMP180.cpp I2C.cpp Display.cpp Interface.cpp Kompass.cpp LSM303D.cpp Output.cpp RTC.cpp diskio.c ff.c
 #SOURCES=$(shell find . -type f -name '*.cpp')
 
 PROGRAMMER=stk500
@@ -14,6 +14,7 @@ CFLAGS=-c -O
 LDFLAGS=-lprintf_flt -lm -fpermissive -u vfprintf 
 
 all: hex eeprom
+run: hex eeprom
 
 hex: $(TARGET).hex
 
@@ -35,7 +36,10 @@ size:
 	avr-size --mcu=$(MCU) -C $(TARGET).elf
 
 program:
-	avrdude -p$(MCU) $(PORT) $(BAUD) -c$(PROGRAMMER) -Uflash:w:$(TARGET).hex:a
+	avrdude -D -p$(MCU) $(PORT) $(BAUD) -c$(PROGRAMMER) -Uflash:w:$(TARGET).hex:a
+
+read:
+	avrdude -p$(MCU) $(PORT) $(BAUD) -c$(PROGRAMMER) -Ueeprom:r:$(TARGET).eep:i
 
 clean_tmp:
 	rm -rf *.o

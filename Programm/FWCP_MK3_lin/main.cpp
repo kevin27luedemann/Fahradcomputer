@@ -4,7 +4,7 @@
  * Created: 28.11.2015 18:12:54
  * Author : Lüdemann
  */ 
-#define VERSIONSNUMMER 3.08
+#define VERSIONSNUMMER 3.09
 #define SPANNUNGSTEILER 2.0069
 #define F_CPU 8000000
 #define BATMIN 3.6
@@ -52,7 +52,7 @@ BMP180 druck;
 
 #include "Output.h"
 Output LED('B',PORTB1);
-Output Vibrationsmotor('B',PORTB2);
+Output Vibm('B',PORTB2);
 Output IRLED('D',PORTD7);
 
 extern "C" {
@@ -62,7 +62,8 @@ extern "C" {
 	};
 
 //Anzeigebits
-#define refreshdisplay 0
+#define refreshdisplay  0
+#define blinkflag       1
 
 uint8_t anzeige;	//Flagregister fuer die Anziegenschaltung
 
@@ -103,6 +104,7 @@ ISR(TIMER1_COMPA_vect){
 	statusreg |= (1<<updaterate);
 }
 
+//GPS sachen
 #define message				0
 #define valid				1
 #define complete			2
@@ -124,7 +126,6 @@ uint8_t gpssekunde;
 uint8_t gpsTag;
 uint8_t gpsMonat;
 uint8_t gpsJahr;
-//GPS sachen
 void GPSENABLE()
 {
 	PORTC |=  (1<<PINC4);
@@ -211,7 +212,7 @@ uint8_t reed_debounce(volatile uint8_t *port, uint8_t pin)
 //Berechnung der Geschwindigkeit
 void geschwindigkeit(float durch){
 	//Einholen der Daten und ruecksetzen
-	uint16_t zaehlungen = TCNT1;
+    uint16_t zaehlungen = TCNT1;
 	TCNT1 = 0;
 	//Berechnung
 	double temp = geschw;
@@ -264,11 +265,8 @@ int main(void)
 	};
 	
 	druck.bmp180_getcalibration();
-	//speichern der Werte und per hand rechnen
 	
-	
-	while (1) 
-    {
+	while (1){
 		tastaturhandler(Folien[position],Tastatur.unified());
 		maininterupthandler(Folien[position]);
 		gpshandler();
@@ -339,8 +337,11 @@ void initialisierung(){
 	rtc.Tag		= EEPROM_Read(EETAGE);
 	rtc.Monat	= EEPROM_Read(EEMONAT);
 	rtc.Jahr	= EEPROM_Read(EEJAHR);
+    rtc.WMinuten= 52;
+    rtc.WStunden= 14;
 	rtc.ausgabedatumneu();
 	rtc.RTCstart();
+    rtc.interupts |= (1<<Weckerein);
 	
 	//AD deaktivieren zum stromsparen
 	ACSR |= (1<<ACD);
@@ -422,6 +423,12 @@ void tastaturhandler(monitor *mon, uint8_t taste){
 				else{
 					LED.on();
 				}
+	            if ((rtc.interupts&(1<<Weckeractiv))){
+                    Vibm.off();
+                    anzeige &= ~(1<<blinkflag);
+                    oled.invert(0);
+                    rtc.interupts &= ~(1<<Weckeractiv);
+                }
 				break;
 			default:
 				//alle anderen Tasten werden an den jeweiligen Handler weiter gegeben
@@ -548,6 +555,13 @@ void maininterupthandler(monitor *mon){
 		FPScount=0;
 		anzeige |= (1<<refreshdisplay);
 		rtc.interupts &= ~(1<<sekundeninterupt);
+        if ((anzeige&(1<<blinkflag)))			//Anzeige blinken
+        {
+            static uint8_t inver = 0;
+            if (inver == 0){inver = 1;}
+            else{inver = 0;}
+            oled.invert(inver);
+        }
 	}
 	if ((rtc.interupts&(1<<minuteninterupt)))		//Minuten
 	{
@@ -565,15 +579,17 @@ void maininterupthandler(monitor *mon){
 		mon->draw();
 		anzeige &= ~(1<<refreshdisplay);
 	}
-	/*
+	
 	if ((rtc.interupts&(1<<Weckeractiv)))
 	{
 		if ((rtc.interupts&(1<<Weckerein)))
 		{
 			anzeige |= (1<<blinkflag) | (1<<refreshdisplay);
+            Vibm.on();
+            LED.on();
 			rtc.interupts &= ~(1<<Weckerein);
 		}
-	}*/
+	}
 }
 
 #define gpsmovavvnumber	4.0
