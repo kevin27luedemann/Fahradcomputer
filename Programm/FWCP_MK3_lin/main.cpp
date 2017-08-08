@@ -112,13 +112,16 @@ ISR(TIMER1_COMPA_vect){
 #define notvalidgetdate		4
 #define enable				6
 #define fix					7
+#define HOMELAT             53.224041
+#define HOMELON             9.558916
 uint8_t gpsstatus;
 uint8_t gpsdata[72];
 uint8_t gpscounter;
 double lat;
-double latavv[4];
 double lon;
-double lonavv[4];
+double dummy_place;
+double dlat;
+double dlon;
 double gpsspeed;
 uint8_t gpsstunde;
 uint8_t gpsminute;
@@ -136,7 +139,32 @@ void GPSDISABLE()
 	PORTC &= ~(1<<PINC4);
 	gpsstatus &= ~((1<<enable) | (1<<fix));
 }
+double get_distance(double lat1, double lon1, double lat2, double lon2){
+    double dist = 0;
+    float radius_e = 6371e3;
+    double phi1 = lat1*M_PI/180.;
+    double phi2 = lat2*M_PI/180.;
+    double dphi = phi2-phi1;
+    double dlambda = lon2*M_PI/180.-lon1*M_PI/180.;
 
+    double a = sin(dphi/2.)*sin(dphi/2.)+cos(phi1)*cos(phi2)*sin(dlambda/2.)*sin(dlambda/2.);
+    double c = 2*atan2(sqrt(a),sqrt(1-a));
+    return radius_e*c;
+}
+double get_bearing(double lat1, double lon1, double lat2, double lon2){
+    double phi1 = lat1*M_PI/180.;
+    double phi2 = lat2*M_PI/180.;
+    double lam1 = lon1*M_PI/180.;
+    double lam2 = lon2*M_PI/180.;
+
+    double y = sin(lam2-lam1)*cos(phi2);
+    double x =   cos(phi1)*sin(phi2) 
+                -sin(phi1)*cos(phi2)*cos(lam2-lam1);
+
+    double bearing = atan2(y,x)*180./M_PI;
+    if(bearing<0){bearing=360+bearing;}
+    return bearing;
+}
 ISR(USART0_RX_vect){
 	uint8_t temp = UDR0;
 	if (temp == '$' && !(gpsstatus&(1<<complete)) && !(gpsstatus&(1<<completenotvalid)))
@@ -311,7 +339,9 @@ void initialisierung(){
 	gpscounter = 0;
 	gpsstatus = (1<<fix);
 	lat = 0;
+    dlat = HOMELAT;
 	lon = 0;
+    dlon = HOMELON;
 	gpsspeed = 0;
 	gpsstunde = 0;
 	gpsminute = 0;
@@ -598,27 +628,6 @@ void maininterupthandler(monitor *mon){
 	}
 }
 
-#define gpsmovavvnumber	4.0
-void gpsmovingavv(double latneu, double lonneu){
-	for (uint8_t i = gpsmovavvnumber; i >= 1; i--)
-	{
-		latavv[i]	= latavv[i-1];
-		lonavv[i]	= lonavv[i-1];
-	}
-	latavv[0]	= latneu;
-	lonavv[0]	= lonneu;
-	
-	double summelat	= 0;
-	double summelon	= 0;
-	for (uint8_t i = 0; i < gpsmovavvnumber; i++)
-	{
-		summelat	+= latavv[i];
-		summelon	+= lonavv[i];
-	}
-	lat	= summelat/gpsmovavvnumber;
-	lon	= summelon/gpsmovavvnumber;
-}
-
 void gpshandler(){
 	if ((gpsstatus&(1<<complete)))
 	{
@@ -670,7 +679,9 @@ void gpshandler(){
 		}
 		
 		//Avvaragging
-		gpsmovingavv(la,lo);
+		//gpsmovingavv(la,lo);
+        lat = la;
+        lon = lo;
 		
 		//Speed 
 		volatile uint8_t counter = 45;

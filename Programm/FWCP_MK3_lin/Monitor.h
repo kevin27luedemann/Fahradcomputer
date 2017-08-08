@@ -317,6 +317,7 @@ class wandern: public monitor
 				name[i] = ' ';
 			}
 		}
+        maxentriesx = 7;
 	}
 	
 	uint8_t tastendruck(uint8_t *tast){
@@ -339,11 +340,81 @@ class wandern: public monitor
 		}
 		else if (*tast=='A')
 		{
-			GPSENABLE();
+             int8_t dlatgra = (int8_t) dlat;
+            uint8_t dlatmin = (uint8_t) ((uint32_t)(dlat*60.)%60);
+            uint8_t dlatsek = (uint8_t) ((uint32_t)(dlat*3600.)%60);
+             int8_t dlongra = (int16_t) dlon;
+            uint8_t dlonmin = (uint8_t) ((uint32_t)(dlon*60.)%60);
+            uint8_t dlonsek = (uint8_t) ((uint16_t)(dlon*3600.)%60);
+            switch (posx)
+            {
+                case 0:
+			        GPSENABLE();
+                    break;
+                case 1:
+                    if(dlatgra < 89.){  dlat += 1.;}
+                    //else{               dlat  = -dlat;}
+                    break;
+                case 2:
+                    if(dlatmin < 59){   dlat += 1./60.;}
+                    //else{               dlat -= (double)59./60.;}
+                    break;
+                case 3:
+                    if(dlatsek < 59){   dlat += 1./3600.;}
+                    //else{               dlat -= (double)59./3600.;}
+                    break;
+                case 4:
+                    if(dlongra < 179.){ dlon += 1.;}
+                    //else{               dlon  = -dlon;}
+                    break;
+                case 5:
+                    if(dlonmin < 59){   dlon += 1./60.;}
+                    //else{               dlon -= (double)59./60.;}
+                    break;
+                case 6:
+                    if(dlonsek < 59){   dlon += 1./3600.;}
+                    //else{               dlon -= (double)59./3600.;}
+                    break;
+            }
 		}
 		else if (*tast=='B')
 		{
-			GPSDISABLE();
+             int8_t dlatgra = (int8_t) dlat;
+            uint8_t dlatmin = (uint8_t) ((uint32_t)(dlat*60.)%60);
+            uint8_t dlatsek = (uint8_t) ((uint32_t)(dlat*3600.)%60);
+             int8_t dlongra = (int16_t) dlon;
+            uint8_t dlonmin = (uint8_t) ((uint32_t)(dlon*60.)%60);
+            uint8_t dlonsek = (uint8_t) ((uint16_t)(dlon*3600.)%60);
+            switch (posx)
+            {
+                case 0:
+			        GPSDISABLE();
+                    break;
+                case 1:
+                    if(dlatgra > -89.){  dlat -= 1.;}
+                    //else{               dlat  = -dlat;}
+                    break;
+                case 2:
+                    if(dlatmin > 0 ){    dlat -= 1./60.;}
+                    //else{               dlat += (double)59./60.;}
+                    break;
+                case 3:
+                    if(dlatsek > 0 ){    dlat -= 1./3600.;}
+                    //else{               dlat += (double)59./3600.;}
+                    break;
+                case 4:
+                    if(dlongra > -179.){ dlon -= 1.;}
+                    //else{               dlon  = -dlon;}
+                    break;
+                case 5:
+                    if(dlonmin > 0 ){    dlon -= 1./60.;}
+                    //else{               dlon += (double)59./60.;}
+                    break;
+                case 6:
+                    if(dlonsek > 0 ){    dlon -= 1./3600.;}
+                    //else{               dlon += (double)59./3600.;}
+                    break;
+            }
 		}
 		else if (*tast=='X')
 		{
@@ -356,60 +427,123 @@ class wandern: public monitor
 		monitor::draw();
 		header();
 		bottom();
-		/*
-		//Debug data
-		buffersize=sprintf(buffer,"Status: %i",gpsstatus);
-		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,1*charhighte);}
-		buffersize=sprintf(buffer,"Data: %c%c%c%c%c",gpsdata[0],gpsdata[1],gpsdata[2],gpsdata[3],gpsdata[4]);
-		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,3*charhighte);}
-		*/
-		/*
-		//anzeige des Winkel
-		Accelerometer.magn_read_angle();		
-		buffersize=sprintf(buffer,"%.02f",Accelerometer.roll);
-		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,5*charhighte);}
-		buffersize=sprintf(buffer,"%.02f",Accelerometer.pitch);
-		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,6*charhighte);}
-		buffersize=sprintf(buffer,"%.02f",Accelerometer.angle_M);
-		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,7*charhighte);}
-		
-		buffersize=sprintf(buffer,"%i",FPS);
-		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+70,1*charhighte);}
-		*/
 		
 		//Umrechnen in Grad Minuten und Sekunden
-		int8_t latgra = (int8_t) lat;
-		int8_t latmin = (int8_t) ((lat-(double)latgra)*60.0);
-		double latsek = ((lat-(double)latgra)*60.0-(double)latmin)*60.0;
-		
-		int16_t longra = (int16_t) lon;
-		int8_t lonmin = (int8_t) ((lon-(double)longra)*60.0);
-		double lonsek = ((lon-(double)longra)*60.0-(double)lonmin)*60.0;
+         int8_t latgra = (int8_t) lat;
+        uint8_t latmin = (uint8_t) ((uint32_t)(lat*60.)%60);
+        uint8_t latsek = (uint8_t) ((uint32_t)(lat*3600.)%60);
+         int8_t longra = (int16_t) lon;
+        uint8_t lonmin = (uint8_t) ((uint32_t)(lon*60.)%60);
+        uint8_t lonsek = (uint8_t) ((uint16_t)(lon*3600.)%60);
 
-		//Latitude
-		buffersize=sprintf(buffer,"Lat: %02i %02i'%.3f''",latgra,latmin,latsek);
-		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,2*charhighte);}
-		
-		//Longitude
-		buffersize=sprintf(buffer,"Lon:%03i %02i'%.3f''",longra,lonmin,lonsek);
-		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,3*charhighte);}
-			
-		//Speed
-		buffersize=sprintf(buffer,"Spe: %.2f",gpsspeed);
-		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,4*charhighte);}
-			
-		//gpstime
-		buffersize=sprintf(buffer,"%02i:%02i:%02i %02i.%02i.%02i",gpsstunde,gpsminute,gpssekunde,gpsTag,gpsMonat,gpsJahr);
-		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,5*charhighte);}
-		
-		
-		//Druckdaten	
-		buffersize=sprintf(buffer,"%.02f  %.02f",druck.pressure,druck.temperature);
-		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,6*charhighte);}
-		
-		buffersize=sprintf(buffer,"%.02f",druck.altitude);
-		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,7*charhighte);}
-		
+         int8_t dlatgra = (int8_t) dlat;
+        uint8_t dlatmin = (uint8_t) ((uint32_t)(dlat*60.)%60);
+        uint8_t dlatsek = (uint8_t) ((uint32_t)(dlat*3600.)%60);
+         int8_t dlongra = (int16_t) dlon;
+        uint8_t dlonmin = (uint8_t) ((uint32_t)(dlon*60.)%60);
+        uint8_t dlonsek = (uint8_t) ((uint16_t)(dlon*3600.)%60);
+        double dist     = get_distance(lat,lon,dlat,dlon);
+        double bear     = get_bearing(lat,lon,dlat,dlon);
+
+        if(posx == 0){
+            //Latitude
+            buffersize=sprintf(buffer,"Lat: %03i %02i'%02i''",latgra,latmin,latsek);
+            for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,1*charhighte);}
+            //Longitude
+            buffersize=sprintf(buffer,"Lon: %03i %02i'%02i''",longra,lonmin,lonsek);
+            for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,2*charhighte);}
+
+            if(dist > 1e3){
+                buffersize=sprintf(buffer,"Dist: %.1fkm",dist/1000.);
+            }
+            else{
+                buffersize=sprintf(buffer,"Dist: %.1fm",dist);
+            }
+            for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,3*charhighte);}
+            
+                
+            //Speed
+            buffersize=sprintf(buffer,"Spe: %.2f",gpsspeed);
+            for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,4*charhighte);}
+                
+            //gpstime
+            buffersize=sprintf(buffer,"%02i:%02i:%02i %02i.%02i.%02i",gpsstunde,gpsminute,gpssekunde,gpsTag,gpsMonat,gpsJahr);
+            for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,5*charhighte);}
+            
+            
+            //Druckdaten	
+            buffersize=sprintf(buffer,"%.02f  %.02f",druck.pressure,druck.temperature);
+            for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,6*charhighte);}
+            
+            buffersize=sprintf(buffer,"%.02f",druck.altitude);
+            for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,7*charhighte);}
+        }
+        else if(posx==1){
+            //Latitude
+            buffersize=sprintf(buffer,"Set Destination");
+            for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,2*charhighte);}
+            buffersize=sprintf(buffer,"Lat Gra: %03i ",dlatgra);
+            for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,4*charhighte);}
+        }
+        else if(posx==2){
+            //Latitude
+            buffersize=sprintf(buffer,"Set Destination");
+            for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,2*charhighte);}
+            buffersize=sprintf(buffer,"Lat Min: %03i'",dlatmin);
+            for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,4*charhighte);}
+        }
+        else if(posx==3){
+            //Latitude
+            buffersize=sprintf(buffer,"Set Destination");
+            for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,2*charhighte);}
+            buffersize=sprintf(buffer,"Lat Sek: %03i''",dlatsek);
+            for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,4*charhighte);}
+        }
+        else if(posx==4){
+            //Longitude
+            buffersize=sprintf(buffer,"Set Destination");
+            for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,2*charhighte);}
+            buffersize=sprintf(buffer,"Lon Gra: %03i",dlongra);
+            for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,4*charhighte);}
+        }
+        else if(posx==5){
+            //Longitude
+            buffersize=sprintf(buffer,"Set Destination");
+            for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,2*charhighte);}
+            buffersize=sprintf(buffer,"Lon Min: %03i'",dlonmin);
+            for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,4*charhighte);}
+        }
+        else if(posx==6){
+            //Longitude
+            buffersize=sprintf(buffer,"Set Destination");
+            for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,2*charhighte);}
+            buffersize=sprintf(buffer,"Lon Sek: %03i''",dlonsek);
+            for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,4*charhighte);}
+        }
+        else if(posx==7){
+            if(dist>=1e6){
+                oled->draw_number16x16((uint8_t)(dist/1e7),0,1.66*charhighte);
+                oled->draw_number16x16((uint8_t)(dist/1e6)%10,numbersmalsize,1.66*charhighte);
+                oled->draw_ASCI('T',2*numbersmalsize+charsize/2,2*charhighte);
+                oled->draw_ASCI('m',2*numbersmalsize+charsize+charsize/2,2*charhighte);
+            }
+            else if(dist>=1e3){
+                oled->draw_number16x16((uint8_t)(dist/1e5)%10,0,1.66*charhighte);
+                oled->draw_number16x16((uint8_t)(dist/1e4)%10,numbersmalsize,1.66*charhighte);
+                oled->draw_number16x16((uint8_t)(dist/1e3)%10,2*numbersmalsize,1.66*charhighte);
+                oled->draw_ASCI('k',3*numbersmalsize+charsize/2,2*charhighte);
+                oled->draw_ASCI('m',3*numbersmalsize+charsize+charsize/2,2*charhighte);
+            }
+            else{
+                oled->draw_number16x16((uint8_t)(dist/100)%10,0,1.66*charhighte);
+                oled->draw_number16x16((uint8_t)(dist/10)%10,numbersmalsize,1.66*charhighte);
+                oled->draw_number16x16((uint8_t)(dist)%10,2*numbersmalsize,1.66*charhighte);
+                oled->draw_ASCI('m',3*numbersmalsize+charsize/2,2*charhighte);
+            }
+            oled->draw_number16x16((uint8_t)(bear/100)%10,0*numbersmalsize,2.66*charhighte+numbersmalhight);
+            oled->draw_number16x16((uint8_t)(bear/10)%10,1*numbersmalsize,2.66*charhighte+numbersmalhight);
+            oled->draw_number16x16((uint8_t)(bear)%10,2*numbersmalsize,2.66*charhighte+numbersmalhight);
+        }
 			
 		send();	
 	}
