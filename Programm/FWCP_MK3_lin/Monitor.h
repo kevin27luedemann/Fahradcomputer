@@ -93,17 +93,12 @@ class uhr:public monitor
 	{
 		char na[] = "Uhr";
 		for(uint8_t i =0; i< namesize;i++){
-			if (i<sizeof(na))
-			{
-				name[i] = na[i];
-			}
-			else
-			{
-				name[i] = ' ';
-			}
+			if (i<sizeof(na)){name[i] = na[i];}
+			else{name[i] = ' ';}
 		}
 		Zeiger = 0;
-		maxentries = 3;
+		//maxentries = 3;
+        maxentriesx = 3;
 	}
 	
 	//Zeiger setter und getter Funktion
@@ -118,14 +113,29 @@ class uhr:public monitor
 	uint8_t tastendruck(uint8_t *tast){
 		if (*tast=='e')
 		{
-			if (Zeiger==1)
-			{
-				setzeiger(0);
-			}
-			else{
-				setzeiger(1);
-			}
+			if (Zeiger==1){setzeiger(0);}
+			else{setzeiger(1);}
 		}
+        if(posx == 1){
+            if(*tast == 'A'){
+                if(rtc->WStunden<23){rtc->WStunden += 1;}
+                else{rtc->WStunden = 0;}
+           } 
+           else if(*tast == 'B'){
+                if(rtc->WStunden>0){rtc->WStunden -= 1;}
+                else{rtc->WStunden = 23;}
+           }
+        }
+        else if(posx == 2){
+            if(*tast == 'A'){
+                if(rtc->WMinuten<59){rtc->WMinuten += 1;}
+                else{rtc->WMinuten = 0;}
+           } 
+           else if(*tast == 'B'){
+                if(rtc->WMinuten>0){rtc->WMinuten -= 1;}
+                else{rtc->WMinuten = 59;}
+           }
+        }
 	return 0;
 	}
 
@@ -150,14 +160,37 @@ class uhr:public monitor
 		monitor::draw();
 		header();
 		bottom();
-
-		oled->analog(rtc->Stunden,rtc->Minuten,rtc->Sekunden,Zeiger);
-		//draw large number
-		oled->draw_number16x16(rtc->msg_uhr[0]-'0',70,1.66*charhighte);
-		oled->draw_number16x16(rtc->msg_uhr[1]-'0',70+numbersmalsize,1.66*charhighte);
-		oled->draw_number16x16(rtc->msg_uhr[3]-'0',70,2.33*charhighte+numbersmalhight);
-		oled->draw_number16x16(rtc->msg_uhr[4]-'0',70+numbersmalsize,2.33*charhighte+numbersmalhight);
-
+        if(posx==3){
+           EEPROM_Write(EEWECKMINUTEN,rtc->WMinuten); 
+           EEPROM_Write(EEWECKSTUNDEN,rtc->WStunden); 
+           posx = 0;
+        }
+        if(posx==0){
+            oled->analog(rtc->Stunden,rtc->Minuten,rtc->Sekunden,Zeiger);
+            //draw large number
+            oled->draw_number16x16(rtc->msg_uhr[0]-'0',70,1.66*charhighte);
+            oled->draw_number16x16(rtc->msg_uhr[1]-'0',70+numbersmalsize,1.66*charhighte);
+            oled->draw_number16x16(rtc->msg_uhr[3]-'0',70,2.33*charhighte+numbersmalhight);
+            oled->draw_number16x16(rtc->msg_uhr[4]-'0',70+numbersmalsize,2.33*charhighte+numbersmalhight);
+        }
+        else if(posx==1){
+            oled->draw_number16x16(rtc->WStunden/10,70,1.66*charhighte);
+            oled->draw_number16x16(rtc->WStunden%10,70+numbersmalsize,1.66*charhighte);
+            oled->draw_number16x16(rtc->WMinuten/10,70,2.33*charhighte+numbersmalhight);
+            oled->draw_number16x16(rtc->WMinuten%10,70+numbersmalsize,2.33*charhighte+numbersmalhight);
+            oled->draw_ASCI('-',70-3*charsize,2*charhighte);
+            oled->draw_ASCI('-',70-2*charsize,2*charhighte);
+            oled->draw_ASCI('>',70-1*charsize,2*charhighte);
+        }
+        else if(posx==2){
+            oled->draw_number16x16(rtc->WStunden/10,70,1.66*charhighte);
+            oled->draw_number16x16(rtc->WStunden%10,70+numbersmalsize,1.66*charhighte);
+            oled->draw_number16x16(rtc->WMinuten/10,70,2.33*charhighte+numbersmalhight);
+            oled->draw_number16x16(rtc->WMinuten%10,70+numbersmalsize,2.33*charhighte+numbersmalhight);
+            oled->draw_ASCI('-',70-3*charsize,3*charhighte+numbersmalhight);
+            oled->draw_ASCI('-',70-2*charsize,3*charhighte+numbersmalhight);
+            oled->draw_ASCI('>',70-1*charsize,3*charhighte+numbersmalhight);
+        }
 		send();
 	}
 };
@@ -415,9 +448,11 @@ class einstellungen: public monitor
 		bottom();
 		if (posx==0)
 		{
-			buffersize=sprintf(buffer,"Zeit einstellen");
+			//buffersize=sprintf(buffer,"Zeit einstellen");
+			buffersize=sprintf(buffer,"Wecker Ein: %u", (bool)(rtc->interupts&(1<<Weckerein)));
 			for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,2*charhighte);}
-			buffersize=sprintf(buffer,"g bestimmen");
+			//buffersize=sprintf(buffer,"Wecker einstellen");
+			buffersize=sprintf(buffer,"Wecker Dauer:  %u", (bool)(rtc->interupts&(1<<Weckerdauer)));
 			for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,3*charhighte);}
 			buffersize=sprintf(buffer,"Versionsnummer");
 			for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,4*charhighte);}
@@ -431,25 +466,16 @@ class einstellungen: public monitor
 		{
 			//Uhreinstellung machen
 			//noch etwas bloed, aber mit eigener Funktion
-			uhreinstellen();
+			//uhreinstellen();
+            if(rtc->interupts&(1<<Weckerein)){rtc->interupts&=~(1<<Weckerein);}
+            else{rtc->interupts|=(1<<Weckerein);}
 			posx=0;
 		}
 		else if (posy==1 && posx==1)
 		{
-			//g bestimmen einbauen
-			buffersize=sprintf(buffer,"Geraet nicht bewegen");
-			for (uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,2*charhighte);}
-			buffersize=sprintf(buffer,"* fuer start");
-			for (uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,3*charhighte);}
-			if (5<6&&5>0)
-			{
-				buffersize=sprintf(buffer,"Noch %i Sekunden",5);
-				for (uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,5*charhighte);}
-			}
-			else if (5==0)
-			{
-				posx--;
-			}
+            if(rtc->interupts&(1<<Weckerdauer)){rtc->interupts&=~(1<<Weckerdauer);}
+            else{rtc->interupts|=(1<<Weckerdauer);}
+			posx=0;
 		}
 		else if (posy==2 && posx==1)
 		{

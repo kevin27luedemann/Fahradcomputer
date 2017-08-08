@@ -80,6 +80,7 @@ uint8_t RTC::zeit(){
 				Stunden = 0;
 				Tag++;
 				kalender();
+                if(interupts&(1<<Weckerdauer)){interupts|=(1<<Weckerein);}
 			}
 		}
 		Wecker();

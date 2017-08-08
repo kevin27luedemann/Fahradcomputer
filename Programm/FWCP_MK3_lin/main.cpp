@@ -337,11 +337,11 @@ void initialisierung(){
 	rtc.Tag		= EEPROM_Read(EETAGE);
 	rtc.Monat	= EEPROM_Read(EEMONAT);
 	rtc.Jahr	= EEPROM_Read(EEJAHR);
-    rtc.WMinuten= 52;
-    rtc.WStunden= 14;
+    rtc.WMinuten= EEPROM_Read(EEWECKMINUTEN);
+    rtc.WStunden= EEPROM_Read(EEWECKSTUNDEN);
 	rtc.ausgabedatumneu();
 	rtc.RTCstart();
-    rtc.interupts |= (1<<Weckerein);
+    //rtc.interupts |= (1<<Weckerein);
 	
 	//AD deaktivieren zum stromsparen
 	ACSR |= (1<<ACD);
@@ -555,13 +555,6 @@ void maininterupthandler(monitor *mon){
 		FPScount=0;
 		anzeige |= (1<<refreshdisplay);
 		rtc.interupts &= ~(1<<sekundeninterupt);
-        if ((anzeige&(1<<blinkflag)))			//Anzeige blinken
-        {
-            static uint8_t inver = 0;
-            if (inver == 0){inver = 1;}
-            else{inver = 0;}
-            oled.invert(inver);
-        }
 	}
 	if ((rtc.interupts&(1<<minuteninterupt)))		//Minuten
 	{
@@ -578,6 +571,19 @@ void maininterupthandler(monitor *mon){
 		//Hier aktuelle seite neu ausgeben
 		mon->draw();
 		anzeige &= ~(1<<refreshdisplay);
+        if ((anzeige&(1<<blinkflag)))			//Anzeige blinken
+        {
+            static uint8_t inver = 0;
+            if (inver == 0){
+                inver = 1;
+                LED.on();
+            }
+            else{
+                inver = 0;
+                LED.off();
+            }
+            oled.invert(inver);
+        }
 	}
 	
 	if ((rtc.interupts&(1<<Weckeractiv)))

@@ -43,7 +43,7 @@ uint8_t EEPROM_Read(uint16_t adresse){
 #define EETAGE		2
 #define EEMONAT		3
 #define EEJAHR		4
-#define EEWCKMINUTEN	5
+#define EEWECKMINUTEN	5
 #define EEWECKSTUNDEN	6
 
 

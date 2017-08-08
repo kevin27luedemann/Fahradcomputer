@@ -15,12 +15,13 @@
 
 //interuptbits
 #define Alarm 0
-#define sekundeninterupt 1
-#define minuteninterupt 2
-#define Weckerein 3
-#define Weckeractiv 4
-#define Timerlauft 5
-#define Stoppuhrlauft 6
+#define sekundeninterupt    1
+#define minuteninterupt     2
+#define Weckerein           3
+#define Weckeractiv         4
+#define Timerlauft          5
+#define Stoppuhrlauft       6
+#define Weckerdauer         7
 
 #include <avr/io.h>
 #include <stdlib.h>

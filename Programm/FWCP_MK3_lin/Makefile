@@ -26,7 +26,7 @@ $(TARGET).hex: $(TARGET).elf
 $(TARGET)_eeprom.hex: $(TARGET).elf
 	avr-objcopy -O ihex -j .eeprom --change-section-lma .eeprom=1 $(TARGET).elf $(TARGET)_eeprom.hex
 
-$(TARGET).elf: $(OBJECTS)
+$(TARGET).elf: $(OBJECTS) Monitor.h
 	avr-g++ $(LDFLAGS) -mmcu=$(MCU) $(OBJECTS) -o $(TARGET).elf
 
 %.o : %.cpp
@@ -35,11 +35,14 @@ $(TARGET).elf: $(OBJECTS)
 size:
 	avr-size --mcu=$(MCU) -C $(TARGET).elf
 
-program:
-	avrdude -D -p$(MCU) $(PORT) $(BAUD) -c$(PROGRAMMER) -Uflash:w:$(TARGET).hex:a
+program: $(TARGET).hex
+	avrdude -p$(MCU) $(PORT) $(BAUD) -c$(PROGRAMMER) -Uflash:w:$(TARGET).hex:a
 
-read:
+readee:
 	avrdude -p$(MCU) $(PORT) $(BAUD) -c$(PROGRAMMER) -Ueeprom:r:$(TARGET).eep:i
+
+readfl:
+	avrdude -p$(MCU) $(PORT) $(BAUD) -c$(PROGRAMMER) -Uflash:r:$(TARGET).fla:i
 
 clean_tmp:
 	rm -rf *.o
