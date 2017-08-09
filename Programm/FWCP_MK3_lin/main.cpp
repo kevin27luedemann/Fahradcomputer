@@ -4,7 +4,7 @@
  * Created: 28.11.2015 18:12:54
  * Author : Lüdemann
  */ 
-#define VERSIONSNUMMER 3.09
+#define VERSIONSNUMMER 3.10
 #define SPANNUNGSTEILER 2.0069
 #define F_CPU 8000000
 #define BATMIN 3.6
@@ -43,7 +43,7 @@ Interface Tastatur;
 //SOUND Lautsprecher;
 
 #include "LSM303D.h"
-LSM303D Accelerometer;
+LSM303D accel;
 
 #include "BMP180.h"
 BMP180 druck;
@@ -161,8 +161,9 @@ double get_bearing(double lat1, double lon1, double lat2, double lon2){
     double x =   cos(phi1)*sin(phi2) 
                 -sin(phi1)*cos(phi2)*cos(lam2-lam1);
 
-    double bearing = atan2(y,x)*180./M_PI;
-    if(bearing<0){bearing=360+bearing;}
+    double bearing = atan2(y,x);
+    if(bearing>2.*M_PI){bearing-=2.*M_PI;}
+    else if(bearing<0){bearing+=2.*M_PI;}
     return bearing;
 }
 ISR(USART0_RX_vect){
@@ -585,22 +586,7 @@ void maininterupthandler(monitor *mon){
 		FPScount=0;
 		anzeige |= (1<<refreshdisplay);
 		rtc.interupts &= ~(1<<sekundeninterupt);
-	}
-	if ((rtc.interupts&(1<<minuteninterupt)))		//Minuten
-	{
-		if ((statusreg&(1<<mounttingstat)) && (statusreg&(1<<loggingstat)))
-		{
-			f_sync(&logger);
-		}
-		anzeige |= (1<<refreshdisplay);
-		rtc.interupts &= ~(1<<minuteninterupt);
-	}
-	
-	if ((anzeige&(1<<refreshdisplay)))			//Anzeige aktualieseren
-	{
-		//Hier aktuelle seite neu ausgeben
-		mon->draw();
-		anzeige &= ~(1<<refreshdisplay);
+		//anzeige &= ~(1<<refreshdisplay);
         if ((anzeige&(1<<blinkflag)))			//Anzeige blinken
         {
             static uint8_t inver = 0;
@@ -613,9 +599,19 @@ void maininterupthandler(monitor *mon){
                 LED.off();
             }
             oled.invert(inver);
+		    anzeige |= (1<<refreshdisplay);
         }
 	}
-	
+	if ((rtc.interupts&(1<<minuteninterupt)))		//Minuten
+	{
+		if ((statusreg&(1<<mounttingstat)) && (statusreg&(1<<loggingstat)))
+		{
+			f_sync(&logger);
+		}
+		anzeige |= (1<<refreshdisplay);
+		rtc.interupts &= ~(1<<minuteninterupt);
+	}
+
 	if ((rtc.interupts&(1<<Weckeractiv)))
 	{
 		if ((rtc.interupts&(1<<Weckerein)))
@@ -625,6 +621,12 @@ void maininterupthandler(monitor *mon){
             LED.on();
 			rtc.interupts &= ~(1<<Weckerein);
 		}
+	}
+	
+	if ((anzeige&(1<<refreshdisplay)))			//Anzeige aktualieseren
+	{
+		//Hier aktuelle seite neu ausgeben
+		mon->draw();
 	}
 }
 

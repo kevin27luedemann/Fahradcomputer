@@ -221,6 +221,7 @@ class tacho: public monitor
 		if (*tast=='e')
 		{
 			nullen();
+            accel.reset_Magn();
 		}
 		return 0;
 	}
@@ -271,6 +272,16 @@ class tacho: public monitor
 		//Nadel erst, wenn Kompass implementiert
 		//Anzeige der Richtung als Alternative
 		//anzeige_kleinenadel(31,31+8,angle);
+        //accel.magn_read_angle();
+		//buffersize=sprintf(buffer,"%.3f",accel.pitch*180./M_PI);
+		//for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,2*charhighte);}
+		//buffersize=sprintf(buffer,"%.3f",accel.roll*180./M_PI);
+		//for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,3*charhighte);}
+		//buffersize=sprintf(buffer,"%.3f",accel.angle_M*180./M_PI);
+		//for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,8*charhighte);}
+        //oled->draw_line(31,31,15,2.*M_PI-accel.angle_M);
+
+        //oled->draw_line(31,31,10,accel.angle_M);
 
 		//anzeige der gesammtstrecke
 		buffersize=sprintf(buffer,"%.3fkm",strecke/1000);
@@ -419,6 +430,12 @@ class wandern: public monitor
 		else if (*tast=='X')
 		{
 			druck.pressure0 = druck.pressure;
+            dlat = lat;
+            dlon = lon;
+		}
+		else if (*tast=='Y')
+		{
+            accel.reset_Magn();
 		}
 		return 0;
 	}
@@ -524,7 +541,7 @@ class wandern: public monitor
             if(dist>=1e6){
                 oled->draw_number16x16((uint8_t)(dist/1e7),0,1.66*charhighte);
                 oled->draw_number16x16((uint8_t)(dist/1e6)%10,numbersmalsize,1.66*charhighte);
-                oled->draw_ASCI('T',2*numbersmalsize+charsize/2,2*charhighte);
+                oled->draw_ASCI('M',2*numbersmalsize+charsize/2,2*charhighte);
                 oled->draw_ASCI('m',2*numbersmalsize+charsize+charsize/2,2*charhighte);
             }
             else if(dist>=1e3){
@@ -540,9 +557,14 @@ class wandern: public monitor
                 oled->draw_number16x16((uint8_t)(dist)%10,2*numbersmalsize,1.66*charhighte);
                 oled->draw_ASCI('m',3*numbersmalsize+charsize/2,2*charhighte);
             }
+            accel.magn_read_angle();
             oled->draw_number16x16((uint8_t)(bear/100)%10,0*numbersmalsize,2.66*charhighte+numbersmalhight);
             oled->draw_number16x16((uint8_t)(bear/10)%10,1*numbersmalsize,2.66*charhighte+numbersmalhight);
             oled->draw_number16x16((uint8_t)(bear)%10,2*numbersmalsize,2.66*charhighte+numbersmalhight);
+
+            oled->draw_number16x16((uint8_t)(accel.angle_M*180./M_PI/100)%10,70+0*numbersmalsize,2.66*charhighte+numbersmalhight);
+            oled->draw_number16x16((uint8_t)(accel.angle_M*180./M_PI/10)%10,70+1*numbersmalsize,2.66*charhighte+numbersmalhight);
+            oled->draw_number16x16((uint8_t)(accel.angle_M*180./M_PI)%10,70+2*numbersmalsize,2.66*charhighte+numbersmalhight);
         }
 			
 		send();	

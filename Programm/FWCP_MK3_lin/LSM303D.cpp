@@ -74,8 +74,14 @@ void LSM303D::readacc(){
 	achsen_A[2] =(int16_t) (input[1]<<8 | input[0]);
 	achsen_A[0] =(int16_t) (input[3]<<8 | input[2]);
 	achsen_A[1] =(int16_t) (input[5]<<8 | input[4]);
-	pitch=atan2(achsen_A[2],achsen_A[1])-M_PI_2;
+	//pitch=atan2(achsen_A[2],achsen_A[1])-M_PI_2;
+	//roll=atan2(achsen_A[2],achsen_A[0])-M_PI_2;
+	pitch=atan2(achsen_A[2],achsen_A[1]+M_PI_2);
 	roll=atan2(achsen_A[2],achsen_A[0])-M_PI_2;
+    if(pitch>2*M_PI){pitch-=2.*M_PI;}
+    else if(pitch<0){pitch+=2.*M_PI;}
+    if(roll>2*M_PI){roll-=2.*M_PI;}
+    else if(roll<0){roll+=2.*M_PI;}
 	sei();
 }
 
@@ -214,19 +220,19 @@ uint8_t LSM303D::magn_read_angle(){
 			angle_M = 270;
 		}*/
 		
-		angle_M = atan2f(achsen_M[0],achsen_M[1])*180.0/M_PI;
+		angle_M = atan2f(achsen_M[0],achsen_M[1]);
 		
 		//deklination
-		angle_M+=2.35;
+		angle_M+=2.35*M_PI/180.;
 		//Normierung auf %360
 		
-		if (angle_M>=360)
+		if (angle_M>2.*M_PI)
 		{
-			angle_M-=360;
+			angle_M-=2.*M_PI;
 		}
 		else if (angle_M < 0)
 		{
-			angle_M+=360;
+			angle_M+=2.*M_PI;
 		}
 	}
 
