@@ -198,7 +198,7 @@ void Display::draw_line(uint8_t x, uint8_t y, uint8_t length, float phi){
 void Display::draw_triangle(uint8_t basecenter_x, uint8_t basecenter_y, uint8_t baselength, float baseangle, float rotationangle){
 	//correcting rotationangle
 	rotationangle*=M_PI/180.0;
-	baseangle*=M_PI/180.0;
+	//baseangle*=M_PI/180.0;
 	//draw baseline
 	draw_line(basecenter_x,basecenter_y,baselength/2,rotationangle);
 	draw_line(basecenter_x,basecenter_y,baselength/2,rotationangle-M_PI);

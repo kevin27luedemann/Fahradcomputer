@@ -272,16 +272,12 @@ class tacho: public monitor
 		//Nadel erst, wenn Kompass implementiert
 		//Anzeige der Richtung als Alternative
 		//anzeige_kleinenadel(31,31+8,angle);
-        //accel.magn_read_angle();
-		//buffersize=sprintf(buffer,"%.3f",accel.pitch*180./M_PI);
-		//for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,2*charhighte);}
-		//buffersize=sprintf(buffer,"%.3f",accel.roll*180./M_PI);
-		//for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,3*charhighte);}
-		//buffersize=sprintf(buffer,"%.3f",accel.angle_M*180./M_PI);
-		//for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,8*charhighte);}
-        //oled->draw_line(31,31,15,2.*M_PI-accel.angle_M);
-
-        //oled->draw_line(31,31,10,accel.angle_M);
+        accel.magn_read_angle();
+        double winkel = accel.angle_M+M_PI_2;
+        if(winkel<0){winkel+=2.*M_PI;}
+        else if(winkel>2.*M_PI){winkel-=2.*M_PI;}
+        oled->draw_line(31,31,15,2.*M_PI-winkel);
+        oled->drawRectangle(29,29,33,33,1);
 
 		//anzeige der gesammtstrecke
 		buffersize=sprintf(buffer,"%.3fkm",strecke/1000);
@@ -558,13 +554,18 @@ class wandern: public monitor
                 oled->draw_ASCI('m',3*numbersmalsize+charsize/2,2*charhighte);
             }
             accel.magn_read_angle();
-            oled->draw_number16x16((uint8_t)(bear/100)%10,0*numbersmalsize,2.66*charhighte+numbersmalhight);
-            oled->draw_number16x16((uint8_t)(bear/10)%10,1*numbersmalsize,2.66*charhighte+numbersmalhight);
-            oled->draw_number16x16((uint8_t)(bear)%10,2*numbersmalsize,2.66*charhighte+numbersmalhight);
+            oled->draw_number16x16((uint8_t)(bear*180./M_PI/100)%10,0*numbersmalsize,1.66*charhighte+numbersmalhight);
+            oled->draw_number16x16((uint8_t)(bear*180./M_PI/10)%10,1*numbersmalsize,1.66*charhighte+numbersmalhight);
+            oled->draw_number16x16((uint8_t)(bear*180./M_PI)%10,2*numbersmalsize,1.66*charhighte+numbersmalhight);
 
-            oled->draw_number16x16((uint8_t)(accel.angle_M*180./M_PI/100)%10,70+0*numbersmalsize,2.66*charhighte+numbersmalhight);
-            oled->draw_number16x16((uint8_t)(accel.angle_M*180./M_PI/10)%10,70+1*numbersmalsize,2.66*charhighte+numbersmalhight);
-            oled->draw_number16x16((uint8_t)(accel.angle_M*180./M_PI)%10,70+2*numbersmalsize,2.66*charhighte+numbersmalhight);
+            oled->draw_number16x16((uint8_t)(accel.angle_M*180./M_PI/100)%10,0*numbersmalsize,1.66*charhighte+numbersmalhight*2);
+            oled->draw_number16x16((uint8_t)(accel.angle_M*180./M_PI/10)%10,1*numbersmalsize,1.66*charhighte+numbersmalhight*2);
+            oled->draw_number16x16((uint8_t)(accel.angle_M*180./M_PI)%10,2*numbersmalsize,1.66*charhighte+numbersmalhight*2);
+            double winkel = accel.angle_M+M_PI_2-bear;
+            if(winkel<0){winkel+=2.*M_PI;}
+            else if(winkel>2.*M_PI){winkel-=2.*M_PI;}
+            oled->draw_line(100,31,15,2.*M_PI-winkel);
+            oled->drawRectangle(98,29,102,33,1);
         }
 			
 		send();	
