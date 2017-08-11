@@ -162,9 +162,8 @@ double get_bearing(double lat1, double lon1, double lat2, double lon2){
                 -sin(phi1)*cos(phi2)*cos(lam2-lam1);
 
     double bearing = atan2(y,x);
-    //if(bearing>2.*M_PI){bearing-=2.*M_PI;}
-    if(bearing<0){bearing+=2.*M_PI;}
-    return bearing;
+    //if(bearing<0){bearing+=2.*M_PI;}
+    return fmod(bearing+2*M_PI,2.*M_PI);
 }
 ISR(USART0_RX_vect){
 	uint8_t temp = UDR0;

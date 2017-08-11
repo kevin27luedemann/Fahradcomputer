@@ -71,17 +71,13 @@ void LSM303D::readacc(){
 		
 	}
 	i2c.twi_stop();
-	achsen_A[2] =(int16_t) (input[1]<<8 | input[0]);
-	achsen_A[0] =(int16_t) (input[3]<<8 | input[2]);
-	achsen_A[1] =(int16_t) (input[5]<<8 | input[4]);
+	achsen_A[2] = (int16_t) (input[1]<<8 | input[0]);
+	achsen_A[1] =-(int16_t) (input[3]<<8 | input[2]);
+	achsen_A[0] = (int16_t) (input[5]<<8 | input[4]);
 	//pitch=atan2(achsen_A[2],achsen_A[1])-M_PI_2;
 	//roll=atan2(achsen_A[2],achsen_A[0])-M_PI_2;
-	pitch=atan2(achsen_A[2],achsen_A[1]+M_PI_2);
-	roll=atan2(achsen_A[2],achsen_A[0])-M_PI_2;
-    if(pitch>2*M_PI){pitch-=2.*M_PI;}
-    else if(pitch<0){pitch+=2.*M_PI;}
-    if(roll>2*M_PI){roll-=2.*M_PI;}
-    else if(roll<0){roll+=2.*M_PI;}
+	roll=atan2(-achsen_A[1],achsen_A[2]);
+	pitch=atan2(achsen_A[0],sqrt((double)achsen_A[1]*(double)achsen_A[1]+(double)achsen_A[2]*(double)achsen_A[2]));
 	sei();
 }
 
@@ -105,9 +101,9 @@ void LSM303D::readacc_fast(){
 	}
 	i2c.twi_stop();
 	
-	achsen_A[2] =(int16_t) (input[1]<<8 | input[0]);
-	achsen_A[0] =(int16_t) (input[3]<<8 | input[2]);
-	achsen_A[1] =(int16_t) (input[5]<<8 | input[4]);
+	achsen_A[2] = (int16_t) (input[1]<<8 | input[0]);
+	achsen_A[1] = (int16_t) (input[3]<<8 | input[2]);
+	achsen_A[0] =-(int16_t) (input[5]<<8 | input[4]);
 }
 
 void LSM303D::LSM303_init(){
@@ -165,9 +161,9 @@ uint8_t LSM303D::magn_read_angle(){
 	}
 	i2c.twi_stop();
 	sei();
-	achsen_M[2] =(int16_t) (input[1]<<8 | input[0]);
-	achsen_M[0] =(int16_t) (input[3]<<8 | input[2]);
-	achsen_M[1] =(int16_t) (input[5]<<8 | input[4]);
+	achsen_M[2] = (int16_t) (input[1]<<8 | input[0]);
+	achsen_M[1] =-(int16_t) (input[3]<<8 | input[2]);
+	achsen_M[0] = (int16_t) (input[5]<<8 | input[4]);
 	
 	if (achsen_M[0]==-4096 || achsen_M[1]==-4096 || achsen_M[2]==-4096)
 	{
@@ -179,11 +175,11 @@ uint8_t LSM303D::magn_read_angle(){
 		for(uint8_t i=0;i<3;i++){
 			if(achsen_M[i]>max[i]){
 				max[i]=achsen_M[i];
-				offset_M[i]=(max[i]+min[i])/2;
+				offset_M[i]=(max[i]+min[i])/2.;
 			}
 			else if(achsen_M[i]<min[i]){
 				min[i]=achsen_M[i];
-				offset_M[i]=(max[i]+min[i])/2;
+				offset_M[i]=(max[i]+min[i])/2.;
 			}
 			else {
 				achsen_M[i]-=offset_M[i];
@@ -192,48 +188,28 @@ uint8_t LSM303D::magn_read_angle(){
 		
 		//berechnung Winkel
 		//Projektion auf Ebene
-		/*
 		double	xh =  (double)achsen_M[0]*cos(pitch);
 				xh += (double)achsen_M[1]*sin(roll)*sin(pitch);
 				xh -= (double)achsen_M[2]*cos(roll)*sin(pitch);
 		double	yh =  (double)achsen_M[1]*cos(roll);
 				yh += (double)achsen_M[2]*sin(roll);
+		/*
+        double xh = achsen_M[0];
+        double yh = achsen_M[1];
 		
-		if (xh>0)
-		{
-			angle_M = 180-atan(yh/xh)*180.0/M_PI;
-		}
-		else if (xh>0 && yh<0)
-		{
-			angle_M = -atan(yh/xh)*180.0/M_PI;
-		}
-		else if (xh>0 && yh>0)
-		{
-			angle_M = 360-atan(xh/xh)*180.0/M_PI;
-		}
-		else if (xh==0 && yh<0)
-		{
-			angle_M = 90;
-		}
-		else if (xh==0 && yh>0)
-		{
-			angle_M = 270;
-		}*/
+		if(yh>0){angle_M = M_PI/2.-atan2(yh,xh);}
+        else if(yh<0){angle_M = 3.*M_PI/2.-atan2(yh,xh);}
+		else if(yh==0 && xh<0){angle_M = M_PI;}
+		else if(yh==0 && xh>0){angle_M = 0.;}
+        */
 		
-		angle_M = atan2f(achsen_M[0],achsen_M[1]);
+		//angle_M = atan2(achsen_M[1],achsen_M[0]);
+		angle_M = atan2(yh,xh);
 		
 		//deklination
-		angle_M+=2.35*M_PI/180.;
+		//angle_M+=2.35*M_PI/180.;
 		//Normierung auf %360
-		
-		if (angle_M>2.*M_PI)
-		{
-			angle_M-=2.*M_PI;
-		}
-		else if (angle_M < 0)
-		{
-			angle_M+=2.*M_PI;
-		}
+        angle_M = fmod(angle_M+2.*M_PI,2.*M_PI);
 	}
 
 	return 0;

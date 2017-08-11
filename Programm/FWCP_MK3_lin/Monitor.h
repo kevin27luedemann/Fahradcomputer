@@ -273,10 +273,7 @@ class tacho: public monitor
 		//Anzeige der Richtung als Alternative
 		//anzeige_kleinenadel(31,31+8,angle);
         accel.magn_read_angle();
-        double winkel = accel.angle_M+M_PI_2;
-        if(winkel<0){winkel+=2.*M_PI;}
-        else if(winkel>2.*M_PI){winkel-=2.*M_PI;}
-        oled->draw_line(31,31,15,2.*M_PI-winkel);
+        oled->draw_line(31,31,15,(accel.angle_M+M_PI_2)+M_PI);
         oled->drawRectangle(29,29,33,33,1);
 
 		//anzeige der gesammtstrecke
@@ -534,37 +531,74 @@ class wandern: public monitor
             for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,4*charhighte);}
         }
         else if(posx==7){
+            /*
             if(dist>=1e6){
                 oled->draw_number16x16((uint8_t)(dist/1e7),0,1.66*charhighte);
                 oled->draw_number16x16((uint8_t)(dist/1e6)%10,numbersmalsize,1.66*charhighte);
                 oled->draw_ASCI('M',2*numbersmalsize+charsize/2,2*charhighte);
                 oled->draw_ASCI('m',2*numbersmalsize+charsize+charsize/2,2*charhighte);
             }
-            else if(dist>=1e3){
+            else if(dist>=1e5){
                 oled->draw_number16x16((uint8_t)(dist/1e5)%10,0,1.66*charhighte);
                 oled->draw_number16x16((uint8_t)(dist/1e4)%10,numbersmalsize,1.66*charhighte);
                 oled->draw_number16x16((uint8_t)(dist/1e3)%10,2*numbersmalsize,1.66*charhighte);
                 oled->draw_ASCI('k',3*numbersmalsize+charsize/2,2*charhighte);
                 oled->draw_ASCI('m',3*numbersmalsize+charsize+charsize/2,2*charhighte);
             }
-            else{
-                oled->draw_number16x16((uint8_t)(dist/100)%10,0,1.66*charhighte);
-                oled->draw_number16x16((uint8_t)(dist/10)%10,numbersmalsize,1.66*charhighte);
+            else if(dist>=1e4){
+                oled->draw_number16x16((uint8_t)(dist/1e4)%10,0,1.66*charhighte);
+                oled->draw_number16x16((uint8_t)(dist/1e3)%10,numbersmalsize,1.66*charhighte);
+                oled->draw_ASCI('.',charsize/2+2*numbersmalsize,2.66*charhighte);
+                oled->draw_number16x16((uint8_t)(dist/1e3)%10,2*numbersmalsize+charsize,1.66*charhighte);
+                oled->draw_ASCI('k',3*numbersmalsize+charsize/2+charsize,2*charhighte);
+                oled->draw_ASCI('m',3*numbersmalsize+charsize+charsize/2+charsize,2*charhighte);
+            }
+            else if(dist>=1e3){
+                oled->draw_number16x16((uint8_t)(dist/1e3)%10,0,1.66*charhighte);
+                oled->draw_ASCI('.',charsize/2+1*numbersmalsize,2.66*charhighte);
+                oled->draw_number16x16((uint8_t)(dist/1e2)%10,numbersmalsize+charsize,1.66*charhighte);
+                oled->draw_number16x16((uint8_t)(dist/1e1)%10,2*numbersmalsize+charsize,1.66*charhighte);
+                oled->draw_ASCI('k',3*numbersmalsize+charsize/2+charsize,2*charhighte);
+                oled->draw_ASCI('m',3*numbersmalsize+charsize+charsize/2+charsize,2*charhighte);
+            }
+            else if(dist>=1e2){
+                oled->draw_number16x16((uint8_t)(dist/1e2)%10,0,1.66*charhighte);
+                oled->draw_number16x16((uint8_t)(dist/1e1)%10,numbersmalsize,1.66*charhighte);
                 oled->draw_number16x16((uint8_t)(dist)%10,2*numbersmalsize,1.66*charhighte);
                 oled->draw_ASCI('m',3*numbersmalsize+charsize/2,2*charhighte);
             }
+            else if(dist>=1e1){
+                oled->draw_number16x16((uint8_t)(dist/1e1)%10,0,1.66*charhighte);
+                oled->draw_number16x16((uint8_t)(dist/1e0)%10,numbersmalsize,1.66*charhighte);
+                oled->draw_ASCI('.',charsize/2+2*numbersmalsize,2.66*charhighte);
+                oled->draw_number16x16((uint8_t)(dist*10)%10,2*numbersmalsize+charsize,1.66*charhighte);
+                oled->draw_ASCI('m',3*numbersmalsize+charsize/2+charsize,2*charhighte);
+            }
+            else{
+                oled->draw_number16x16((uint8_t)(dist)%10,0,1.66*charhighte);
+                oled->draw_ASCI('.',charsize/2+1*numbersmalsize,2.66*charhighte);
+                oled->draw_number16x16((uint8_t)(dist*10)%10,numbersmalsize+charsize,1.66*charhighte);
+                oled->draw_number16x16((uint8_t)(dist*100)%10,2*numbersmalsize+charsize,1.66*charhighte);
+                oled->draw_ASCI('m',3*numbersmalsize+charsize/2+charsize,2*charhighte);
+            }
+            */
             accel.magn_read_angle();
-            oled->draw_number16x16((uint8_t)(bear*180./M_PI/100)%10,0*numbersmalsize,1.66*charhighte+numbersmalhight);
-            oled->draw_number16x16((uint8_t)(bear*180./M_PI/10)%10,1*numbersmalsize,1.66*charhighte+numbersmalhight);
-            oled->draw_number16x16((uint8_t)(bear*180./M_PI)%10,2*numbersmalsize,1.66*charhighte+numbersmalhight);
+            //oled->draw_number16x16((uint8_t)(bear*180./M_PI/100)%10,0*numbersmalsize,1.66*charhighte+numbersmalhight);
+            //oled->draw_number16x16((uint8_t)(bear*180./M_PI/10)%10,1*numbersmalsize,1.66*charhighte+numbersmalhight);
+            //oled->draw_number16x16((uint8_t)(bear*180./M_PI)%10,2*numbersmalsize,1.66*charhighte+numbersmalhight);
 
-            oled->draw_number16x16((uint8_t)(accel.angle_M*180./M_PI/100)%10,0*numbersmalsize,1.66*charhighte+numbersmalhight*2);
-            oled->draw_number16x16((uint8_t)(accel.angle_M*180./M_PI/10)%10,1*numbersmalsize,1.66*charhighte+numbersmalhight*2);
-            oled->draw_number16x16((uint8_t)(accel.angle_M*180./M_PI)%10,2*numbersmalsize,1.66*charhighte+numbersmalhight*2);
-            double winkel = accel.angle_M+M_PI_2-bear;
-            if(winkel<0){winkel+=2.*M_PI;}
-            else if(winkel>2.*M_PI){winkel-=2.*M_PI;}
-            oled->draw_line(100,31,15,2.*M_PI-winkel);
+            //oled->draw_number16x16((uint8_t)(accel.angle_M*180./M_PI/100)%10,0*numbersmalsize,1.66*charhighte+numbersmalhight*2);
+            //oled->draw_number16x16((uint8_t)(accel.angle_M*180./M_PI/10)%10,1*numbersmalsize,1.66*charhighte+numbersmalhight*2);
+            //oled->draw_number16x16((uint8_t)(accel.angle_M*180./M_PI)%10,2*numbersmalsize,1.66*charhighte+numbersmalhight*2);
+            buffersize=sprintf(buffer,"%f",accel.roll*180./M_PI);
+            for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,2.66*charhighte+numbersmalhight*0);}
+            buffersize=sprintf(buffer,"%f",accel.pitch*180./M_PI);
+            for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,2.66*charhighte+numbersmalhight*1);}
+            buffersize=sprintf(buffer,"%f",accel.angle_M*180./M_PI);
+            for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,2.66*charhighte+numbersmalhight*2);}
+            double winkel = accel.angle_M-bear;
+            //double winkel = accel.angle_M+M_PI_2;
+            oled->draw_line(100,31,15,winkel+M_PI_2+M_PI);
             oled->drawRectangle(98,29,102,33,1);
         }
 			
