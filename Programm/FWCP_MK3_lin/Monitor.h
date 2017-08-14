@@ -161,8 +161,8 @@ class uhr:public monitor
 		header();
 		bottom();
         if(posx==3){
-           EEPROM_Write(EEWECKMINUTEN,rtc->WMinuten); 
-           EEPROM_Write(EEWECKSTUNDEN,rtc->WStunden); 
+           EEPWriteByte(EEWECKSTUNDEN,rtc->WStunden); 
+           EEPWriteByte(EEWECKSTUNDEN,rtc->WStunden); 
            posx = 0;
         }
         if(posx==0){
@@ -174,22 +174,27 @@ class uhr:public monitor
             oled->draw_number16x16(rtc->msg_uhr[4]-'0',70+numbersmalsize,2.33*charhighte+numbersmalhight);
         }
         else if(posx==1){
-            oled->draw_number16x16(rtc->WStunden/10,70,1.66*charhighte);
-            oled->draw_number16x16(rtc->WStunden%10,70+numbersmalsize,1.66*charhighte);
-            oled->draw_number16x16(rtc->WMinuten/10,70,2.33*charhighte+numbersmalhight);
-            oled->draw_number16x16(rtc->WMinuten%10,70+numbersmalsize,2.33*charhighte+numbersmalhight);
-            oled->draw_ASCI('-',70-3*charsize,2*charhighte);
-            oled->draw_ASCI('-',70-2*charsize,2*charhighte);
-            oled->draw_ASCI('>',70-1*charsize,2*charhighte);
+            oled->draw_number16x16(rtc->WStunden/10,0*numbersmalsize,1.66*charhighte);
+            oled->draw_number16x16(rtc->WStunden%10,1*numbersmalsize,1.66*charhighte);
+            oled->draw_number16x16(rtc->WMinuten/10,3*numbersmalsize,1.66*charhighte);
+            oled->draw_number16x16(rtc->WMinuten%10,4*numbersmalsize,1.66*charhighte);
+            oled->draw_ASCI('^',1*numbersmalsize+charsize,4*charhighte);
+            //oled->draw_ASCI('-',70-3*charsize,2*charhighte);
+            //oled->draw_ASCI('-',70-2*charsize,2*charhighte);
         }
         else if(posx==2){
-            oled->draw_number16x16(rtc->WStunden/10,70,1.66*charhighte);
-            oled->draw_number16x16(rtc->WStunden%10,70+numbersmalsize,1.66*charhighte);
-            oled->draw_number16x16(rtc->WMinuten/10,70,2.33*charhighte+numbersmalhight);
-            oled->draw_number16x16(rtc->WMinuten%10,70+numbersmalsize,2.33*charhighte+numbersmalhight);
-            oled->draw_ASCI('-',70-3*charsize,3*charhighte+numbersmalhight);
-            oled->draw_ASCI('-',70-2*charsize,3*charhighte+numbersmalhight);
-            oled->draw_ASCI('>',70-1*charsize,3*charhighte+numbersmalhight);
+            oled->draw_number16x16(rtc->WStunden/10,0*numbersmalsize,1.66*charhighte);
+            oled->draw_number16x16(rtc->WStunden%10,1*numbersmalsize,1.66*charhighte);
+            oled->draw_number16x16(rtc->WMinuten/10,3*numbersmalsize,1.66*charhighte);
+            oled->draw_number16x16(rtc->WMinuten%10,4*numbersmalsize,1.66*charhighte);
+            oled->draw_ASCI('^',4*numbersmalsize+charsize,4*charhighte);
+            //oled->draw_number16x16(rtc->WStunden/10,70,1.66*charhighte);
+            //oled->draw_number16x16(rtc->WStunden%10,70+numbersmalsize,1.66*charhighte);
+            //oled->draw_number16x16(rtc->WMinuten/10,70,2.33*charhighte+numbersmalhight);
+            //oled->draw_number16x16(rtc->WMinuten%10,70+numbersmalsize,2.33*charhighte+numbersmalhight);
+            //oled->draw_ASCI('-',70-3*charsize,3*charhighte+numbersmalhight);
+            //oled->draw_ASCI('-',70-2*charsize,3*charhighte+numbersmalhight);
+            //oled->draw_ASCI('>',70-1*charsize,3*charhighte+numbersmalhight);
         }
 		send();
 	}
@@ -336,11 +341,17 @@ class wandern: public monitor
 			rtc->Jahr		= gpsJahr;
 			rtc->ausgabedatumneu();
 			//speichern der neuen Zeit im EEPROM
+            /*
 			EEPROM_Write(EEMINUTEN,rtc->Minuten);
 			EEPROM_Write(EESTUNDEN,rtc->Stunden);
 			EEPROM_Write(EETAGE,rtc->Tag);
 			EEPROM_Write(EEMONAT,rtc->Monat);
-			EEPROM_Write(EEJAHR,rtc->Jahr);
+			EEPROM_Write(EEJAHR,rtc->Jahr);*/
+			EEPWriteByte(EEMINUTEN,rtc->Minuten);
+			EEPWriteByte(EESTUNDEN,rtc->Stunden);
+			EEPWriteByte(EETAGE,rtc->Tag);
+			EEPWriteByte(EEMONAT,rtc->Monat);
+			EEPWriteByte(EEJAHR,rtc->Jahr);
 		}
 		else if (*tast=='A')
 		{
@@ -357,27 +368,21 @@ class wandern: public monitor
                     break;
                 case 1:
                     if(dlatgra < 89.){  dlat += 1.;}
-                    //else{               dlat  = -dlat;}
                     break;
                 case 2:
                     if(dlatmin < 59){   dlat += 1./60.;}
-                    //else{               dlat -= (double)59./60.;}
                     break;
                 case 3:
                     if(dlatsek < 59){   dlat += 1./3600.;}
-                    //else{               dlat -= (double)59./3600.;}
                     break;
                 case 4:
                     if(dlongra < 179.){ dlon += 1.;}
-                    //else{               dlon  = -dlon;}
                     break;
                 case 5:
                     if(dlonmin < 59){   dlon += 1./60.;}
-                    //else{               dlon -= (double)59./60.;}
                     break;
                 case 6:
                     if(dlonsek < 59){   dlon += 1./3600.;}
-                    //else{               dlon -= (double)59./3600.;}
                     break;
             }
 		}
@@ -396,27 +401,21 @@ class wandern: public monitor
                     break;
                 case 1:
                     if(dlatgra > -89.){  dlat -= 1.;}
-                    //else{               dlat  = -dlat;}
                     break;
                 case 2:
                     if(dlatmin > 0 ){    dlat -= 1./60.;}
-                    //else{               dlat += (double)59./60.;}
                     break;
                 case 3:
                     if(dlatsek > 0 ){    dlat -= 1./3600.;}
-                    //else{               dlat += (double)59./3600.;}
                     break;
                 case 4:
                     if(dlongra > -179.){ dlon -= 1.;}
-                    //else{               dlon  = -dlon;}
                     break;
                 case 5:
                     if(dlonmin > 0 ){    dlon -= 1./60.;}
-                    //else{               dlon += (double)59./60.;}
                     break;
                 case 6:
                     if(dlonsek > 0 ){    dlon -= 1./3600.;}
-                    //else{               dlon += (double)59./3600.;}
                     break;
             }
 		}
@@ -452,8 +451,8 @@ class wandern: public monitor
          int8_t dlongra = (int16_t) dlon;
         uint8_t dlonmin = (uint8_t) ((uint32_t)(dlon*60.)%60);
         uint8_t dlonsek = (uint8_t) ((uint16_t)(dlon*3600.)%60);
-        double dist     = get_distance(lat,lon,dlat,dlon);
-        double bear     = get_bearing(lat,lon,dlat,dlon);
+        float dist     = get_distance(lat,lon,dlat,dlon);
+        float bear     = get_bearing(lat,lon,dlat,dlon);
 
         if(posx == 0){
             //Latitude
@@ -531,7 +530,6 @@ class wandern: public monitor
             for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,4*charhighte);}
         }
         else if(posx==7){
-            /*
             if(dist>=1e6){
                 oled->draw_number16x16((uint8_t)(dist/1e7),0,1.66*charhighte);
                 oled->draw_number16x16((uint8_t)(dist/1e6)%10,numbersmalsize,1.66*charhighte);
@@ -581,23 +579,15 @@ class wandern: public monitor
                 oled->draw_number16x16((uint8_t)(dist*100)%10,2*numbersmalsize+charsize,1.66*charhighte);
                 oled->draw_ASCI('m',3*numbersmalsize+charsize/2+charsize,2*charhighte);
             }
-            */
             accel.magn_read_angle();
-            //oled->draw_number16x16((uint8_t)(bear*180./M_PI/100)%10,0*numbersmalsize,1.66*charhighte+numbersmalhight);
-            //oled->draw_number16x16((uint8_t)(bear*180./M_PI/10)%10,1*numbersmalsize,1.66*charhighte+numbersmalhight);
-            //oled->draw_number16x16((uint8_t)(bear*180./M_PI)%10,2*numbersmalsize,1.66*charhighte+numbersmalhight);
+            oled->draw_number16x16((uint8_t)(bear*180./M_PI/100)%10,0*numbersmalsize,1.66*charhighte+numbersmalhight);
+            oled->draw_number16x16((uint8_t)(bear*180./M_PI/10)%10,1*numbersmalsize,1.66*charhighte+numbersmalhight);
+            oled->draw_number16x16((uint8_t)(bear*180./M_PI)%10,2*numbersmalsize,1.66*charhighte+numbersmalhight);
 
-            //oled->draw_number16x16((uint8_t)(accel.angle_M*180./M_PI/100)%10,0*numbersmalsize,1.66*charhighte+numbersmalhight*2);
-            //oled->draw_number16x16((uint8_t)(accel.angle_M*180./M_PI/10)%10,1*numbersmalsize,1.66*charhighte+numbersmalhight*2);
-            //oled->draw_number16x16((uint8_t)(accel.angle_M*180./M_PI)%10,2*numbersmalsize,1.66*charhighte+numbersmalhight*2);
-            buffersize=sprintf(buffer,"%f",accel.roll*180./M_PI);
-            for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,2.66*charhighte+numbersmalhight*0);}
-            buffersize=sprintf(buffer,"%f",accel.pitch*180./M_PI);
-            for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,2.66*charhighte+numbersmalhight*1);}
-            buffersize=sprintf(buffer,"%f",accel.angle_M*180./M_PI);
-            for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize,2.66*charhighte+numbersmalhight*2);}
-            double winkel = accel.angle_M-bear;
-            //double winkel = accel.angle_M+M_PI_2;
+            oled->draw_number16x16((uint8_t)(accel.angle_M*180./M_PI/100)%10,0*numbersmalsize,1.66*charhighte+numbersmalhight*2);
+            oled->draw_number16x16((uint8_t)(accel.angle_M*180./M_PI/10)%10,1*numbersmalsize,1.66*charhighte+numbersmalhight*2);
+            oled->draw_number16x16((uint8_t)(accel.angle_M*180./M_PI)%10,2*numbersmalsize,1.66*charhighte+numbersmalhight*2);
+            float winkel = accel.angle_M-bear;
             oled->draw_line(100,31,15,winkel+M_PI_2+M_PI);
             oled->drawRectangle(98,29,102,33,1);
         }
@@ -670,10 +660,9 @@ class einstellungen: public monitor
 		}
 		else if (posy==2 && posx==1)
 		{
-			buffersize=sprintf(buffer,"Version: %.2f",(double)VERSIONSNUMMER);
+			buffersize=sprintf(buffer,"Version: %.2f",VERSIONSNUMMER);
 			for(uint8_t i=0; i < buffersize;i++){
 				oled->draw_ASCI(buffer[i],(i+2)*charsize,3.5*charhighte);
-
 			}
 		}
 		send();	
@@ -702,7 +691,7 @@ class wilkommen: public monitor
 		for(uint8_t i=0; i < buffersize;i++){
 			oled->draw_ASCI(buffer[i],i*charsize,8);
 		}
-		buffersize=sprintf(buffer,"Version: %.2f",(double)VERSIONSNUMMER);
+		buffersize=sprintf(buffer,"Version: %.2f",(float)VERSIONSNUMMER);
 		for(uint8_t i=0; i < buffersize;i++){
 			oled->draw_ASCI(buffer[i],i*charsize,32);
 
@@ -712,6 +701,14 @@ class wilkommen: public monitor
 		
 };
 
+const char entries_men[][14] PROGMEM = {
+    "Uhr          ",
+    "Tacho        ",
+    "GPS          ",
+    "GPS read     ",
+    "GPS save     ",
+    "Einstellungen",
+    "Display aus  "};
 class menue: public monitor
 {
 	private:
@@ -728,8 +725,8 @@ class menue: public monitor
 			{
 				name[i] = ' ';
 			}
-			maxentriesx = 0;
-			maxentries = numberofpages;
+		maxentriesx = 0;
+		maxentries = numberofpages;
 	}
 	
 	uint8_t tastendruck(uint8_t *tast){
@@ -741,17 +738,181 @@ class menue: public monitor
 		header();
 		bottom();
 		//menueeintrag zeichnen
-		buffersize=sprintf(buffer,"Uhr");
-		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,2*charhighte);}
-		buffersize=sprintf(buffer,"Tacho");
-		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,3*charhighte);}
-		buffersize=sprintf(buffer,"Wandern");
-		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,4*charhighte);}
-		buffersize=sprintf(buffer,"Einstellungen");
-		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,5*charhighte);}
-		buffersize=sprintf(buffer,"Display aus");
-		for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,6*charhighte);}
-		oled->draw_ASCI('>',0*charsize,(posy+2)*charhighte);
+        int8_t places[5] = {posy-2,
+                            posy-1,
+                            posy,
+                            posy+1,
+                            posy+2};
+        for(uint8_t i=0; i<5; i++){
+            if(places[i]>=maxentries){
+                places[i] -= maxentries;
+            }
+            else if(places[i]<0){
+                places[i] += maxentries;
+            }
+        }
+		for(uint8_t i=0;i<14;i++){oled->draw_ASCI(pgm_read_byte(&entries_men[(uint8_t)places[0]][i]),i*charsize+2*charsize,2*charhighte);}
+		for(uint8_t i=0;i<14;i++){oled->draw_ASCI(pgm_read_byte(&entries_men[(uint8_t)places[1]][i]),i*charsize+2*charsize,3*charhighte);}
+		for(uint8_t i=0;i<14;i++){oled->draw_ASCI(pgm_read_byte(&entries_men[(uint8_t)places[2]][i]),i*charsize+2*charsize,4*charhighte);}
+		for(uint8_t i=0;i<14;i++){oled->draw_ASCI(pgm_read_byte(&entries_men[(uint8_t)places[3]][i]),i*charsize+2*charsize,5*charhighte);}
+		for(uint8_t i=0;i<14;i++){oled->draw_ASCI(pgm_read_byte(&entries_men[(uint8_t)places[4]][i]),i*charsize+2*charsize,6*charhighte);}
+		oled->draw_ASCI('>',0*charsize,(2+2)*charhighte);
+		send();
+	}
+	
+};
+
+const char entries_save[][14] PROGMEM = {
+    "Letztes1     ",
+    "Letztes2     ",
+    "Parkplatz    "};
+class GPS_save: public monitor
+{
+	private:
+	public:
+	GPS_save(Display *ol, RTC *rt):monitor(ol,rt)
+	{
+		char na[] = "GPS save";
+		for(uint8_t i =0; i< namesize;i++)
+			if (i<sizeof(na))
+			{
+				name[i] = na[i];
+			}
+			else
+			{
+				name[i] = ' ';
+			}
+		maxentriesx = 1;
+		maxentries = 3;
+	}
+	
+	uint8_t tastendruck(uint8_t *tast){
+		return 0;
+	}
+
+	void draw(){
+		monitor::draw();
+		header();
+		bottom();
+        if(posx==1 && posy == 0){
+            EEPROM_write_float(EEGPSLAST1  ,dlat);
+            EEPROM_write_float(EEGPSLAST1+4,dlon);
+            posx = 0;
+        }
+        if(posx==1 && posy == 1){
+            EEPROM_write_float(EEGPSLAST2  ,dlat);
+            EEPROM_write_float(EEGPSLAST2+4,dlon);
+            posx = 0;
+        }
+        if(posx==1 && posy == 2){
+            EEPROM_write_float(EEGPSPARK  ,dlat);
+            EEPROM_write_float(EEGPSPARK+4,dlon);
+            posx = 0;
+        }
+        if(posx==0){
+            int8_t places[3] = {posy-1,
+                                posy,
+                                posy+1};
+            for(uint8_t i=0; i<3; i++){
+                if(places[i]>=maxentries){
+                    places[i] -= maxentries;
+                }
+                else if(places[i]<0){
+                    places[i] += maxentries;
+                }
+            }
+            for(uint8_t i=0;i<14;i++){oled->draw_ASCI(pgm_read_byte(&entries_save[(uint8_t)places[0]][i]),i*charsize+2*charsize,2*charhighte);}
+            for(uint8_t i=0;i<14;i++){oled->draw_ASCI(pgm_read_byte(&entries_save[(uint8_t)places[1]][i]),i*charsize+2*charsize,3*charhighte);}
+            for(uint8_t i=0;i<14;i++){oled->draw_ASCI(pgm_read_byte(&entries_save[(uint8_t)places[2]][i]),i*charsize+2*charsize,4*charhighte);}
+            //for(uint8_t i=0;i<14;i++){oled->draw_ASCI(pgm_read_byte(&entries_men[(uint8_t)places[3]][i]),i*charsize+2*charsize,5*charhighte);}
+            //for(uint8_t i=0;i<14;i++){oled->draw_ASCI(pgm_read_byte(&entries_men[(uint8_t)places[4]][i]),i*charsize+2*charsize,6*charhighte);}
+            oled->draw_ASCI('>',0*charsize,(1+2)*charhighte);
+        }
+		send();
+	}
+	
+};
+
+const char entries_read[][14] PROGMEM = {
+    "Stemmen      ",
+    "Goettingen   ",
+    "Letzte1      ",
+    "Letzte2      ",
+    "Parkplatz    "};
+class GPS_read: public monitor
+{
+	private:
+	public:
+	GPS_read(Display *ol, RTC *rt):monitor(ol,rt)
+	{
+		char na[] = "GPS read";
+		for(uint8_t i =0; i< namesize;i++)
+			if (i<sizeof(na))
+			{
+				name[i] = na[i];
+			}
+			else
+			{
+				name[i] = ' ';
+			}
+		maxentriesx = 1;
+		maxentries = 5;
+	}
+	
+	uint8_t tastendruck(uint8_t *tast){
+		return 0;
+	}
+
+	void draw(){
+		monitor::draw();
+		header();
+		bottom();
+        if(posx==1 && posy == 0){
+            dlat = EEPROM_read_float(EEGPSHOME  );
+            dlon = EEPROM_read_float(EEGPSHOME+4);
+            posx = 0;
+        }
+        if(posx==1 && posy == 1){
+            dlat = EEPROM_read_float(EEGPSGOET  );
+            dlon = EEPROM_read_float(EEGPSGOET+4);
+            posx = 0;
+        }
+        if(posx==1 && posy == 2){
+            dlat = EEPROM_read_float(EEGPSLAST1  );
+            dlon = EEPROM_read_float(EEGPSLAST1+4);
+            posx = 0;
+        }
+        if(posx==1 && posy == 3){
+            dlat = EEPROM_read_float(EEGPSLAST2  );
+            dlon = EEPROM_read_float(EEGPSLAST2+4);
+            posx = 0;
+        }
+        if(posx==1 && posy == 4){
+            dlat = EEPROM_read_float(EEGPSPARK  );
+            dlon = EEPROM_read_float(EEGPSPARK+4);
+            posx = 0;
+        }
+        if(posx==0){
+            int8_t places[5] = {posy-2,
+                                posy-1,
+                                posy,
+                                posy+1,
+                                posy+2};
+            for(uint8_t i=0; i<5; i++){
+                if(places[i]>=maxentries){
+                    places[i] -= maxentries;
+                }
+                else if(places[i]<0){
+                    places[i] += maxentries;
+                }
+            }
+            for(uint8_t i=0;i<14;i++){oled->draw_ASCI(pgm_read_byte(&entries_read[(uint8_t)places[0]][i]),i*charsize+2*charsize,2*charhighte);}
+            for(uint8_t i=0;i<14;i++){oled->draw_ASCI(pgm_read_byte(&entries_read[(uint8_t)places[1]][i]),i*charsize+2*charsize,3*charhighte);}
+            for(uint8_t i=0;i<14;i++){oled->draw_ASCI(pgm_read_byte(&entries_read[(uint8_t)places[2]][i]),i*charsize+2*charsize,4*charhighte);}
+            for(uint8_t i=0;i<14;i++){oled->draw_ASCI(pgm_read_byte(&entries_read[(uint8_t)places[3]][i]),i*charsize+2*charsize,5*charhighte);}
+            for(uint8_t i=0;i<14;i++){oled->draw_ASCI(pgm_read_byte(&entries_read[(uint8_t)places[4]][i]),i*charsize+2*charsize,6*charhighte);}
+            oled->draw_ASCI('>',0*charsize,(2+2)*charhighte);
+        }
 		send();
 	}
 	

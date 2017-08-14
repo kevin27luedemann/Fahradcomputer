@@ -4,7 +4,7 @@
  * Created: 28.11.2015 18:12:54
  * Author : Lüdemann
  */ 
-#define VERSIONSNUMMER 3.10
+#define VERSIONSNUMMER 3.12
 #define SPANNUNGSTEILER 2.0069
 #define F_CPU 8000000
 #define BATMIN 3.6
@@ -117,12 +117,12 @@ ISR(TIMER1_COMPA_vect){
 uint8_t gpsstatus;
 uint8_t gpsdata[72];
 uint8_t gpscounter;
-double lat;
-double lon;
-double dummy_place;
-double dlat;
-double dlon;
-double gpsspeed;
+float lat;
+float lon;
+float dummy_place;
+float dlat;
+float dlon;
+float gpsspeed;
 uint8_t gpsstunde;
 uint8_t gpsminute;
 uint8_t gpssekunde;
@@ -139,9 +139,9 @@ void GPSDISABLE()
 	PORTC &= ~(1<<PINC4);
 	gpsstatus &= ~((1<<enable) | (1<<fix));
 }
-double get_distance(double lat1, double lon1, double lat2, double lon2){
+float get_distance(float lat1, float lon1, float lat2, float lon2){
     double dist = 0;
-    float radius_e = 6371e3;
+    double radius_e = 6371e3;
     double phi1 = lat1*M_PI/180.;
     double phi2 = lat2*M_PI/180.;
     double dphi = phi2-phi1;
@@ -149,9 +149,9 @@ double get_distance(double lat1, double lon1, double lat2, double lon2){
 
     double a = sin(dphi/2.)*sin(dphi/2.)+cos(phi1)*cos(phi2)*sin(dlambda/2.)*sin(dlambda/2.);
     double c = 2*atan2(sqrt(a),sqrt(1-a));
-    return radius_e*c;
+    return (float)(radius_e*c);
 }
-double get_bearing(double lat1, double lon1, double lat2, double lon2){
+float get_bearing(float lat1, float lon1, float lat2, float lon2){
     double phi1 = lat1*M_PI/180.;
     double phi2 = lat2*M_PI/180.;
     double lam1 = lon1*M_PI/180.;
@@ -163,7 +163,7 @@ double get_bearing(double lat1, double lon1, double lat2, double lon2){
 
     double bearing = atan2(y,x);
     //if(bearing<0){bearing+=2.*M_PI;}
-    return fmod(bearing+2*M_PI,2.*M_PI);
+    return (float)fmod(bearing+2*M_PI,2.*M_PI);
 }
 ISR(USART0_RX_vect){
 	uint8_t temp = UDR0;
@@ -212,9 +212,9 @@ ISR(USART0_RX_vect){
 }
 
 //Tacho funktionen
-double geschw;
-double strecke;
-double maxgeschw;
+float geschw;
+float strecke;
+float maxgeschw;
 uint32_t Fahrtzeit;
 void nullen(){
 	geschw = 0;
@@ -243,8 +243,8 @@ void geschwindigkeit(float durch){
     uint16_t zaehlungen = TCNT1;
 	TCNT1 = 0;
 	//Berechnung
-	double temp = geschw;
-	double umlaufzeit = (REEDMS/1000.0+(zaehlungen/zaehlungenprozeiteinheit)*zeitproachtzaehlungen);
+	float temp = geschw;
+	float umlaufzeit = (REEDMS/1000.0+(zaehlungen/zaehlungenprozeiteinheit)*zeitproachtzaehlungen);
 	geschw = (durch)*M_PI*3.6;
 	geschw /= umlaufzeit;
 	//Mittelwert aus der letzten Messung zum Fehler minimieren
@@ -257,7 +257,7 @@ void geschwindigkeit(float durch){
 }
 
 //hier wird der neue Displayhandler verwendet
-#define numberofpages 5
+#define numberofpages 7
 #include "Monitor.h"
 
 void initialisierung();
@@ -287,6 +287,8 @@ int main(void)
 		new uhr(&oled,&rtc),
 		new tacho(&oled,&rtc),
 		new wandern(&oled,&rtc),
+		new GPS_read(&oled,&rtc),
+		new GPS_save(&oled,&rtc),
 		new einstellungen(&oled,&rtc),
 		new offscreen(&oled,&rtc),
 		new menue(&oled,&rtc)
@@ -339,9 +341,9 @@ void initialisierung(){
 	gpscounter = 0;
 	gpsstatus = (1<<fix);
 	lat = 0;
-    dlat = HOMELAT;
+    dlat = EEPROM_read_float(EEGPSHOME);
 	lon = 0;
-    dlon = HOMELON;
+    dlon = EEPROM_read_float(EEGPSHOME+4);
 	gpsspeed = 0;
 	gpsstunde = 0;
 	gpsminute = 0;
@@ -362,13 +364,21 @@ void initialisierung(){
 	}
 	//Zeit aus speicher
 	rtc.Sekunden= 0;
+    /*
 	rtc.Minuten	= EEPROM_Read(EEMINUTEN);
 	rtc.Stunden	= EEPROM_Read(EESTUNDEN);
 	rtc.Tag		= EEPROM_Read(EETAGE);
 	rtc.Monat	= EEPROM_Read(EEMONAT);
 	rtc.Jahr	= EEPROM_Read(EEJAHR);
     rtc.WMinuten= EEPROM_Read(EEWECKMINUTEN);
-    rtc.WStunden= EEPROM_Read(EEWECKSTUNDEN);
+    rtc.WStunden= EEPROM_Read(EEWECKSTUNDEN);*/
+	rtc.Minuten	= EEPReadByte(EEMINUTEN);
+	rtc.Stunden	= EEPReadByte(EESTUNDEN);
+	rtc.Tag		= EEPReadByte(EETAGE);
+	rtc.Monat	= EEPReadByte(EEMONAT);
+	rtc.Jahr	= EEPReadByte(EEJAHR);
+    rtc.WMinuten= EEPReadByte(EEWECKMINUTEN);
+    rtc.WStunden= EEPReadByte(EEWECKSTUNDEN);
 	rtc.ausgabedatumneu();
 	rtc.RTCstart();
     //rtc.interupts |= (1<<Weckerein);
@@ -636,8 +646,8 @@ void gpshandler(){
 		{
 			gpsstatus |= (1<<fix);
 		}
-		double la	= 0;
-		double lo	= 0;
+		float la	= 0;
+		float lo	= 0;
 		//brechnung von Latitutde, Longitude, Zeit und Datum
 		//Zeit
 		gpsstunde =		(gpsdata[7] - '0')*10;
@@ -989,11 +999,18 @@ void uhreinstellen(){
 	rtc.Sekunden		= 0;
 	rtc.HundSekunden	= 0;
 	//speichern der neuen Zeit im EEPROM
+    /*
 	EEPROM_Write(EEMINUTEN,rtc.Minuten);
 	EEPROM_Write(EESTUNDEN,rtc.Stunden);
 	EEPROM_Write(EETAGE,rtc.Tag);
 	EEPROM_Write(EEMONAT,rtc.Monat);
 	EEPROM_Write(EEJAHR,rtc.Jahr);
+    */
+	EEPWriteByte(EEMINUTEN,rtc.Minuten);
+	EEPWriteByte(EESTUNDEN,rtc.Stunden);
+	EEPWriteByte(EETAGE,rtc.Tag);
+	EEPWriteByte(EEMONAT,rtc.Monat);
+	EEPWriteByte(EEJAHR,rtc.Jahr);
 	
 	oled.clearFrame();
 	rtc.ausgabedatumneu();
