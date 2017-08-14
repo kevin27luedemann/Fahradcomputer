@@ -364,7 +364,8 @@ class wandern: public monitor
             switch (posx)
             {
                 case 0:
-			        GPSENABLE();
+                    if(gpsstatus&(1<<enable)){GPSDISABLE();}
+                    else{GPSENABLE();}
                     break;
                 case 1:
                     if(dlatgra < 89.){  dlat += 1.;}
@@ -397,7 +398,8 @@ class wandern: public monitor
             switch (posx)
             {
                 case 0:
-			        GPSDISABLE();
+                    dlat = lat;
+                    dlon = lon;
                     break;
                 case 1:
                     if(dlatgra > -89.){  dlat -= 1.;}
@@ -422,8 +424,6 @@ class wandern: public monitor
 		else if (*tast=='X')
 		{
 			druck.pressure0 = druck.pressure;
-            dlat = lat;
-            dlon = lon;
 		}
 		else if (*tast=='Y')
 		{
@@ -580,9 +580,12 @@ class wandern: public monitor
                 oled->draw_ASCI('m',3*numbersmalsize+charsize/2+charsize,2*charhighte);
             }
             accel.magn_read_angle();
-            oled->draw_number16x16((uint8_t)(bear*180./M_PI/100)%10,0*numbersmalsize,1.66*charhighte+numbersmalhight);
-            oled->draw_number16x16((uint8_t)(bear*180./M_PI/10)%10,1*numbersmalsize,1.66*charhighte+numbersmalhight);
-            oled->draw_number16x16((uint8_t)(bear*180./M_PI)%10,2*numbersmalsize,1.66*charhighte+numbersmalhight);
+            //oled->draw_number16x16((uint8_t)(bear*180./M_PI/100)%10,0*numbersmalsize,1.66*charhighte+numbersmalhight);
+            //oled->draw_number16x16((uint8_t)(bear*180./M_PI/10)%10,1*numbersmalsize,1.66*charhighte+numbersmalhight);
+            //oled->draw_number16x16((uint8_t)(bear*180./M_PI)%10,2*numbersmalsize,1.66*charhighte+numbersmalhight);
+            oled->draw_number16x16((uint8_t)(gpsspeed/100)%10,0*numbersmalsize,1.66*charhighte+numbersmalhight);
+            oled->draw_number16x16((uint8_t)(gpsspeed/10)%10,1*numbersmalsize,1.66*charhighte+numbersmalhight);
+            oled->draw_number16x16((uint8_t)(gpsspeed)%10,2*numbersmalsize,1.66*charhighte+numbersmalhight);
 
             oled->draw_number16x16((uint8_t)(accel.angle_M*180./M_PI/100)%10,0*numbersmalsize,1.66*charhighte+numbersmalhight*2);
             oled->draw_number16x16((uint8_t)(accel.angle_M*180./M_PI/10)%10,1*numbersmalsize,1.66*charhighte+numbersmalhight*2);
