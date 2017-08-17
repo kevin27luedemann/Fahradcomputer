@@ -467,6 +467,7 @@ void tastaturhandler(monitor *mon, uint8_t taste){
                     Vibm.off();
                     anzeige &= ~(1<<blinkflag);
                     oled.invert(0);
+					LED.off();
                     rtc.interupts &= ~(1<<Weckeractiv);
                 }
 				break;

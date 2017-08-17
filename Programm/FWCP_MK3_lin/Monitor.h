@@ -54,11 +54,6 @@ class monitor
 		}
 		oled->drawBATT(Batteriestatus(),SSD1306_WIDTH-13-4,0);
 		oled->drawGPS((gpsstatus&((1<<enable)|(1<<fix)))>>enable,SSD1306_WIDTH-27,0);
-		/*
-		buffersize=sprintf(buffer,"Bat: %i%%",Batteriestatus());
-		for(uint8_t i=((SSD1306_WIDTH/charsize)-buffersize);i<(SSD1306_WIDTH/charsize);i++){
-			oled->draw_ASCI(buffer[i-((SSD1306_WIDTH/charsize)-buffersize)],i*charsize,0);
-		}*/
 	}
 	
 	//draw bottom and overload it
