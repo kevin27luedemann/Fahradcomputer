@@ -498,17 +498,57 @@ void maininterupthandler(monitor *mon){
 		}
 	}
 	//SD Karte mounten bzw. aufnahme starten
-    /*
 	else if (position==3)
 	{
 		if (mon->posy==3 && mon->posx==1)
 		{
+			if (!(statusreg&(1<<mounttingstat)))
+			{
+				//mounting sd Karte
+				if (disk_initialize(0) == 0)
+				{
+					if (f_mount(&FATFS_Obj,"",0) == 0)
+					{
+						statusreg |= (1<<mounttingstat);
+					}
+				}
+			}
+			else if (!(statusreg&(1<<loggingstat)))
+			{
+				f_mount(0,"",0);
+				statusreg &= ~(1<<mounttingstat);
+			}
+			mon->posx--;
 		}
 		else if (mon->posy==4 && mon->posx==1)
 		{
+			if (!(statusreg&(1<<loggingstat)) && (statusreg&(1<<mounttingstat)) )
+			{
+				if (disk_status(0) == 0)
+				{
+					char name[13];
+					sprintf(name,"%02u%02u%02u%02u.txt",rtc.Monat,rtc.Tag,rtc.Stunden,rtc.Minuten);
+					f_open(&logger, name, FA_OPEN_ALWAYS | FA_WRITE);
+					//Zeit und GPS
+					f_printf(&logger,"#Zeit [s]\tlongitude [1e6]\tLatitude [1e5]\tGPSSpeed [1e2 km/h] ");
+					//Tacho
+					f_printf(&logger,"\tTacho [1e2 km/h] ");
+					//Barometer
+					f_printf(&logger,"\tTemperatur [10 C] \tDruck [Pa] \tHoeheSee [10 m]");
+					//Batterie
+					f_printf(&logger,"\tBatterie[1e2 V]\n");
+				}
+				
+				statusreg |= (1<<loggingstat);
+			}
+			else{
+				f_sync(&logger);
+				f_close(&logger);
+				statusreg &= ~(1<<loggingstat);
+			}
 			mon->posx--;
 		}
-	}*/
+	}
 	
 	if (statusreg&(1<<updaterate))				//24 FPS fuer schnelle anzeigen
 	{
