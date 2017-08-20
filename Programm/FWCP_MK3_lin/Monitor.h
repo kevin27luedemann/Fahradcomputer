@@ -612,7 +612,7 @@ class einstellungen: public monitor
 				name[i] = ' ';
 			}
 		}
-		maxentries = 5;
+		maxentries = 4;
 	}
 	
 	//Tastenhandler
@@ -635,17 +635,14 @@ class einstellungen: public monitor
 			for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,3*charhighte);}
 			buffersize=sprintf(buffer,"Versionsnummer");
 			for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,4*charhighte);}
-			buffersize=sprintf(buffer,"Mount SD: %u", (bool)(statusreg&(1<<mounttingstat)));
+			buffersize=sprintf(buffer,"Logg SD: %u", (bool)(statusreg&(1<<mounttingstat)));
 			for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,5*charhighte);}
-			buffersize=sprintf(buffer,"Logging:  %u", (bool)(statusreg&(1<<loggingstat)));
-			for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,6*charhighte);}
+			//buffersize=sprintf(buffer,"Logging:  %u", (bool)(statusreg&(1<<loggingstat)));
+			//for(uint8_t i=0;i<buffersize;i++){oled->draw_ASCI(buffer[i],i*charsize+2*charsize,6*charhighte);}
 			oled->draw_ASCI('>',0*charsize,(posy+2)*charhighte);
 		}
 		else if (posy==0 && posx==1)
 		{
-			//Uhreinstellung machen
-			//noch etwas bloed, aber mit eigener Funktion
-			//uhreinstellen();
             if(rtc->interupts&(1<<Weckerein)){rtc->interupts&=~(1<<Weckerein);}
             else{rtc->interupts|=(1<<Weckerein);}
 			posx=0;
@@ -663,6 +660,48 @@ class einstellungen: public monitor
 				oled->draw_ASCI(buffer[i],(i+2)*charsize,3.5*charhighte);
 			}
 		}
+        else if (posy==3 && posx==1){
+			if (!(statusreg&(1<<mounttingstat)))
+			{
+				//mounting sd Karte
+				if (disk_initialize(0) == 0)
+				{
+					if (f_mount(&FATFS_Obj,"",0) == 0)
+					{
+						statusreg |= (1<<mounttingstat);
+					}
+			}
+			else if (!(statusreg&(1<<loggingstat)))
+			{
+				f_mount(0,"",0);
+				statusreg &= ~(1<<mounttingstat);
+			}
+			if (!(statusreg&(1<<loggingstat)) && (statusreg&(1<<mounttingstat)) )
+			{
+				if (disk_status(0) == 0)
+				{
+					char name[13];
+					sprintf(name,"%02u%02u%02u%02u.txt",rtc->Monat,rtc->Tag,rtc->Stunden,rtc->Minuten);
+					f_open(&logger, name, FA_OPEN_ALWAYS | FA_WRITE);
+					//Zeit und GPS
+					f_printf(&logger,"#Zeit [s]\tlongitude [1e6]\tLatitude [1e5]\tGPSSpeed [1e2 km/h] ");
+					//Tacho
+					f_printf(&logger,"\tTacho [1e2 km/h] ");
+					//Barometer
+					f_printf(&logger,"\tTemperatur [10 C] \tDruck [Pa] \tHoeheSee [10 m]");
+					//Batterie
+					f_printf(&logger,"\tBatterie[1e2 V]\n");
+				}
+				
+				statusreg |= (1<<loggingstat);
+			}
+			else{
+				f_sync(&logger);
+				f_close(&logger);
+				statusreg &= ~(1<<loggingstat);
+			}
+			posx=0;
+        }
 		send();	
 	}
 	
